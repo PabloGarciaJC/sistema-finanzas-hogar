@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  php_apache_server:
+    image: php:apache
+    build:
+      context: ./
+      dockerfile: dockerfile/Dockerfile
+    container_name: php-apache
+    ports:
+      - "${PHP_APACHE_PORT}:80"
+    volumes:
+      - ${PROJECT_PATH}:/usr/local/apache2/htdocs/
+
+  mysql:
+    image: mysql:latest
+    ports:
+     - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+        - ./mysql/sql:/docker-entrypoint-initdb.d
+        - ./mysql/conf:/etc/mysql/conf.d
+        - persistent:/var/lib/mysql:rw
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    expose: 
+      - 80
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
+
+volumes:
+  persistent:
