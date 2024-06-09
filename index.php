@@ -9,7 +9,7 @@ require_once 'helpers/configuracion/htmlConfiguracion.php';
 require_once 'helpers/configuracion/validacionesConfig.php';
 require_once 'helpers/historial/estadisticas.php';
 require_once 'helpers/configuracion/estadisticasConfig.php';
-require_once 'helpers/historial/htmlHistorial.php'; 'peuabaa';
+require_once 'helpers/historial/htmlHistorial.php';
 
 //Controlador Frontal
 if(isset($_GET['controller'])){
