@@ -7,6 +7,7 @@ class ConfiguracionController
 
     public function index()
     {
+       
         require_once 'views/layout/header.php';
         require_once 'views/configuracion/banner.php';
         require_once 'views/layout/sidebar.php';

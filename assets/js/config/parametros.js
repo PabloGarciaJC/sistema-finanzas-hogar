@@ -1,1 +1,1 @@
-const baseUrl = 'http://localhost/portafolios/pablogarciajc_gestionhogar/';
+const baseUrl = 'http://sistemafinanzashogar.local/';

@@ -32,7 +32,6 @@ if (btnCrearConfiguracion) {
   });
 }
 
-
 function ajaxCrearConfig() {
   $.ajax({
     type: 'POST',
