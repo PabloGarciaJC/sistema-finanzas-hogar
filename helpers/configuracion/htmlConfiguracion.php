@@ -31,54 +31,10 @@ class htmlConfiguracion
 
         // Obtener Lista
         $obtenerLista = $configuracion->listar($ultimoRegistro, $mostrarRegistros);
-
-        // echo '<div class="graphs">';
-        // echo '<div class="col_3">';
-        // echo '<div class="col-md-3 widget widget1">';
-        // echo '<div class="r3_counter_box">';
-        // echo '<div class="text-center" style="margin-top: 9px;">';
-
-        // echo '<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modalCrearConfiguracion">&#128421 Crear Filas</button>';
-        // echo '</div>';
-        // echo '</div>';
-        // echo '</div>';
-
-        // if ($obtenerLista->num_rows > 0) {
-        //     echo '<div class="col-md-3 widget widget1">';
-        //     echo '<div class="r3_counter_box">';
-        //     echo '<div class="text-center" style="margin-top: 9px;">';
-        //     echo '<a href="" id="" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalEditarRegistroC"
-        // onclick="editarRegistroConfig(' . $obtenerIdRegistro . ', ' . $obtenerRegistro->income_veronica . ', ' . $obtenerRegistro->income_pablo . ', ' . $obtenerRegistro->income_extra . ', ' . $obtenerRegistro->saving_verpa . ', \'' . $obtenerRegistro->month . '\', ' . $obtenerRegistro->year . ', ' . $paginaActual . ')">&#128240;  Editar Ingresos</a>';
-        //     echo '</div>';
-        //     echo '</div>';
-        //     echo '</div>';
-        // }
-
-        // echo '<div class="col-md-3 widget widget1">';
-        // echo '<div class="r3_counter_box">';
-        // echo '<div class="text-center" style="margin-top: 9px;">';
-
-        // echo '<a href="" id="" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#modalRepoblar" onclick="repoblar(' . $obtenerIdRegistro . ')">&#128452; Repoblar Tabla</a>';
-        // echo '</div>';
-        // echo '</div>';
-        // echo '</div>';
-
-        // echo '<div class="col-md-3 widget widget1">';
-        // echo '<div class="r3_counter_box">';
-        // echo '<div class="text-center" style="margin-top: 9px;">';
-        // echo '<a href="' . base_url . '" class="btn btn-info btn-lg">&#11013 Volver</a>';
-        // echo '</div>';
-        // echo '</div>';
-        // echo '</div>';
-
-        // echo '<div class="clearfix"> </div>';
-        // echo '</div>';
-        // echo '</div>';
-       
+      
         echo '<table class="table table-bordered">';
         echo '<thead>';
         echo '<tr>';
-        // echo '<th style=" text-align: center;">Id</th>';
         echo '<th style=" text-align: center;">Nombre</th>';
         echo '<th style="text-align: center;">Descripcion</th>';
         echo '<th style="text-align: center;">Gastos</th>';

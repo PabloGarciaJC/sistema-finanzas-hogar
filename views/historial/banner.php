@@ -11,12 +11,8 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="index.html"> Verpa</a>
-      </div>
-      <!-- <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" id= "buscadorConfiguracion" placeholder="buscador...">
-			</form> -->
-      
+        <a class="navbar-brand" href="/"> Verpa</a>
+      </div> 
   </div>
  
 
