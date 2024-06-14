@@ -5,41 +5,39 @@ services:
   php_apache_server:
     build:
       context: ./
-      dockerfile: dockerfile/Dockerfile
+      dockerfile: dockerfile/Dockerfile  # Ruta al Dockerfile para construir la imagen
     container_name: php-apache
     ports:
-      - "${PHP_APACHE_PORT}:80"
+      - "${PHP_APACHE_PORT}:80"  # Mapeo del puerto del contenedor al host
     volumes:
-     # Lugar en el Contenedor don va a correr la aplicacion
-      - ${PROJECT_PATH}:/var/www/html
-    # Comando al iniciar: habilitar configuración y ejecutar Apache
+      - ${PROJECT_PATH}:/var/www/html  # Montaje del directorio del proyecto en el contenedor
     command: >
-      bash -c "a2ensite docker.conf && apache2-foreground"
-               
+      bash -c "a2ensite docker.conf && apache2-foreground"  # Comando para iniciar Apache
+
   # Servidor MySQL
   mysql:
     image: mysql:latest
     ports:
-     - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT}:3306"  # Mapeo del puerto de MySQL
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-        - ./mysql/sql:/docker-entrypoint-initdb.d
-        - persistent:/var/lib/mysql:rw
+      - ./mysql/sql:/docker-entrypoint-initdb.d  # Carga de scripts SQL al inicio de MySQL
+      - persistent:/var/lib/mysql:rw  # Persistencia de datos de MySQL
 
   # phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
-      - ${PHPMYADMIN_PORT}:80
+      - "${PHPMYADMIN_PORT}:80"  # Mapeo del puerto de phpMyAdmin
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: mysql  # Host de MySQL para phpMyAdmin
     depends_on:
-      - mysql
+      - mysql  # Dependencia de MySQL para asegurar que se inicie primero
 
 # Volúmenes definidos
 volumes:
-  persistent:
+  persistent:  # Definición de un volumen persistente para MySQL
