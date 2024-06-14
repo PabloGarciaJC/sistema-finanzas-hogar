@@ -10,11 +10,12 @@ services:
     ports:
       - "${PHP_APACHE_PORT}:80"
     volumes:
-     # Lugar en el Contenedor don va a correr la aplicacion
       - ${PROJECT_PATH}:/var/www/html
-    # Habilita Host Vitural en el Contenedor
-      - ./docker.conf:/etc/apache2/sites-available/docker.conf
-    # Comando al iniciar: habilitar configuración y ejecutar Apache
+      - ./docker.conf:${PROJECT_PATH}dockerfile/Dockerfile/hostvitrual/docker.conf
+    environment:
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     command: >
       bash -c "a2ensite docker.conf && apache2-foreground"
                

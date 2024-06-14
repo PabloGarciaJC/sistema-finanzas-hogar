@@ -2,8 +2,10 @@
 set -e
 
 mysql -u root -ppassword <<-EOSQL
-    CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\`;
-    CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY 'password';
-    GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%' WITH GRANT OPTION;
+    CREATE DATABASE IF NOT EXISTS \`gestionhogar_pablogarciajc\`;
+    CREATE USER IF NOT EXISTS 'pablogarciajcbd'@'%' IDENTIFIED BY 'password';
+    GRANT ALL PRIVILEGES ON \`gestionhogar_pablogarciajc\`.* TO 'pablogarciajcbd'@'%' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
 EOSQL
+
+
