@@ -11,8 +11,9 @@ services:
       - "${PHP_APACHE_PORT}:80"  # Mapeo del puerto del contenedor al host
     volumes:
       - ${PROJECT_PATH}:/var/www/html  # Montaje del directorio del proyecto en el contenedor
+      - ./config/docker.conf:/etc/apache2/sites-available/docker.conf  # Montaje del archivo de configuración de Apache
     command: >
-      bash -c "a2ensite docker.conf && apache2-foreground"  # Comando para iniciar Apache
+      apache2-foreground
 
   # Servidor MySQL
   mysql:

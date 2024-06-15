@@ -21,10 +21,17 @@ RUN a2enmod rewrite
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /var/www/html
 
+# Copiar los archivos desde el directorio del proyecto al directorio de trabajo en el contenedor
+COPY . .
+
+# Copiar el archivo de configuración de Apache desde el directorio config al contenedor
+COPY config/docker.conf /etc/apache2/sites-available/docker.conf
+
+# Habilitar el sitio en Apache
+RUN a2ensite docker.conf
+
 # Exponer el puerto 80 del contenedor
 EXPOSE 80
 
-# Copiar los archivos desde el directorio del proyecto al directorio de trabajo en el contenedora
-COPY . .
-
-
+# Comando para iniciar Apache en primer plano
+CMD ["apache2-foreground"]
