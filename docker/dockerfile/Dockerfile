@@ -1,34 +1,28 @@
-# Utilizamos una imagen base de PHP con Apache
+# Utilizar una imagen base de PHP con Apache
 FROM php:8.0.0-apache
 
 # Suprimir la interacción del usuario durante la instalación de paquetes
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Instala la extensión mysqli para la comunicación con MySQL
+# Instalar extensiones PHP necesarias
 RUN docker-php-ext-install mysqli \
-    # Actualiza la lista de paquetes disponibles
-    && apt-get update \
-    # Instala paquetes necesarios: sendmail, libpng-dev, libzip-dev, zlib1g-dev, libonig-dev
-    && apt-get install -y sendmail libpng-dev libzip-dev zlib1g-dev libonig-dev \
-    # Limpia la caché de paquetes descargados
-    && rm -rf /var/lib/apt/lists/* \
-    # Instala extensiones PHP: zip, mbstring, gd
-    && docker-php-ext-install zip mbstring gd
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-enable mysqli pdo_mysql \
+    && a2enmod rewrite
 
-# Habilitar el módulo rewrite de Apache
+# Crear el directorio DocumentRoot si no existe
+RUN mkdir -p /var/www/Portafolios/gestionhogar_pablogarciajc
+
+# Copiar los archivos del directorio del proyecto al directorio de trabajo en el contenedor
+COPY . /var/www/html
+
+# Configurar Apache
+COPY config/docker.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
+RUN service apache2 restart
 
-# Establecer el directorio de trabajo en el contenedor
-WORKDIR /var/www/html
-
-# Copiar los archivos desde el directorio del proyecto al directorio de trabajo en el contenedor
-COPY . .
-
-# Copiar el archivo de configuración de Apache desde el directorio config al contenedor
-COPY config/docker.conf /etc/apache2/sites-available/docker.conf
-
-# Habilitar el sitio en Apache
-RUN a2ensite docker.conf
+# Configurar ServerName globalmente para Apache
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Exponer el puerto 80 del contenedor
 EXPOSE 80

@@ -1,1 +1,1 @@
-const baseUrl = 'http://sistemafinanzashogar.local/';
+const baseUrl = 'http://gestionhogar.docker:8082/';

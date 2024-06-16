@@ -15,7 +15,7 @@ services:
     command: >
       apache2-foreground
 
-  # Servidor MySQL
+  # Otros servicios como MySQL y phpMyAdmin
   mysql:
     image: mysql:latest
     ports:
@@ -29,7 +29,6 @@ services:
       - ./mysql/sql:/docker-entrypoint-initdb.d  # Carga de scripts SQL al inicio de MySQL
       - persistent:/var/lib/mysql:rw  # Persistencia de datos de MySQL
 
-  # phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
@@ -39,6 +38,5 @@ services:
     depends_on:
       - mysql  # Dependencia de MySQL para asegurar que se inicie primero
 
-# Volúmenes definidos
 volumes:
   persistent:  # Definición de un volumen persistente para MySQL

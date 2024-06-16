@@ -1,5 +1,5 @@
 <?php
-require_once 'model/registro.php';
+require_once 'model/Registro.php';
 
 class RegistroController
 {

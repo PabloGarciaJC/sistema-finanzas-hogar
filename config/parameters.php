@@ -1,7 +1,20 @@
 <?php
 
-define("controller_default", "RegistroController");
-define("action_default", "index"); // Action es el Metodo de los Controladores
-define("base_url","http://sistemafinanzashogar.local/");
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable('./docker/');
+$dotenv->load();
+
+// Bases de Datos
+define("DB_USER", $_ENV['MYSQL_USER']);
+define("DB_PASSWORD", $_ENV['MYSQL_PASSWORD']);
+define("DB_DATABASE", $_ENV['COMPOSE_PROJECT_NAME']);
+
+define("CONTROLLER_DEFAULT", "RegistroController");
+// Action es el Metodo de los Controladores
+define("ACTION_DEFAULT", "index"); 
+define("BASE_URL","http://gestionhogar.docker:8082/");
 ?>
 
