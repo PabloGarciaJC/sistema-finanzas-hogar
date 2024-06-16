@@ -12,8 +12,8 @@ define("DB_USER", $_ENV['MYSQL_USER']);
 define("DB_PASSWORD", $_ENV['MYSQL_PASSWORD']);
 define("DB_DATABASE", $_ENV['COMPOSE_PROJECT_NAME']);
 
-define("CONTROLLER_DEFAULT", "RegistroController");
 // Action es el Metodo de los Controladores
+define("CONTROLLER_DEFAULT", "RegistroController");
 define("ACTION_DEFAULT", "index"); 
 define("BASE_URL","http://gestionhogar.docker:8082/");
 ?>

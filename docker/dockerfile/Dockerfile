@@ -17,7 +17,7 @@ RUN mkdir -p /var/www/Portafolios/gestionhogar_pablogarciajc
 COPY . /var/www/html
 
 # Configurar Apache
-COPY config/docker.conf /etc/apache2/sites-available/000-default.conf
+COPY config/docker.conf /etc/apache2/sites-available/docker.conf
 RUN a2enmod rewrite
 RUN service apache2 restart
 
