@@ -36,8 +36,7 @@
   <input type="search" placeholder="Busca servicios y deudas.. Aqui !" id="buscadorConfiguracion" />
 
   <!-- Listar Tabla -->
-  <div class="table-responsive" id="tablaConfiguracion">
-  </div>
+  <div class="table-responsive" id="tablaConfiguracion"></div>
 
 </div>
 

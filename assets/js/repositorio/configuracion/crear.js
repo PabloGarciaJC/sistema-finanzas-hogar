@@ -59,12 +59,6 @@ function ajaxCrearConfig() {
       $("#modalCrearConfiguracion").modal('hide');
     }
   })
-    .fail(function () {
-      console.log('error');
-    })
-    .always(function () {
-      console.log('completo');
-    });
 }
 
 

@@ -41,12 +41,6 @@ if (btnEliminarRegistro) {
         })
       }
     })
-      .fail(function () {
-        console.log('error');
-      })
-      .always(function () {
-        console.log('completo');
-      });
   });
 }
 

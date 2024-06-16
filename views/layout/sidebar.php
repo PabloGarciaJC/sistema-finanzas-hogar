@@ -1,5 +1,4 @@
   <!-- Sidebar  -->
-
   <div class="navbar-default sidebar" role="navigation" style="margin-top: 0px;">
     <div class="sidebar-nav navbar-collapse">
       <ul class="nav" id="side-menu">

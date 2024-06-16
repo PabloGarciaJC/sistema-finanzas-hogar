@@ -1,1 +1,3 @@
-const baseUrl = 'http://gestionhogar.docker:8082/';
+var url = new URL(window.location.href);
+var baseUrl = url.origin + '/';
+

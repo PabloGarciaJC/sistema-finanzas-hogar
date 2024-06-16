@@ -48,12 +48,6 @@ if (btnEliminarHistorial) {
         })
       }
     })
-      .fail(function () {
-        console.log('error');
-      })
-      .always(function () {
-        console.log('completo');
-      });
   });
 }
 

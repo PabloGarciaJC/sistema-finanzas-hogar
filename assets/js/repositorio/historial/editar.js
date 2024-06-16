@@ -75,12 +75,6 @@ function ajaxEditarHistorial(idHistorial, editNombreHistorial, editDescripcionHi
       $("#modalEditarHistorial").modal('hide');
     }
   })
-    .fail(function () {
-      console.log('error');
-    })
-    .always(function () {
-      console.log('completo');
-    });
 }
 
 

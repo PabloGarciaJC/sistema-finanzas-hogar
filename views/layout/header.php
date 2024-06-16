@@ -7,7 +7,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="keywords" content="Modern Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
-
   <!-- Bootstrap Core CSS -->
   <link href="<?= BASE_URL ?>assets/css/bootstrap/bootstrap.min.css" rel='stylesheet' type='text/css' />
   <!-- Custom CSS -->
@@ -17,10 +16,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
   <link href="<?= BASE_URL ?>assets/css/font-awesome.css" rel="stylesheet">
   <!-- jQuery -->
   <script src="<?= BASE_URL ?>assets/js/librerias/jquery.min.js"></script>
-  
   <!----webfonts--->
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
-  <!---//webfonts--->
   <!-- Nav CSS -->
   <link href="<?= BASE_URL ?>assets/css/custom.css" rel="stylesheet">
   <!-- Metis Menu Plugin JavaScript -->
@@ -29,6 +26,4 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
   <!-- Graph JavaScript -->
   <script src="<?= BASE_URL ?>assets/js/librerias/d3.v3.js"></script>
   <script src="<?= BASE_URL ?>assets/js/librerias/rickshaw.js"></script>
-
-
 </head>

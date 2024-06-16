@@ -70,12 +70,6 @@ function ajaxCrear() {
       Swal.fire({ title: 'El mes y año, ya estan registrados !!' })
     }
   })
-    .fail(function () {
-      console.log('error');
-    })
-    .always(function () {
-      console.log('completo');
-    });
 }
 
 

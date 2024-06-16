@@ -23,22 +23,20 @@
  <script src="<?= BASE_URL ?>assets/js/helpers/historial/validacionesHistorial.js"></script>
 
  <!-- Registro -->
- <script src="<?= BASE_URL ?>assets/js/repositorio/registro/crear.js"></script>
- <script src="<?= BASE_URL ?>assets/js/repositorio/registro/buscador.js"></script>
+<script src="<?= BASE_URL ?>assets/js/repositorio/registro/crear.js"></script>
+<script src="<?= BASE_URL ?>assets/js/repositorio/registro/buscador.js"></script>
  <script src="<?= BASE_URL ?>assets/js/repositorio/registro/editar.js"></script>
- <script src="<?= BASE_URL ?>assets/js/repositorio/registro/eliminar.js"></script>
+ <script src="<?= BASE_URL ?>assets/js/repositorio/registro/eliminar.js"></script> 
 
  <!-- Configuracion -->
  <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/crear.js"></script>
  <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/buscador.js"></script>
  <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/editar.js"></script>
- <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/eliminar.js"></script>
- <!-- <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/editarRegistroConfig.js"></script> -->
+ <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/eliminar.js"></script> 
 
  <!-- Historial -->
  <script src="<?= BASE_URL ?>assets/js/repositorio/historial/crear.js"></script>
  <script src="<?= BASE_URL ?>assets/js/repositorio/historial/buscador.js"></script>
 <script src="<?= BASE_URL ?>assets/js/repositorio/historial/editar.js"></script>
  <script src="<?= BASE_URL ?>assets/js/repositorio/historial/eliminar.js"></script>
- <script src="<?= BASE_URL ?>assets/js/repositorio/historial/repoblar.js"></script> 
- <!-- <script src="<?= BASE_URL ?>assets/js/repositorio/configuracion/editarRegistroConfig.js"></script> -->
+ <script src="<?= BASE_URL ?>assets/js/repositorio/historial/repoblar.js"></script>
