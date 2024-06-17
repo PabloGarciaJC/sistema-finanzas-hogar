@@ -14,15 +14,10 @@ RUN docker-php-ext-install mysqli \
 RUN mkdir -p /var/www/Portafolios/gestionhogar_pablogarciajc
 
 # Copiar los archivos del directorio del proyecto al directorio de trabajo en el contenedor
-COPY . /var/www/html
+COPY . /var/www/Portafolios/gestionhogar_pablogarciajc
 
-# Configurar Apache
-COPY config/docker.conf /etc/apache2/sites-available/docker.conf
-RUN a2enmod rewrite
+# Reiniciar Apache para aplicar cambios
 RUN service apache2 restart
-
-# Configurar ServerName globalmente para Apache
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Exponer el puerto 80 del contenedor
 EXPOSE 80
