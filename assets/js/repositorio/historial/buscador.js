@@ -35,11 +35,5 @@ function obtenerHistorialTabla(inputBuscadorHistorial, paginaActualHistorial) {
       .done(function (respuestaPeticion) {
         $('#tablaHistorial').html(respuestaPeticion);
       })
-      .fail(function () {
-        console.log('error');
-      })
-      .always(function () {
-        console.log('completo');
-      });
   }
 }

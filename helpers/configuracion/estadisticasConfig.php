@@ -1,5 +1,5 @@
 <?php
-require_once 'model/configuracion.php';
+require_once 'model/Configuracion.php';
 
 class estadisticasConfig
 {

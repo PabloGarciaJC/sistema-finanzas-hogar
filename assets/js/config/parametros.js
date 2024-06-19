@@ -1,1 +1,3 @@
-const baseUrl = 'http://sistemafinanzashogar.local/';
+var url = new URL(window.location.href);
+var baseUrl = url.origin + '/';
+

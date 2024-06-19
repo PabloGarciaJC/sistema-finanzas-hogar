@@ -9,7 +9,7 @@ let buscadorRegistro = document.getElementById('buscadorRegistro');
 //Capturo el Buscador a tiempo Real
 if (buscadorRegistro) {
   buscadorRegistro.addEventListener("keyup", function (e) {
-    let imputBuscadorRegistro = buscadorRegistro.value;
+    let imputBuscadorRegistro = buscadorRegistro.value; 
     obtenerRegistrosTabla(imputBuscadorRegistro, paginaActual);
   });
 };
@@ -24,18 +24,8 @@ function obtenerRegistrosTabla(imputBuscadorRegistro, paginaActual) {
     },
   })
     .done(function (respuestaPeticion) {
-
-console.log(respuestaPeticion);
       $('#tablaRegistro').html(respuestaPeticion);
-      let objeto = $.parseJSON(respuestaPeticion);
-      crearHtmlTable(objeto);
     })
-    .fail(function () {
-      console.log('error');
-    })
-    .always(function () {
-      console.log('completo');
-    });
 }
 
 

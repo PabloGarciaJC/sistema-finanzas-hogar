@@ -11,7 +11,7 @@
     <div class="col-md-3 widget widget1">
       <div class="r3_counter_box">
         <div class="text-center" style="margin-top: 9px;">
-          <a href="<?= base_url ?>" class="btn btn-info btn-lg">&#11013 Volver</a>
+          <a href="<?= BASE_URL ?>" class="btn btn-info btn-lg">&#11013 Volver</a>
         </div>
       </div>
     </div>
@@ -36,8 +36,7 @@
   <input type="search" placeholder="Busca servicios y deudas.. Aqui !" id="buscadorConfiguracion" />
 
   <!-- Listar Tabla -->
-  <div class="table-responsive" id="tablaConfiguracion">
-  </div>
+  <div class="table-responsive" id="tablaConfiguracion"></div>
 
 </div>
 

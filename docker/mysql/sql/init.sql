@@ -45,7 +45,7 @@ CREATE TABLE `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `nombre`, `descripcion`, `gastos`, `fechaCorte`, `status`, `rol`) VALUES
-(14, 'Carrefour', 'Mercado Familiar', '407.00', 'Ultimo de Cada Mes', 'PENDIENTE', 1),
+(14, 'Carrefour', 'Mercado Familiar ytes', '407.00', 'Ultimo de Cada Mes', 'PENDIENTE', 1),
 (15, 'Carrefour', 'Sitio Web Pablo', '10.00', '15 de cada Mes', 'PENDIENTE', 1),
 (17, 'Carrefour', 'Netflix', '5.49', '21 de cada Mes', 'PENDIENTE', 1),
 (18, 'Carrefour', 'HBO', '3.99', '21 de casa mes', 'PENDIENTE', 1),

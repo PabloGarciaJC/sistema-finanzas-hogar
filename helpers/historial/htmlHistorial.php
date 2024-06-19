@@ -1,6 +1,6 @@
 <?php
 
-require_once 'model/historial.php';
+require_once 'model/Historial.php';
 
 class htmlHistorial
 {
@@ -58,7 +58,7 @@ class htmlHistorial
         echo '<div class="col-md-3 widget widget1">';
         echo '<div class="r3_counter_box">';
         echo '<div class="text-center" style="margin-top: 9px;">';
-        echo '<a href="' . base_url . '" class="btn btn-info btn-lg">&#11013 Volver</a>';
+        echo '<a href="' . BASE_URL . '" class="btn btn-info btn-lg">&#11013 Volver</a>';
         echo '</div>';
         echo '</div>';
         echo '</div>';

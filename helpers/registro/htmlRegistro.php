@@ -67,7 +67,7 @@ class htmlRegistro
                 echo '<td>' . $listarRegistros->saving_verpa . ' &#8364;</td>';
                 echo '<td>' . $listarRegistros->month . '</td>';
                 echo '<td>' . $listarRegistros->year . '</td>';
-                echo '<td><a href="' . base_url . 'historial/index&id=' . $listarRegistros->id . '"><strong> Ver</strong></a></td>';
+                echo '<td><a href="' . BASE_URL . 'historial/index&id=' . $listarRegistros->id . '"><strong> Ver</strong></a></td>';
 
                 echo '<td>';
                 echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEditarRegistro" onclick="editar(' . $listarRegistros->id . ', ' . $listarRegistros->income_veronica . ', ' . $listarRegistros->income_pablo . ', ' . $listarRegistros->income_extra . ', ' . $listarRegistros->saving_verpa . ', \'' . $listarRegistros->month . '\', ' . $listarRegistros->year . ', ' . $paginaActual . ')">&#128240; Editar</button>';

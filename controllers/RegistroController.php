@@ -1,5 +1,5 @@
 <?php
-require_once 'model/registro.php';
+require_once 'model/Registro.php';
 
 class RegistroController
 {
@@ -14,6 +14,7 @@ class RegistroController
 
   public function buscador()
   {
+
     $imputBuscador = isset($_POST["imputBuscador"]) ? $_POST["imputBuscador"] : false;
     $paginaActual = isset($_POST['paginaActual']) ? $_POST['paginaActual'] : false;
     htmlRegistro::obtenerTodos($imputBuscador, $paginaActual);

@@ -68,12 +68,6 @@ function ajaxEditarConfig(idConfig, editNombreConfig, editDescripcionConfig, edi
       $("#modalEditarConfig").modal('hide');
     }
   })
-    .fail(function () {
-      console.log('error');
-    })
-    .always(function () {
-      console.log('completo');
-    });
 }
 
 

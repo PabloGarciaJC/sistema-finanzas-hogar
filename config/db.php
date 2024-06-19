@@ -1,17 +1,19 @@
 <?php
-
 class Database {
 
     static public function connect(){
-        $db = new mysqli('localhost','pablogarciajcbd','123','pablogarciajc_gestionhogar');   
-    
-        $db->query("SET NAMES 'utf8'");   
-        // echo 'si hay conexion'; 
+        // Conexión a la base de datos usando Docker Compose
+        $db = new mysqli('mysql', DB_USER, DB_PASSWORD, DB_DATABASE);   
+        
+        // Verificar conexión
+        if ($db->connect_error) {
+            die("Error de conexión: " . $db->connect_error);
+        }
+        
+        $db->set_charset("utf8");
+
         return $db;
     }
 }
-// $tes = new Database();
-// $prueba = $tes->connect(); 
-// var_dump($prueba); 
- 
-?>
+
+

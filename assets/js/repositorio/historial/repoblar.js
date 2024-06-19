@@ -38,13 +38,6 @@ if (btnRepoblar) {
           timer: 800
         })
         $("#modalRepoblar").modal('hide');
-        
       })
-      .fail(function () {
-        console.log('error');
-      })
-      .always(function () {
-        console.log('completo');
-      });
   });
 }

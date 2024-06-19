@@ -1,13 +1,12 @@
 <?php
 
-require_once 'model/configuracion.php';
+require_once 'model/Configuracion.php';
 
 class ConfiguracionController
 {
 
     public function index()
     {
-       
         require_once 'views/layout/header.php';
         require_once 'views/configuracion/banner.php';
         require_once 'views/layout/sidebar.php';
@@ -89,5 +88,4 @@ class ConfiguracionController
             echo $eliminado;
         }
     }
-
 }

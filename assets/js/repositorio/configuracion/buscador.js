@@ -29,11 +29,4 @@ function obtenerConfigTabla(imputBuscadorConfig, paginaActualConfig) {
     .done(function (respuestaPeticion) {
       $('#tablaConfiguracion').html(respuestaPeticion);
     })
-    .fail(function () {
-      console.log('error');
-    })
-    .always(function () {
-      console.log('completo');
-    });
-
 }

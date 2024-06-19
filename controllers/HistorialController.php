@@ -1,7 +1,7 @@
 <?php
 
-require_once 'model/historial.php';
-require_once 'model/configuracion.php';
+require_once 'model/Historial.php';
+require_once 'model/Configuracion.php';
 
 class HistorialController
 {
