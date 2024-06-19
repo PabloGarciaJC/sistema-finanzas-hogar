@@ -1,5 +1,5 @@
 # Ignorar archivos generados por Visual Studio Code
-.vscode/
+.vscode/*
 
 # Ignorar archivos generados por la plantilla
-.plantilla/
+plantilla/*
