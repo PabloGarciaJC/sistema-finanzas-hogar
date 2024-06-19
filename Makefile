@@ -40,8 +40,3 @@ stop:
 .PHONY: clean
 clean:
 	$(DOCKER_COMPOSE) down -v --remove-orphans
-
-# Objetivo para asignar todos los permisos a un directorio
-.PHONY: all_permissions
-all_permissions:
-	sudo chmod -R 777 /var/www/Portafolios/gestionhogar_pablogarciajc

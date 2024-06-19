@@ -16,6 +16,4 @@ class Database {
     }
 }
 
-// Ejemplo de uso:
-// $tes = Database::connect();
 

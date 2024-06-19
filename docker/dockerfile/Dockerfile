@@ -11,17 +11,14 @@ RUN docker-php-ext-install mysqli \
     && a2enmod rewrite
 
 # Crear el directorio DocumentRoot si no existe
-RUN mkdir -p /var/www/Portafolios/gestionhogar_pablogarciajc
+RUN mkdir -p ${PROJECT_PATH}
 
 # Copiar los archivos del directorio del proyecto al directorio de trabajo en el contenedor
-COPY . /var/www/Portafolios/gestionhogar_pablogarciajc
+COPY . ${PROJECT_PATH}
 
 # Cambiar los permisos del directorio DocumentRoot
-RUN chown -R www-data:www-data /var/www/Portafolios/gestionhogar_pablogarciajc \
-    && chmod -R 755 /var/www/Portafolios/gestionhogar_pablogarciajc
-
-# Reiniciar Apache para aplicar cambios (esto no es necesario generalmente)
-# RUN service apache2 restart
+RUN chown -R www-data:www-data ${PROJECT_PATH} \
+    && chmod -R 755 ${PROJECT_PATH}
 
 # Exponer el puerto 80 del contenedor
 EXPOSE 80
