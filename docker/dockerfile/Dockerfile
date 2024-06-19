@@ -16,8 +16,12 @@ RUN mkdir -p /var/www/Portafolios/gestionhogar_pablogarciajc
 # Copiar los archivos del directorio del proyecto al directorio de trabajo en el contenedor
 COPY . /var/www/Portafolios/gestionhogar_pablogarciajc
 
-# Reiniciar Apache para aplicar cambios
-RUN service apache2 restart
+# Cambiar los permisos del directorio DocumentRoot
+RUN chown -R www-data:www-data /var/www/Portafolios/gestionhogar_pablogarciajc \
+    && chmod -R 755 /var/www/Portafolios/gestionhogar_pablogarciajc
+
+# Reiniciar Apache para aplicar cambios (esto no es necesario generalmente)
+# RUN service apache2 restart
 
 # Exponer el puerto 80 del contenedor
 EXPOSE 80
