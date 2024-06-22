@@ -14,6 +14,6 @@ define("DB_DATABASE", $_ENV['COMPOSE_PROJECT_NAME']);
 // Action es el Metodo de los Controladores
 define("CONTROLLER_DEFAULT", "RegistroController");
 define("ACTION_DEFAULT", "index"); 
-define("BASE_URL","http://localhost:8082/");
+define("BASE_URL", $_ENV['BASE_URL_PROJECT']); 
 ?>
 
