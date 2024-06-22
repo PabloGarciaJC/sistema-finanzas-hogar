@@ -9,7 +9,7 @@ up:
 # Objetivo para bajar los contenedores
 .PHONY: down
 down:
-	$(DOCKER_COMPOSE) down
+	$(DOCKER_COMPOSE) down -v
 
 # Objetivo para reiniciar los contenedores
 .PHONY: restart
