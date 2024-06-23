@@ -4,6 +4,9 @@ FROM php:8.0.0-apache
 # Suprimir la interacción del usuario durante la instalación de paquetes
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Definir el argumento PROJECT_PATH (se pasa desde docker-compose.yml)
+ARG PROJECT_PATH
+
 # Instalar extensiones PHP necesarias
 RUN docker-php-ext-install mysqli \
     && docker-php-ext-install pdo_mysql \

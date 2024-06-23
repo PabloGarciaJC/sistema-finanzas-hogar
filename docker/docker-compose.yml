@@ -4,8 +4,10 @@ services:
   # Servidor PHP con Apache
   php_apache_server:
     build:
-      context: ./
+      context: .
       dockerfile: dockerfile/Dockerfile
+      args:
+        PROJECT_PATH: ${PROJECT_PATH}
     container_name: php-apache
     ports:
       - "${PHP_APACHE_PORT}:80"
