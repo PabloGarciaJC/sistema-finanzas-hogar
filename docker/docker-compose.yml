@@ -12,7 +12,7 @@ services:
     ports:
       - "${PHP_APACHE_PORT}:80"
     volumes:
-      - /home/pablo/www/gestionhogar_pablogarciajc:/var/www/html
+      - "${PROJECT_PATH}:/var/www/html"
     command: >
       apache2-foreground
 
