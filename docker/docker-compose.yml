@@ -22,9 +22,10 @@ services:
       - "${MYSQL_PORT}:3306"
     environment:
       MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT: ${MYSQL_ROOT}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./mysql/sql:/docker-entrypoint-initdb.d
       - persistent:/var/lib/mysql:rw
