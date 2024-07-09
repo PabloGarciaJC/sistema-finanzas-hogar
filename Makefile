@@ -9,7 +9,7 @@ up:
 # Objetivo para bajar los contenedores
 .PHONY: down
 down:
-	$(DOCKER_COMPOSE) down -v
+	$(DOCKER_COMPOSE) down
 
 # Objetivo para reiniciar los contenedores
 .PHONY: restart
@@ -40,3 +40,8 @@ stop:
 .PHONY: clean
 clean:
 	$(DOCKER_COMPOSE) down -v --remove-orphans
+
+# Objetivo para ejecutar un shell interactivo en el contenedor php-apache-pablogarciajc
+.PHONY: container-php-server
+container-php-server:
+	$(DOCKER_COMPOSE) exec php_apache_server /bin/bash
