@@ -1,5 +1,12 @@
-# Variables para el comando docker-compose
 DOCKER_COMPOSE = docker-compose -f ./docker/docker-compose.yml
+
+## Inicia el sistema desde cero
+.PHONY: init-app
+init-app: | copy-env up
+
+.PHONY: copy-env
+copy-env: # Copia .env.example a .env si no existe
+	@cd ./docker && [ ! -f .env ] && cp .env.example .env
 
 # Objetivo para levantar los contenedores
 .PHONY: up
@@ -35,10 +42,4 @@ build:
 .PHONY: stop
 stop:
 	$(DOCKER_COMPOSE) stop
-
-# Objetivo para limpiar contenedores, volúmenes y redes
-.PHONY: clean
-clean:
-	$(DOCKER_COMPOSE) down -v --remove-orphans
-
 
