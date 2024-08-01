@@ -1,20 +1,17 @@
 version: '3'
 
 services:
-  # Servidor PHP con Apache
   php_apache_server:
     build:
       context: .
-      dockerfile: dockerfile/Dockerfile
+      dockerfile: Dockerfile
     container_name: php-apache-pablogarciajc
     ports:
-      - "${PHP_APACHE_PORT}:80"
+      - "8081:80"
     volumes:
       - .:/var/www/html
-    command: >
-      apache2-foreground
     networks:
-    - network_pablogarciajc
+      - network_pablogarciajc
 
   mysql:
     image: mysql:latest

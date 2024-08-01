@@ -10,6 +10,9 @@ RUN docker-php-ext-install mysqli \
 # Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /var/www/html
 
+# Agregar ServerName a la configuración global de Apache
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Exponer el puerto 80 del contenedor
 EXPOSE 80
 

@@ -41,7 +41,4 @@ stop:
 clean:
 	$(DOCKER_COMPOSE) down -v --remove-orphans
 
-# Objetivo para ejecutar un shell interactivo en el contenedor php-apache-pablogarciajc
-.PHONY: container-php-server
-container-php-server:
-	$(DOCKER_COMPOSE) exec php_apache_server /bin/bash
+
