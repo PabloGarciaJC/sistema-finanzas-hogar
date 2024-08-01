@@ -1,30 +1,46 @@
 # Utilizar una imagen base de PHP con Apache
 FROM php:8.0.0-apache
 
-# Habilitar mod_rewrite e instalar extensiones y librerías necesarias
-RUN apt-get update -y && apt-get install -y \
-    libicu-dev \
-    libmariadb-dev \
-    unzip zip \
-    zlib1g-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    git \
-    libzip-dev && \
-    docker-php-ext-install mysqli pdo_mysql && \
-    docker-php-ext-enable mysqli pdo_mysql && \
-    a2enmod rewrite
-    
+# Habilitar e instalar extensiones y librerías necesariass
+RUN apt-get update -y && \  
+    # Instalar los paquetes necesarios
+    apt-get install -y \   
+    # Biblioteca de desarrollo para manejo de cadenas (ICU)
+    libicu-dev \                                                  
+    # Biblioteca de desarrollo para MariaDB
+    libmariadb-dev \                                             
+    # Herramienta para descomprimir archivos ZIP
+    unzip \                                                       
+    # Herramienta para crear archivos ZIP
+    zip \                                                          
+    # Biblioteca de desarrollo para compresión de datos (zlib)
+    zlib1g-dev \                                                  
+    # Biblioteca para manejo de imágenes JPEG
+    libjpeg-dev \                                                 
+    # Biblioteca para manejo de fuentes TrueType
+    libfreetype6-dev \                                           
+    # Alternativa para manejo de JPEG con mejoras de rendimiento
+    libjpeg62-turbo-dev \                                         
+    # Biblioteca para manejo de imágenes PNG
+    libpng-dev \                                                  
+    # Herramienta de control de versiones (Git)
+    git \                                                           
+    # Biblioteca para manejo de archivos ZIP en PHP
+    libzip-dev && \         
+    # Instalar extensiones de PHP necesarias
+    docker-php-ext-install mysqli pdo_mysql gettext intl gd && \  
+    # Habilitar extensiones de PHP instaladas
+    docker-php-ext-enable mysqli pdo_mysql && \                   
+    # Habilitar el módulo de reescritura de Apache
+    a2enmod rewrite && \                                         
+    # Limpiar la caché de apt para reducir el tamaño de la imagen
+    apt-get clean && rm -rf /var/lib/apt/lists/*                  
+
 # Copiar el contenido de la aplicación
 COPY . /var/www/html
 
 # Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Instalar extensiones PHP
-RUN docker-php-ext-install gettext intl pdo_mysql gd
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 # Configurar la extensión GD
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \

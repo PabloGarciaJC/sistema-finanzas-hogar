@@ -8,6 +8,10 @@ init-app: | copy-env up
 copy-env: # Copia .env.example a .env si no existe
 	@cd ./docker && [ ! -f .env ] && cp .env.example .env
 
+.PHONY: content-apache
+content-apache:
+	docker exec -it php-apache-pablogarciajc bash
+
 # Objetivo para levantar los contenedores
 .PHONY: up
 up:
