@@ -10,9 +10,9 @@ class Database {
 
     static public function connect() {
         
-        if (self::$logger === null) {
+    
             self::$logger = LoggerWrapper::getInstance();
-        }
+       
 
         $db = new mysqli(DB_SERVER_NAME, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT);
 
