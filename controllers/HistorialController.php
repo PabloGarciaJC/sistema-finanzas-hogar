@@ -14,7 +14,6 @@ class HistorialController
 
     public function index()
     {
-       
         $configuracion = new Configuracion();
         $mostarConfig = $configuracion->mostrar();
         $idRegistro = isset($_GET['id']) ? $_GET['id'] : false;
