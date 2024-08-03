@@ -20,7 +20,7 @@ class Database {
         if ($db->connect_error) {
             die("Error de conexión: " . $db->connect_error);
         } else {
-            echo "Conexión exitosa a la base de datos.";
+            // echo "Conexión exitosa a la base de datos.";
         }
 
         // Establecer el conjunto de caracteres
