@@ -20,6 +20,13 @@ class Database {
             self::$logger->info("Conexión exitosa a la base de datos.");
         }
 
+           // Verificar si la conexión está activa
+           if ($db->ping()) {
+            self::$logger->info("La conexión a la base de datos está activa.");
+        } else {
+            self::$logger->info("La conexión a la base de datos no está activa.");
+        }
+
         $db->set_charset("utf8");
 
         return $db;
