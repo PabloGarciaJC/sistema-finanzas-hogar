@@ -14,6 +14,8 @@ require_once 'helpers/historial/htmlHistorial.php';
 require_once 'config/logger.php';
 
 
+$logger->info('prueba');
+
 //Controlador Frontal
 if (isset($_GET['controller'])) {
    $nombre_controlador = $_GET['controller'] . 'Controller';
