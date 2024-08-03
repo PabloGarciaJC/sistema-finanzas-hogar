@@ -10,7 +10,7 @@ class LoggerWrapper
     private $log;
     private $handler;
 
-    private function __construct($name = 'logs', $file = __DIR__ . '/app.log', $level = Level::Debug)
+    private function __construct($name = 'logs', $file = __DIR__ . '/log/app.log', $level = Level::Debug)
     {
         $this->log = new Logger($name);
         $this->handler = new StreamHandler($file, $level);

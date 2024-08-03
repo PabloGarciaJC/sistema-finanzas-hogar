@@ -11,7 +11,7 @@ require_once 'helpers/configuracion/validacionesConfig.php';
 require_once 'helpers/historial/estadisticas.php';
 require_once 'helpers/configuracion/estadisticasConfig.php';
 require_once 'helpers/historial/htmlHistorial.php';
-require_once 'config/looger.php';
+require_once 'config/logger.php';
 
 //Controlador Frontal
 if (isset($_GET['controller'])) {
