@@ -15,6 +15,7 @@ class Database {
             die("Error de conexión: " . $db->connect_error);
         } else {
             // echo "Conexión exitosa a la base de datos.";
+            LoggerWrapper::getInstance()->info('Conexión exitosa a la base de datos.');
         }
 
         // Establecer el conjunto de caracteres
