@@ -13,7 +13,6 @@ class ConfiguracionController
 
     public function index()
     {
-        $this->logger->info('Entrando al método index de ConfiguracionController');
         require_once 'views/layout/header.php';
         require_once 'views/configuracion/banner.php';
         require_once 'views/layout/sidebar.php';

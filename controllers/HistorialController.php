@@ -5,6 +5,12 @@ require_once 'model/Configuracion.php';
 
 class HistorialController
 {
+    private $logger;
+
+    public function __construct()
+    {
+        $this->logger = LoggerWrapper::getInstance();
+    }
 
     public function index()
     {

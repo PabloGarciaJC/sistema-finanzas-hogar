@@ -3,6 +3,13 @@ require_once 'model/Registro.php';
 
 class RegistroController
 {
+  private $logger;
+
+  public function __construct()
+  {
+      $this->logger = LoggerWrapper::getInstance();
+  }
+  
   public function index()
   {
     require_once 'views/layout/header.php';
