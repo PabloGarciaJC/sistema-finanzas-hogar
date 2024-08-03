@@ -8,7 +8,7 @@ class Database {
         if (self::$logger === null) {
             self::$logger = LoggerWrapper::getInstance();
         }
-        self::$logger->info(DB_PASSWORD);
+        self::$logger->info(DB_DATABASE);
 
         // Conexión a la base de datos usando Docker Compose
         $db = new mysqli('mysql', DB_USER, DB_PASSWORD, DB_DATABASE);   
