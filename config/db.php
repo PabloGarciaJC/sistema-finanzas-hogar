@@ -23,5 +23,4 @@ class Database {
     }
 }
 
-// Probar la conexión
-Database::connect();
+
