@@ -65,5 +65,3 @@ class LoggerWrapper
         $this->log->emergency($message);
     }
 }
-
-$logger = LoggerWrapper::getInstance();
