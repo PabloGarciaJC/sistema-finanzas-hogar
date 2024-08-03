@@ -12,12 +12,14 @@ class Database {
         // Conexión a la base de datos usando Docker Compose
         $db = new mysqli('mysql', DB_USER, DB_PASSWORD, DB_DATABASE);   
         
-        self::$logger->info( $db);
+        self::$logger->info(DB_USER);
+        self::$logger->info(DB_PASSWORD);
+        self::$logger->info(DB_DATABASE);
         // Verificar conexión
         if ($db->connect_error) {
-            self::$logger->info("Error de conexión: " . $db->connect_error);
+            // self::$logger->info("Error de conexión: " . $db->connect_error);
         } else {
-            self::$logger->info("Conexión exitosa a la base de datos.");
+            // self::$logger->info("Conexión exitosa a la base de datos.");
         }
 
         $db->set_charset("utf8");
