@@ -1,20 +1,19 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+class Database {
+    static public function connect() {
+        $db = new mysqli('127.0.0.1', 'u498565300_fzuserpjgc', 'iTdJM0k4w6c4qS', 'u498565300_fhbdpjgc', 3306);
 
-$host = '127.0.0.1';
-$username = 'u498565300_fzuserpjgc';
-$password = 'iTdJM0k4w6c4qS';
-$dbname = 'u498565300_fhbdpjgc';
+        if ($db->connect_error) {
+            die("Error de conexión: " . $db->connect_error);
+        } else {
+            echo "Conexión exitosa a la base de datos.";
+        }
 
-$conn = new mysqli($host, $username, $password, $dbname);
+        $db->set_charset("utf8");
 
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
+        return $db;
+    }
 }
 
-echo "Conexión exitosa a la base de datos.";
-
-$conn->close();
+Database::connect();
 ?>
