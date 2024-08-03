@@ -4,9 +4,18 @@ require_once 'model/Configuracion.php';
 
 class ConfiguracionController
 {
+    private $logger;
+
+    public function __construct()
+    {
+        $this->logger = LoggerWrapper::getInstance();
+    }
 
     public function index()
     {
+
+    
+        $this->logger->info('Entrando al método index de ConfiguracionController');
         require_once 'views/layout/header.php';
         require_once 'views/configuracion/banner.php';
         require_once 'views/layout/sidebar.php';
