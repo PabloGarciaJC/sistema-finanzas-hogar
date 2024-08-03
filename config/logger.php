@@ -66,4 +66,3 @@ class LoggerWrapper
     }
 }
 
-$logger = LoggerWrapper::getInstance();
