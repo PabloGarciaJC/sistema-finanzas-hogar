@@ -8,8 +8,7 @@ class Database {
         if (self::$logger === null) {
             self::$logger = LoggerWrapper::getInstance();
         }
-        self::$logger->info(DB_USER);
-
+   
         // Conexión a la base de datos usando los parámetros correctos
         $db = new mysqli('127.0.0.1', 'u498565300_fzuserpjgc', 'iTdJM0k4w6c4qS', 'u498565300_fhbdpjgc', 3306);
         
