@@ -13,7 +13,8 @@ require_once 'helpers/configuracion/estadisticasConfig.php';
 require_once 'helpers/historial/htmlHistorial.php';
 require_once 'config/logger.php';
 
-
+$tes = LoggerWrapper::getInstance();
+$tes->info('prueba');
 
 //Controlador Frontal
 if (isset($_GET['controller'])) {
