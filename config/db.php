@@ -1,30 +1,20 @@
 <?php
 class Database {
 
-    private static $logger;
-
     static public function connect(){
-
-        if (self::$logger === null) {
-            self::$logger = LoggerWrapper::getInstance();
-        }
-   
-        // Conexión a la base de datos usando los parámetros correctos
         $db = new mysqli('127.0.0.1', 'u498565300_fzuserpjgc', 'iTdJM0k4w6c4qS', 'u498565300_fhbdpjgc', 3306);
-        
-        // Verificar conexión
+
         if ($db->connect_error) {
-            self::$logger->info("Error de conexión: " . $db->connect_error);
-            die("Error de conexión: " . $db->connect_error);
-        } else {
-            self::$logger->info("Conexión exitosa a la base de datos.");
+            echo "Error de conexión: " . $db->connect_error;
+            return null; // Salir si hay error de conexión
         }
 
-           // Verificar si la conexión está activa
-           if ($db->ping()) {
-            self::$logger->info("La conexión a la base de datos está activa.");
+        echo "Conexión exitosa a la base de datos.";
+        
+        if ($db->ping()) {
+            echo "La conexión a la base de datos está activa.";
         } else {
-            self::$logger->info("La conexión a la base de datos no está activa.");
+            echo "La conexión a la base de datos no está activa.";
         }
 
         $db->set_charset("utf8");
@@ -32,3 +22,6 @@ class Database {
         return $db;
     }
 }
+
+// Probar la conexión
+Database::connect();
