@@ -1,4 +1,7 @@
-# Comando base para docker-compose
+## ---------------------------------------------------------
+## Comando base para docker-compose
+## ---------------------------------------------------------
+
 DOCKER_COMPOSE = docker-compose -f ./.docker/docker-compose.yml
 
 ## ---------------------------------------------------------
@@ -10,12 +13,12 @@ init-app: | copy-env set-permissions up
 
 .PHONY: copy-env
 copy-env:
-	@cd ./docker && [ ! -f .env ] && cp .env.example .env
+	@cd ./.docker && [ ! -f .env ] && cp .env.example .env
 
 .PHONY: set-permissions
 set-permissions:
-	@chmod -R 777 ./config/log
-	@chmod g+s ./config/log
+	@chmod -R 777 ./config/.log
+	@chmod g+s ./config/.log
 
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
