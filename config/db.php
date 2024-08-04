@@ -17,6 +17,7 @@ class Database {
 
         $db = new mysqli($_ENV['DB_SERVER_NAME'], $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD'], $_ENV['DB_DATABASE'], $_ENV['MYSQL_PORT']);  
 
+        echo $_ENV['DB_SERVER_NAME'];
         if ($db->connect_error) {
             die("Error de conexión: " . $db->connect_error);
         } 
