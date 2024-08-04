@@ -1,18 +1,9 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
-
-## ---------------------------------------------------------
-## Se requieren librerías
-## ---------------------------------------------------------
-
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable('./.docker/');
-$dotenv->load();
-
 ## ---------------------------------------------------------
 ## Definición de constantes para bases de datos
 ## ---------------------------------------------------------
+
 define("ACTION_DEFAULT", "index"); 
 define("BASE_URL", $_ENV['BASE_URL_PROJECT']); 
 define("CONTROLLER_DEFAULT", "RegistroController");

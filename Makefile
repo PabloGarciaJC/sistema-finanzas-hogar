@@ -9,16 +9,21 @@ DOCKER_COMPOSE = docker-compose -f ./.docker/docker-compose.yml
 ## ---------------------------------------------------------
 
 .PHONY: init-app
-init-app: | copy-env set-permissions up
+init-app: | copy-env set-permissions create-symlink up
 
 .PHONY: copy-env
 copy-env:
-	@cd ./.docker && [ ! -f .env ] && cp .env.example .env
+	@ [ ! -f .env ] && cp .env.example .env
 
 .PHONY: set-permissions
 set-permissions:
 	@chmod -R 777 ./config/.log
 	@chmod g+s ./config/.log
+
+.PHONY: create-symlink
+create-symlink:
+	@ [ -L .docker/.env ] || ln -s ../.env .docker/.env
+
 
 ## ---------------------------------------------------------
 ## Gestión de Contenedores

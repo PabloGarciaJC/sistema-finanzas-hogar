@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/vendor/autoload.php';
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(__DIR__ );
+$dotenv->load();
+
 require_once 'config/parameters.php';
 require_once 'config/db.php';
 require_once 'autoload.php';
@@ -13,7 +18,7 @@ require_once 'helpers/configuracion/estadisticasConfig.php';
 require_once 'helpers/historial/htmlHistorial.php';
 require_once 'config/logger.php';
 
-//Controlador Frontal
+// Controlador Frontal
 if (isset($_GET['controller'])) {
    $nombre_controlador = $_GET['controller'] . 'Controller';
 } elseif (!isset($_GET['controller']) && !isset($_GET['action'])) {

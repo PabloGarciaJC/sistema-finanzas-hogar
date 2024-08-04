@@ -25,7 +25,7 @@ services:
       MYSQL_ROOT: ${MYSQL_ROOT}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
-      - ./database/sql:/docker-entrypoint-initdb.d
+      - ./database:/docker-entrypoint-initdb.d
       - persistent:/var/lib/mysql:rw
     networks:
     - network_pablogarciajc
