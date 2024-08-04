@@ -1,7 +1,7 @@
 <?php
 spl_autoload_register(function($class) {
-    $className = ucfirst($class); // Convertir la primera letra en mayúscula   
-    $classPath = __DIR__ . '/controllers/' . $className . '.php'; // Ruta a los controladores
+    $className = ucfirst($class);
+    $classPath = __DIR__ . '/controllers/' . $className . '.php';
     if (file_exists($classPath)) {
         include $classPath;
     } else {
