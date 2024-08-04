@@ -9,7 +9,7 @@ DOCKER_COMPOSE = docker-compose -f ./.docker/docker-compose.yml
 ## ---------------------------------------------------------
 
 .PHONY: init-app
-init-app: | copy-env set-permissions create-symlink up
+init-app: | copy-env set-permissions create-symlink up print-urls
 
 .PHONY: copy-env
 copy-env:
@@ -23,6 +23,11 @@ set-permissions:
 .PHONY: create-symlink
 create-symlink:
 	@ [ -L .docker/.env ] || ln -s ../.env .docker/.env
+
+.PHONY: print-urls
+print-urls:
+	@echo "## Acceso a la Aplicación:   http://localhost:8081/"
+	@echo "## Acceso a PhpMyAdmin:      http://localhost:8082/"
 
 
 ## ---------------------------------------------------------
