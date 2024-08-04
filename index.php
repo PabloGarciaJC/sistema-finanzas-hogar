@@ -15,15 +15,9 @@ $dotenv->load();
 ## Incluir archivos de configuración y librerías
 ## ---------------------------------------------------------
 
-require_once __DIR__ . '/config/includes.php';
 require_once __DIR__ . '/autoload.php';
-require_once __DIR__ . '/helpers/registro/htmlRegistro.php';
-require_once __DIR__ . '/helpers/registro/validaciones.php';
-require_once __DIR__ . '/helpers/configuracion/htmlConfiguracion.php';
-require_once __DIR__ . '/helpers/configuracion/validacionesConfig.php';
-require_once __DIR__ . '/helpers/historial/estadisticas.php';
-require_once __DIR__ . '/helpers/configuracion/estadisticasConfig.php';
-require_once __DIR__ . '/helpers/historial/htmlHistorial.php';
+require_once __DIR__ . '/config/includes.php';
+require_once __DIR__ . '/helpers/includes.php';
 
 ## ---------------------------------------------------------
 ## Controlador Frontal
