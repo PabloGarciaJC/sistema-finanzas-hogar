@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 class Database {
     static public function connect() {
 
-        $db = new mysqli($_ENV['DB_SERVER_NAME'], $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD'], $_ENV['DB_DATABASE'], 3306);  
+        $db = new mysqli($_ENV['DB_SERVER_NAME'], $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD'], $_ENV['DB_DATABASE'], $_ENV['MYSQL_PORT']);  
 
         if ($db->connect_error) {
             die("Error de conexión: " . $db->connect_error);
