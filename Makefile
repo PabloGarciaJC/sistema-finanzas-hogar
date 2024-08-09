@@ -13,7 +13,7 @@ init-app: | copy-env set-permissions create-symlink up print-urls
 
 .PHONY: copy-env
 copy-env:
-	@ [ ! -f .env ] && cp .env.example .env
+	@ [ ! -f .env ] && cp .env.example .env || true
 
 .PHONY: set-permissions
 set-permissions:
@@ -29,14 +29,9 @@ print-urls:
 	@echo "## Acceso a la Aplicación:   http://localhost:8081/"
 	@echo "## Acceso a PhpMyAdmin:      http://localhost:8082/"
 
-
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
 ## ---------------------------------------------------------
-
-.PHONY: content-apache
-content-apache:
-	docker exec -it php-apache-pablogarciajc bash
 
 .PHONY: up
 up:
@@ -65,3 +60,7 @@ build:
 .PHONY: stop
 stop:
 	$(DOCKER_COMPOSE) stop
+
+.PHONY: shell
+shell:
+	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzashogar  /bin/sh -c "cd /var/www/html/; exec bash -l"
