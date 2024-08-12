@@ -4,10 +4,6 @@
 **La Aplicación Web de Finanzas para el Hogar** Este proyecto ofrece una solución integral para la gestión de finanzas personales. Surgió de mi necesidad personal de organizar mis propias finanzas, lo que me llevó a identificar varios desafíos y oportunidades de mejora en los métodos convencionales. Con el sistema de Finanzas para el Hogar, los usuarios podrán registrar y monitorear sus ingresos y gastos de manera más efectiva. Si estás interesado en trabajar juntos o tienes alguna pregunta, no dudes en contactarme. O si prefieres, envíame un mensaje a mi WhatsApp para una respuesta más rápida. 
 Demo: https://finanzashogar.pablogarciajc.com/
 
-## Objetivo
-
-Mi objetivo es brindar una experiencia intuitiva y sencilla para la administración financiera personal.
-
 </br>
 
 | ![GestionHogar_1](https://pablogarciajc.com/wp-content/uploads/2024/03/pablogarciajc-aplicacion-web-finanzas-para-el-hogar-img1.webp) | ![GestionHogar_2](https://pablogarciajc.com/wp-content/uploads/2024/03/pablogarciajc-aplicacion-web-finanzas-para-el-hogar-img2.webp) |
