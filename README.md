@@ -9,7 +9,6 @@ Demo: https://finanzashogar.pablogarciajc.com/
 | ![GestionHogar_1](https://pablogarciajc.com/wp-content/uploads/2024/03/pablogarciajc-aplicacion-web-finanzas-para-el-hogar-img1.webp) | ![GestionHogar_2](https://pablogarciajc.com/wp-content/uploads/2024/03/pablogarciajc-aplicacion-web-finanzas-para-el-hogar-img2.webp) |
 |-----------|-----------|
 
-
 ## Funcionaliades
 
 La aplicación cuenta con **tres módulos:**
