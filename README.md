@@ -30,65 +30,33 @@ La aplicación cuenta con **tres módulos:**
 
 **Población de tablas:**
 
-* Permite llenar la tabla con datos preestablecidos para facilitar la gestión de información y evitar tener que ingresar los datos manualmente cada mes.
+* Permite llenar la tabla con datos preestablecidos para facilitar la gestión de información.
 
 ## Tecnologías
 
-La aplicación web se desarrolla con **PHP 7.3.5 como lenguaje de programación.**
-
 **Front-end:**
 
-* Bootstrap v4.0.0: [plantilla](https://w3layouts.com/template/modern-admin-panel-flat-bootstrap-responsive-web-template/) que mejora la apariencia y la experiencia del usuario.
-* JavaScript: lenguaje de programación que permite agregar funcionalidades dinámicas a la aplicación web.
-* JQuery: biblioteca de JavaScript que facilita la manipulación del DOM y la realización de solicitudes HTTP.
+* HTML | CSS | JavaScript | Axios | Jquery | Flexbox | Grid
 
 **Back-end:**
 
-* SQL (Structured Query Language) es un lenguaje de programación utilizado para interactuar con bases de datos relacionales. Con SQL, puedes crear, consultar, actualizar y eliminar datos en una base de datos.
+* PHP | POO | MVC (Modelo Vista Controlador)
 
-* PhpMyAdmin, permite a los usuarios realizar varias tareas de gestión de bases de datos, como la creación, modificación y eliminación de bases de datos, tablas, columnas, índices y usuarios; la ejecución de sentencias SQL y la gestión de usuarios y permisos de la base de datos.
+**Tecnologías de Desarrollo:**
 
-**El patrón de arquitectura:**
-
-* Model-View-Controller (MVC) es un patrón de diseño que se utiliza para separar la lógica de negocios de una aplicación, la representación visual de los datos y la gestión de la entrada del usuario.
+* Git | GitHub | Visual Studio Code | Windows | Dockers
 
 ## Instalación
 
 **Requisitos:**
 
-* Descargar un servidor local, recomiendo [Wampserver64](https://www.wampserver.com/en/download-wampserver-64bits/)
+* Clonar Proyecto en GitHub.
+* Docker y Docker Compose.
+* Makefile (Opcional).
 
-**Instrucciones:**
-
-1. Descargar el proyecto de GitHub:
-
-    * Vaya al repositorio del proyecto en GitHub.
-    * Haga clic en el botón "Clone or download".
-    * Seleccione "Download ZIP" para descargar un archivo ZIP con el proyecto.
-
-2. Mover el proyecto a la carpeta de servidor WAMP:
-
-    * Abra la carpeta "www" dentro de la carpeta de instalación de WAMP en su equipo.
-    * Cree una carpeta en el escritorio llamada «portafolios».
-    * Descomprima el archivo ZIP descargado en la carpeta "www/portafolios", que previamente descargó de Github.
-    * Verifique que el nombre de la carpeta del proyecto sea «pablogarciajc_gestionhogar».
-
-3. Iniciar WAMP:
-
-    * Haga clic en el icono de WAMP en la bandeja del sistema (es posible que deba hacer clic con el botón derecho del mouse para ver todas las opciones disponibles).
-    * Seleccione "Start All Services" para iniciar el servidor WAMP.
-
-4. Acceder a phpMyAdmin:
-
-    * Abra un navegador web y escriba "localhost/phpmyadmin" en la barra de direcciones.
-    * Ingrese su nombre de usuario y contraseña de phpMyAdmin.
-
-5. Importar la base de datos en phpMyAdmin:
-
-    * En la pestaña "Importar", haga clic en el botón "Examinar" y seleccione el archivo de la base de datos que desea importar en su equipo, el cual esta en  el archivo del proyecto llamado «database» que ha descargado de Github y tiene como nombre pablogarciajc_gestionhogar.sql
-    * Asegúrese de que el formato de la base de datos sea compatible con phpMyAdmin y seleccione la correcta opción de formato (SQL).
-    * Haga clic en el botón "Ir" para iniciar la importación.
-    * Después de importar la base de datos, en un navegador, vaya a [http://localhost/portafolios/pablogarciajc_gestionhogar/] para acceder a su proyecto.
+**Acceso a la Aplicación.**
+* Aplicación Web: http://localhost:8081/
+* PhpMyAdmin: http://localhost:8082/
 
 ## Contáctame para más información o preguntas
 
