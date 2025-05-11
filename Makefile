@@ -49,6 +49,9 @@ symfony-install:
 require-twig:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require twig
 
+require-orm-pack: #ORM
+	docker compose -f ./.docker/docker-compose.yml exec php_apache_finanzas_hogar composer require symfony/orm-pack
+
 # .PHONY: console
 # console:
 # 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console
