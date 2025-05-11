@@ -45,48 +45,29 @@ symfony-install:
 ## Symfony - Configuración de Componentes
 ## ---------------------------------------------------------
 
-# Requiere el paquete Twig para trabajar con plantillas
+# Trabajar con plantillas
 .PHONY: require-twig
 require-twig:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require twig
 
-# Requiere el paquete ORM para trabajar con Doctrine ORM (gestión de bases de datos)
+# ORM (gestión de bases de datos)
 require-orm-pack:
 	docker compose -f ./.docker/docker-compose.yml exec php_apache_finanzas_hogar composer require symfony/orm-pack
 
-# Requiere el paquete symfony/debug-bundle para habilitar herramientas de depuración en desarrollo
+# Depuración en desarrollo
 .PHONY: require-debug
 require-debug:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require --dev symfony/debug-bundle
 
-# Requiere el paquete symfony/maker-bundle para generar automáticamente código (controladores, entidades, etc.)
+# Paquete para generar automáticamente código (controladores, entidades, etc.)
 .PHONY: require-maker
 require-maker:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require --dev symfony/maker-bundle
 
-# .PHONY: console
-# console:
-# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console
-
-.PHONY: migrate
-migrate:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate
-
-.PHONY: rollback
-rollback:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:rollback
-
-# .PHONY: make-controller
-# make-controller:
-# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:controller
-
-# .PHONY: make-entity
-# make-entity:
-# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:entity
-
-# .PHONY: make-migration
-# make-migration:
-# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:migration
+# Paquete EasyAdmin Bundle para la administración del panel en Symfony
+.PHONY: require-easyadmin
+require-easyadmin:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require easycorp/easyadmin-bundle
 
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
@@ -101,25 +82,9 @@ up:
 down:
 	$(DOCKER_COMPOSE) down
 
-.PHONY: restart
-restart:
-	$(DOCKER_COMPOSE) restart
-
-.PHONY: ps
-ps:
-	$(DOCKER_COMPOSE) ps
-
-.PHONY: logs
-logs:
-	$(DOCKER_COMPOSE) logs
-
 .PHONY: build
 build:
 	$(DOCKER_COMPOSE) build
-
-.PHONY: stop
-stop:
-	$(DOCKER_COMPOSE) stop
 
 .PHONY: shell
 shell:
