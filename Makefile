@@ -45,12 +45,24 @@ symfony-install:
 ## Symfony - Configuración de Componentes
 ## ---------------------------------------------------------
 
-.PHONY: require-twig #templates
+# Requiere el paquete Twig para trabajar con plantillas
+.PHONY: require-twig
 require-twig:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require twig
 
-require-orm-pack: #ORM
+# Requiere el paquete ORM para trabajar con Doctrine ORM (gestión de bases de datos)
+require-orm-pack:
 	docker compose -f ./.docker/docker-compose.yml exec php_apache_finanzas_hogar composer require symfony/orm-pack
+
+# Requiere el paquete symfony/debug-bundle para habilitar herramientas de depuración en desarrollo
+.PHONY: require-debug
+require-debug:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require --dev symfony/debug-bundle
+
+# Requiere el paquete symfony/maker-bundle para generar automáticamente código (controladores, entidades, etc.)
+.PHONY: require-maker
+require-maker:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require --dev symfony/maker-bundle
 
 # .PHONY: console
 # console:
