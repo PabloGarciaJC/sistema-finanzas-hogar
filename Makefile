@@ -31,7 +31,7 @@ print-urls:
 	@echo "## Acceso a PhpMyAdmin:      http://localhost:8082/"
 
 ## ---------------------------------------------------------
-## Symfony - Comandos útiles
+## Symfony - Instalación
 ## ---------------------------------------------------------
 
 .PHONY: symfony-install
@@ -41,13 +41,17 @@ symfony-install:
 		composer create-project symfony/skeleton symfony \
 	"
 
-.PHONY: require-twig
+## ---------------------------------------------------------
+## Symfony - Configuración de Componentes
+## ---------------------------------------------------------
+
+.PHONY: require-twig #templates
 require-twig:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require twig
 
-.PHONY: console
-console:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console
+# .PHONY: console
+# console:
+# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console
 
 .PHONY: migrate
 migrate:
@@ -57,29 +61,26 @@ migrate:
 rollback:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:rollback
 
-.PHONY: make-controller
-make-controller:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:controller
+# .PHONY: make-controller
+# make-controller:
+# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:controller
 
-.PHONY: make-entity
-make-entity:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:entity
+# .PHONY: make-entity
+# make-entity:
+# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:entity
 
-.PHONY: make-migration
-make-migration:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:migration
-
-.PHONY: require-twig
-require-twig:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require twig
+# .PHONY: make-migration
+# make-migration:
+# 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console make:migration
 
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
 ## ---------------------------------------------------------
 
-.PHONY: up
+.PHONY: up 
 up:
 	$(DOCKER_COMPOSE) up -d
+	@$(MAKE) --no-print-directory print-urls
 
 .PHONY: down
 down:
