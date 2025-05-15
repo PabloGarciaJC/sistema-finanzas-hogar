@@ -1,0 +1,29 @@
+action:
+  new: "Añadir"
+  edit: "Editar"
+  delete: "Eliminar"
+  search: "Buscar"
+  save: "Guardar cambios"
+  cancel: "Cancelar"
+
+label:
+  search: "Buscar"
+  no_results: "No se encontraron resultados"
+  actions: "Acciones"
+  form:
+    empty_fields: "No hay campos"
+  "true": "Sí"
+  "false": "No"
+  "null": "Nulo"
+
+paginator:
+  results: "{0} No hay resultados|{1} <strong>1</strong> resultado|]1,Inf] <strong>%count%</strong> resultados"
+  previous: "Anterior"
+  next: "Siguiente"
+
+form:
+  are_you_sure: "¿Estás seguro de que deseas continuar?"
+  new:
+    title: "Crear %entity_label_singular%"
+  edit:
+    title: "Editar %entity_label_singular%"

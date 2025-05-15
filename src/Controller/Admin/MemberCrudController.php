@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class MemberCrudController extends AbstractCrudController
 {
@@ -19,12 +20,17 @@ class MemberCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-
             TextField::new('name', 'Nombre'),
-
             TextField::new('company', 'Empresa'),
-
             MoneyField::new('salary', 'Salario')->setCurrency('USD'),
         ];
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Miembro')
+            ->setEntityLabelInPlural('Miembros')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Miembros');   
     }
 }

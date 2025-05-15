@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class PeriodCrudController extends AbstractCrudController
 {
@@ -23,5 +24,13 @@ class PeriodCrudController extends AbstractCrudController
             IntegerField::new('year', 'Año'),
             TextField::new('status', 'Estado'),
         ];
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Periodos')
+            ->setEntityLabelInPlural('Periodos')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Periodos');
     }
 }

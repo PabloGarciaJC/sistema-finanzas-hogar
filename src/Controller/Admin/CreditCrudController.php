@@ -9,8 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class CreditCrudController extends AbstractCrudController
 {
@@ -46,4 +46,14 @@ class CreditCrudController extends AbstractCrudController
             TextField::new('status', 'Estado'),
         ];
     }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Créditos')
+            ->setEntityLabelInPlural('Créditos')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Créditos')
+            ->setSearchFields(['member.name', 'bankEntity', 'status']);
+    }
+    
 }

@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class SavingCrudController extends AbstractCrudController
 {
@@ -25,5 +26,14 @@ class SavingCrudController extends AbstractCrudController
             IntegerField::new('year', 'Año'),
             MoneyField::new('amount', 'Monto')->setCurrency('USD'),
         ];
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Ahorros')
+            ->setEntityLabelInPlural('Ahorros')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ahorros')
+            ->setSearchFields(['member.name', 'month', 'year']);
     }
 }

@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class IncomeCrudController extends AbstractCrudController
 {
@@ -40,5 +41,14 @@ class IncomeCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn)
     {
         return new Income();
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Ingresos')
+            ->setEntityLabelInPlural('Ingresos')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos')
+            ->setSearchFields(['description', 'member.name']);
     }
 }

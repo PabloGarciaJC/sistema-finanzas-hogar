@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Bundle\SecurityBundle\Security;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class GoalCrudController extends AbstractCrudController
 {
@@ -59,4 +60,13 @@ class GoalCrudController extends AbstractCrudController
 
         parent::persistEntity($entityManager, $entityInstance);
     }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Metas')
+            ->setEntityLabelInPlural('Metas')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Metas')
+            ->setSearchFields(['member.name', 'description', 'status',]);
+    } 
 }

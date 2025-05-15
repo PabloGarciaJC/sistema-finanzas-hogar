@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
 class MonthlySummaryCrudController extends AbstractCrudController
 {
@@ -31,4 +32,14 @@ class MonthlySummaryCrudController extends AbstractCrudController
             TextEditorField::new('notes', 'Notas'),
         ];
     }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Resumen Mensual')
+            ->setEntityLabelInPlural('Resumen Mensual')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Resumen Mensual')
+            ->setSearchFields(['member.name', 'description', 'status',])
+            ->setSearchFields(['member.name', 'month', 'year', 'notes',]);
+    } 
 }
