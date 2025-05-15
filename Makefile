@@ -9,7 +9,7 @@ DOCKER_COMPOSE = docker compose -f ./.docker/docker-compose.yml
 ## ---------------------------------------------------------
 
 .PHONY: init-app
-init-app: | copy-env create-symlink up permissions print-urls
+init-app: | copy-env create-symlink up permissions migracion print-urls
 
 .PHONY: copy-env
 copy-env:
@@ -69,6 +69,13 @@ require-maker:
 require-easyadmin:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require easycorp/easyadmin-bundle
 
+.PHONY: migracion
+migracion:
+	@echo "⏳ Esperando a que MySQL esté disponible..."
+	@sleep 5  # Ajusta el tiempo si es necesario
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate --no-interaction
+	@echo "Migraciones aplicadas!"
+
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
 ## ---------------------------------------------------------
@@ -90,6 +97,10 @@ build:
 .PHONY: shell
 shell:
 	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzas_hogar /bin/sh -c "cd /var/www/html/; exec bash -l"
+
+.PHONY: rollback
+rollback:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate prev --no-interaction
 
 .PHONY: clean-docker
 clean-docker:
