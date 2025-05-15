@@ -40,7 +40,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Html');
+            ->setTitle('<i class="fas fa-wallet"></i> Finanzas Hogar');
     }
 
     public function configureMenuItems(): iterable
