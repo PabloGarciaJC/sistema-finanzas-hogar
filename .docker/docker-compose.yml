@@ -1,5 +1,5 @@
 services:
-  php_apache_finanzashogar:
+  php_apache_finanzas_hogar:
     build:
       context: .
       dockerfile: ./php_server/Dockerfile
@@ -8,36 +8,35 @@ services:
         NEW_GID: ${NEW_GID}
         MY_USER: ${MY_USER}
         MY_GROUP: ${MY_GROUP}
-    container_name: php_apache_finanzashogar
+    container_name: php_apache_finanzas_hogar
     ports:
       - "${PHP_APACHE_PORT}:80"
     volumes:
       - ../.:/var/www/html
     networks:
-      - network_finanzashogar
+      - network_finanzas-hogar
 
   mysql:
-    image: mysql:latest
-    container_name: mysql-finanzashogar
+    image: mariadb:10.11.9
+    container_name: mysql-finanzas-hogar
     ports:
       - "${MYSQL_PORT}:3306"
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT: ${MYSQL_ROOT}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./database:/docker-entrypoint-initdb.d
-      - persistent-finanzashogar:/var/lib/mysql:rw
+      - persistent-finanzas-hogar:/var/lib/mysql:rw
     depends_on:
-      - php_apache_finanzashogar
+      - php_apache_finanzas_hogar
     networks:
-    - network_finanzashogar
+      - network_finanzas-hogar
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin-finanzashogar
+    container_name: phpmyadmin-finanzas-hogar
     ports:
       - "${PHPMYADMIN_PORT}:80"
     environment:
@@ -45,11 +44,11 @@ services:
     depends_on:
       - mysql
     networks:
-    - network_finanzashogar
+      - network_finanzas-hogar
 
 networks:
-  network_finanzashogar:  
-    name: network_finanzashogar
+  network_finanzas-hogar:
+    name: network_finanzas-hogar
 
 volumes:
-  persistent-finanzashogar:
+  persistent-finanzas-hogar:
