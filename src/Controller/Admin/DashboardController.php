@@ -59,8 +59,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)
             ->setController(CreditCrudController::class);
 
-        yield MenuItem::linkToCrud('Periodos', 'fas fa-calendar', Period::class)
-        ->setController(PeriodCrudController::class);
+        // yield MenuItem::linkToCrud('Periodos', 'fas fa-calendar', Period::class)
+        // ->setController(PeriodCrudController::class);
 
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)
             ->setController(GoalCrudController::class);
