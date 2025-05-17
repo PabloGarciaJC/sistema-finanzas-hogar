@@ -9,7 +9,7 @@ DOCKER_COMPOSE = docker compose -f ./.docker/docker-compose.yml
 ## ---------------------------------------------------------
 
 .PHONY: init-app
-init-app: | copy-env create-symlink up permissions migracion print-urls
+init-app: | copy-env composer-install create-symlink up permissions migracion print-urls
 
 .PHONY: copy-env
 copy-env:
@@ -17,7 +17,6 @@ copy-env:
 
 .PHONY: permissions
 permissions:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 var
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 public
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 templates
 
@@ -29,6 +28,10 @@ create-symlink:
 print-urls:
 	@echo "## Acceso a la Aplicación:   http://localhost:8081/"
 	@echo "## Acceso a PhpMyAdmin:      http://localhost:8082/"
+
+.PHONY: composer-install
+composer-install:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer install
 
 ## ---------------------------------------------------------
 ## Symfony - Instalación
