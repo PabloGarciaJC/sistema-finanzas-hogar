@@ -25,8 +25,8 @@ final class Version20250518101005 extends AbstractMigration
             member_id INT UNSIGNED NOT NULL,
             description TEXT NOT NULL,
             target_amount NUMERIC(12, 2) NOT NULL,
-            target_month VARCHAR(20) DEFAULT NULL,
-            target_year INT DEFAULT NULL,
+            frequency VARCHAR(20) NOT NULL,
+            start_date DATE NOT NULL,
             status VARCHAR(20) NOT NULL DEFAULT \'In progress\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
