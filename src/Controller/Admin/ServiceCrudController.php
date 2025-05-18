@@ -31,7 +31,6 @@ class ServiceCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
             AssociationField::new('member', 'Miembro'),
             MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
             $pageName === Crud::PAGE_INDEX

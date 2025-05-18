@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\GoalRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GoalRepository::class)]
@@ -11,27 +10,33 @@ class Goal
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(options: ['unsigned' => true])]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'goals')]
+    #[ORM\ManyToOne(targetEntity: Member::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Member $member = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
+    #[ORM\Column(type: 'text')]
+    private string $description;
 
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
-    private ?string $targetAmount = null;
+    private string $targetAmount;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    private ?string $targetMonth = null;
+    #[ORM\Column(type: 'string', length: 20)]
+    private string $frequency;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $targetYear = null;
+    #[ORM\Column(type: 'date')]
+    private \DateTimeInterface $startDate;
 
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'In progress'])]
-    private ?string $status = 'In progress';
+    private string $status = 'In progress';
+
+    public function __construct()
+    {
+        // Inicializamos startDate para evitar errores al acceder antes de setear
+        $this->startDate = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -46,11 +51,10 @@ class Goal
     public function setMember(?Member $member): self
     {
         $this->member = $member;
-
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -58,11 +62,10 @@ class Goal
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function getTargetAmount(): ?string
+    public function getTargetAmount(): string
     {
         return $this->targetAmount;
     }
@@ -70,35 +73,36 @@ class Goal
     public function setTargetAmount(string $targetAmount): self
     {
         $this->targetAmount = $targetAmount;
-
         return $this;
     }
 
-    public function getTargetMonth(): ?string
+    public function getFrequency(): string
     {
-        return $this->targetMonth;
+        return $this->frequency;
     }
 
-    public function setTargetMonth(?string $targetMonth): self
+    public function setFrequency(string $frequency): self
     {
-        $this->targetMonth = $targetMonth;
-
+        $allowed = ['Mensual', 'Trimestral', 'Semestral', 'Anual'];
+        if (!in_array($frequency, $allowed)) {
+            throw new \InvalidArgumentException('Valor de frecuencia no válido');
+        }
+        $this->frequency = $frequency;
         return $this;
     }
 
-    public function getTargetYear(): ?int
+    public function getStartDate(): \DateTimeInterface
     {
-        return $this->targetYear;
+        return $this->startDate;
     }
 
-    public function setTargetYear(?int $targetYear): self
+    public function setStartDate(\DateTimeInterface $startDate): self
     {
-        $this->targetYear = $targetYear;
-
+        $this->startDate = $startDate;
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -107,10 +111,35 @@ class Goal
     {
         $allowed = ['In progress', 'Completed', 'Canceled'];
         if (!in_array($status, $allowed)) {
-            throw new \InvalidArgumentException("Invalid status value");
+            throw new \InvalidArgumentException('Invalid status value');
         }
         $this->status = $status;
+        return $this;
+    }
 
+    // --- MÉTODOS AUXILIARES PARA MES Y AÑO ---
+
+    public function getMonth(): ?int
+    {
+        return $this->startDate ? (int) $this->startDate->format('m') : null;
+    }
+
+    public function setMonth(int $month): self
+    {
+        $year = $this->startDate ? (int) $this->startDate->format('Y') : (int) date('Y');
+        $this->startDate = new \DateTimeImmutable("$year-$month-01");
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->startDate ? (int) $this->startDate->format('Y') : null;
+    }
+
+    public function setYear(int $year): self
+    {
+        $month = $this->startDate ? (int) $this->startDate->format('m') : 1;
+        $this->startDate = new \DateTimeImmutable("$year-$month-01");
         return $this;
     }
 }

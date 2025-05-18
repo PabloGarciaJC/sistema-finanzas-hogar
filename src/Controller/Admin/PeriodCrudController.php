@@ -19,7 +19,6 @@ class PeriodCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
             IntegerField::new('month', 'Mes'),
             IntegerField::new('year', 'Año'),
             TextField::new('status', 'Estado'),
