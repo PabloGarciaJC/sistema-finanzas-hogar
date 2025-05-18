@@ -9,7 +9,7 @@ DOCKER_COMPOSE = docker compose -f ./.docker/docker-compose.yml
 ## ---------------------------------------------------------
 
 .PHONY: init-app
-init-app: | copy-env composer-install create-symlink up permissions migracion print-urls
+init-app: | copy-env create-symlink up permissions migracion print-urls
 
 .PHONY: copy-env
 copy-env:
@@ -19,6 +19,7 @@ copy-env:
 permissions:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 public
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 templates
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer install
 
 .PHONY: create-symlink
 create-symlink:
@@ -28,10 +29,6 @@ create-symlink:
 print-urls:
 	@echo "## Acceso a la Aplicación:   http://localhost:8081/"
 	@echo "## Acceso a PhpMyAdmin:      http://localhost:8082/"
-
-.PHONY: composer-install
-composer-install:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer install
 
 ## ---------------------------------------------------------
 ## Symfony - Instalación
@@ -79,6 +76,16 @@ migracion:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate --no-interaction
 	@echo "Migraciones aplicadas!"
 
+# Genera un archivo de migración vacío para edición manual
+.PHONY: generate-migration
+generate-migration:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:generate
+
+# Sincroniza el estado interno de Doctrine sobre migraciones aplicadas
+.PHONY: sync-metadata
+sync-metadata:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:sync-metadata-storage
+
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
 ## ---------------------------------------------------------
@@ -103,7 +110,7 @@ shell:
 
 .PHONY: rollback
 rollback:
-	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate prev --no-interaction
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate 0
 
 .PHONY: clean-docker
 clean-docker:

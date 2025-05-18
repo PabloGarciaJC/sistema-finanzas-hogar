@@ -21,8 +21,8 @@ class Member
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $company = null;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
-    private ?string $salary = null;
+    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
+    private ?string $salary = '0.00';
 
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Income::class, orphanRemoval: true)]
     private Collection $incomes;
