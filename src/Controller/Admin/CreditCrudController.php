@@ -44,6 +44,7 @@ class CreditCrudController extends AbstractCrudController
         return [
             AssociationField::new('member'),
             TextField::new('bank_entity', 'Banco'),
+            MoneyField::new('monthly_payment', 'Importe')->setCurrency('EUR'),
             ChoiceField::new('frequency', 'Frecuencia')
                 ->setChoices([
                     'Mensual' => 'Mensual',
@@ -63,7 +64,6 @@ class CreditCrudController extends AbstractCrudController
             ChoiceField::new('year', 'Año')
                 ->setChoices($years)
                 ->onlyOnForms(),
-            MoneyField::new('monthly_payment', 'Importe')->setCurrency('EUR'),
             MoneyField::new('total_amount', 'Importe total')->setCurrency('EUR'),
             // MoneyField::new('remaining_amount', 'Importe restante')->setCurrency('EUR'),
             ChoiceField::new('status', 'Estado')

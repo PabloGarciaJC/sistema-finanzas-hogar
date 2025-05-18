@@ -32,7 +32,11 @@ class Goal
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'In progress'])]
     private string $status = 'In progress';
 
-    // --- Getters y Setters estándar ---
+    public function __construct()
+    {
+        // Inicializamos startDate para evitar errores al acceder antes de setear
+        $this->startDate = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -113,7 +117,7 @@ class Goal
         return $this;
     }
 
-    // --- Métodos auxiliares para formulario (mes y año) ---
+    // --- MÉTODOS AUXILIARES PARA MES Y AÑO ---
 
     public function getMonth(): ?int
     {

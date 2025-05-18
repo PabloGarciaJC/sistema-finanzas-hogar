@@ -61,9 +61,9 @@ class GoalCrudController extends AbstractCrudController
         }
 
         return [
+            AssociationField::new('member', 'Miembro')->setRequired(true),
             $descriptionField,
-            MoneyField::new('targetAmount', 'Monto objetivo')->setCurrency('EUR'),
-
+            MoneyField::new('targetAmount', 'Importe')->setCurrency('EUR'),
             ChoiceField::new('frequency', 'Frecuencia')
                 ->setChoices([
                     'Mensual' => 'Mensual',
@@ -71,7 +71,20 @@ class GoalCrudController extends AbstractCrudController
                     'Semestral' => 'Semestral',
                     'Anual' => 'Anual',
                 ]),
-
+            DateField::new('startDate', 'Fecha de inicio')
+                ->onlyOnDetail()
+                ->setFormat('MMMM yyyy'),
+            // En formulario, usar mes y año por separado
+            ChoiceField::new('month', 'Mes')
+                ->setChoices($months)
+                ->onlyOnForms(),
+            ChoiceField::new('year', 'Año')
+                ->setChoices($years)
+                ->onlyOnForms(),
+            // Mostrar startDate solo en índice y detalle
+            DateField::new('startDate', 'Fecha de inicio')
+                ->onlyOnIndex()
+                ->setFormat('MMMM yyyy'),
             ChoiceField::new('status', 'Estado')
                 ->setChoices([
                     'En progreso' => 'In progress',
@@ -84,25 +97,6 @@ class GoalCrudController extends AbstractCrudController
                     'Canceled' => 'secondary',
                 ]),
 
-            // Mostrar startDate solo en índice y detalle
-            DateField::new('startDate', 'Fecha de inicio')
-                ->onlyOnIndex()
-                ->setFormat('MMMM yyyy'),
-
-            DateField::new('startDate', 'Fecha de inicio')
-                ->onlyOnDetail()
-                ->setFormat('MMMM yyyy'),
-
-            // En formulario, usar mes y año por separado
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->onlyOnForms(),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->onlyOnForms(),
-
-            AssociationField::new('member', 'Miembro')->setRequired(true),
         ];
     }
 
