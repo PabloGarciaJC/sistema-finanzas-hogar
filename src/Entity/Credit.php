@@ -14,7 +14,6 @@ class Credit
     #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    // Relación ManyToOne con Member (muchos créditos pueden ser de un mismo miembro)
     #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'credits')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Member $member = null;
@@ -40,7 +39,7 @@ class Credit
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Active'])]
     private ?string $status = 'Active';
 
-    // Getters y Setters abajo...
+    // --- GETTERS Y SETTERS ---
 
     public function getId(): ?int
     {
@@ -55,7 +54,6 @@ class Credit
     public function setMember(?Member $member): self
     {
         $this->member = $member;
-
         return $this;
     }
 
@@ -67,7 +65,6 @@ class Credit
     public function setBankEntity(string $bankEntity): self
     {
         $this->bankEntity = $bankEntity;
-
         return $this;
     }
 
@@ -79,7 +76,6 @@ class Credit
     public function setTotalAmount(string $totalAmount): self
     {
         $this->totalAmount = $totalAmount;
-
         return $this;
     }
 
@@ -90,12 +86,11 @@ class Credit
 
     public function setFrequency(string $frequency): self
     {
-        $allowed = ['Monthly', 'Bimonthly', 'Quarterly'];
+        $allowed = ['Mensual', 'Bimestral', 'Trimestral', 'Anual'];
         if (!in_array($frequency, $allowed)) {
-            throw new \InvalidArgumentException("Invalid frequency value");
+            throw new \InvalidArgumentException("Valor de frecuencia inválido: $frequency");
         }
         $this->frequency = $frequency;
-
         return $this;
     }
 
@@ -107,7 +102,6 @@ class Credit
     public function setStartDate(\DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
-
         return $this;
     }
 
@@ -119,7 +113,6 @@ class Credit
     public function setMonthlyPayment(string $monthlyPayment): self
     {
         $this->monthlyPayment = $monthlyPayment;
-
         return $this;
     }
 
@@ -131,7 +124,6 @@ class Credit
     public function setRemainingAmount(?string $remainingAmount): self
     {
         $this->remainingAmount = $remainingAmount;
-
         return $this;
     }
 
@@ -142,12 +134,37 @@ class Credit
 
     public function setStatus(string $status): self
     {
-        $allowed = ['Active', 'Paid', 'Canceled'];
+        $allowed = ['Activo', 'Cancelado'];
         if (!in_array($status, $allowed)) {
             throw new \InvalidArgumentException("Invalid status value");
         }
         $this->status = $status;
+        return $this;
+    }
 
+    // --- MÉTODOS AUXILIARES PARA FORMULARIO DE MES Y AÑO ---
+
+    public function getMonth(): ?int
+    {
+        return $this->startDate ? (int) $this->startDate->format('m') : null;
+    }
+
+    public function setMonth(int $month): self
+    {
+        $year = $this->startDate ? (int) $this->startDate->format('Y') : (int) date('Y');
+        $this->startDate = new \DateTimeImmutable("$year-$month-01");
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->startDate ? (int) $this->startDate->format('Y') : null;
+    }
+
+    public function setYear(int $year): self
+    {
+        $month = $this->startDate ? (int) $this->startDate->format('m') : 1;
+        $this->startDate = new \DateTimeImmutable("$year-$month-01");
         return $this;
     }
 }

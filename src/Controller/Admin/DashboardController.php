@@ -48,14 +48,17 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
 
+        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)
+            ->setController(MonthlySummaryCrudController::class);
+
         yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)
             ->setController(MemberCrudController::class);
 
         yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)
             ->setController(IncomeCrudController::class);
 
-        yield MenuItem::linkToCrud('Ahorros', 'fas fa-piggy-bank', Saving::class)
-            ->setController(SavingCrudController::class);
+        // yield MenuItem::linkToCrud('Ahorros', 'fas fa-piggy-bank', Saving::class)
+        //     ->setController(SavingCrudController::class);
 
         yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)
             ->setController(ServiceCrudController::class);
@@ -68,8 +71,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)
             ->setController(GoalCrudController::class);
-
-
 
         // yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)
         //     ->setController(MonthlySummaryCrudController::class);

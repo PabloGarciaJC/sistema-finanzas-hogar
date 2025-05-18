@@ -32,7 +32,6 @@ class GoalCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
             TextEditorField::new('description', 'Descripción'),
             MoneyField::new('targetAmount', 'Monto objetivo')->setCurrency('EUR'),
             TextField::new('targetMonth', 'Mes objetivo'),

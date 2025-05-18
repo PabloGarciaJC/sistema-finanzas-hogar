@@ -21,8 +21,8 @@ class Member
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $company = null;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
-    private ?string $salary = '0.00';
+    // #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
+    // private ?string $salary = '0.00';
 
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Income::class, orphanRemoval: true)]
     private Collection $incomes;
@@ -75,16 +75,16 @@ class Member
         return $this;
     }
 
-    public function getSalary(): ?string
-    {
-        return $this->salary;
-    }
+    // public function getSalary(): ?string
+    // {
+    //     return $this->salary;
+    // }
 
-    public function setSalary(string $salary): self
-    {
-        $this->salary = $salary;
-        return $this;
-    }
+    // public function setSalary(string $salary): self
+    // {
+    //     $this->salary = $salary;
+    //     return $this;
+    // }
 
     /** @return Collection<int, Income> */
     public function getIncomes(): Collection

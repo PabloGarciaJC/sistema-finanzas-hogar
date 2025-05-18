@@ -24,9 +24,6 @@ class Income
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -65,14 +62,29 @@ class Income
         return $this;
     }
 
-    public function getDescription(): ?string
+    // Métodos auxiliares para mes y año (usados en el formulario)
+
+    public function getMonth(): ?int
     {
-        return $this->description;
+        return $this->date ? (int) $this->date->format('m') : null;
     }
 
-    public function setDescription(?string $description): self
+    public function setMonth(int $month): self
     {
-        $this->description = $description;
+        $year = $this->date ? (int) $this->date->format('Y') : (int) date('Y');
+        $this->date = new \DateTimeImmutable("$year-$month-01");
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->date ? (int) $this->date->format('Y') : null;
+    }
+
+    public function setYear(int $year): self
+    {
+        $month = $this->date ? (int) $this->date->format('m') : 1;
+        $this->date = new \DateTimeImmutable("$year-$month-01");
         return $this;
     }
 }

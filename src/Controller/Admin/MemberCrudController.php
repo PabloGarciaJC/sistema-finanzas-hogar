@@ -19,10 +19,8 @@ class MemberCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
             TextField::new('name', 'Nombre'),
             TextField::new('company', 'Empresa'),
-            MoneyField::new('salary', 'Salario')->setCurrency('EUR'),
         ];
     }
 
