@@ -34,7 +34,7 @@ class GoalCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextEditorField::new('description', 'Descripción'),
-            MoneyField::new('targetAmount', 'Monto objetivo')->setCurrency('USD'),
+            MoneyField::new('targetAmount', 'Monto objetivo')->setCurrency('EUR'),
             TextField::new('targetMonth', 'Mes objetivo'),
             IntegerField::new('targetYear', 'Año objetivo'),
             TextField::new('status', 'Estado'),

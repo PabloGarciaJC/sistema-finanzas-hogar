@@ -21,10 +21,10 @@ class SavingCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            AssociationField::new('member', 'Miembro'), // si tienes una relación con la entidad Member
+            AssociationField::new('member', 'Miembro'),
             IntegerField::new('month', 'Mes'),
             IntegerField::new('year', 'Año'),
-            MoneyField::new('amount', 'Monto')->setCurrency('USD'),
+            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
         ];
     }
 

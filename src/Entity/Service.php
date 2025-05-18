@@ -22,8 +22,8 @@ class Service
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
     private ?string $amount = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    // #[ORM\Column(type: Types::DATE_MUTABLE)]
+    // private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -55,16 +55,16 @@ class Service
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
-    {
-        return $this->date;
-    }
+    // public function getDate(): ?\DateTimeInterface
+    // {
+    //     return $this->date;
+    // }
 
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-        return $this;
-    }
+    // public function setDate(\DateTimeInterface $date): self
+    // {
+    //     $this->date = $date;
+    //     return $this;
+    // }
 
     public function getDescription(): ?string
     {

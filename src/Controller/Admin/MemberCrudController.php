@@ -22,7 +22,7 @@ class MemberCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('name', 'Nombre'),
             TextField::new('company', 'Empresa'),
-            MoneyField::new('salary', 'Salario')->setCurrency('USD'),
+            MoneyField::new('salary', 'Salario')->setCurrency('EUR'),
         ];
     }
 

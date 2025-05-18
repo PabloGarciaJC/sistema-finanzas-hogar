@@ -32,7 +32,7 @@ class IncomeCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('USD'),
+            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
             DateField::new('date', 'Fecha'),
             TextEditorField::new('description', 'Descripción'),
         ];

@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ServiceCrudController extends AbstractCrudController
 {
@@ -32,9 +33,13 @@ class ServiceCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('USD'),
-            DateField::new('date', 'Fecha'),
-            TextEditorField::new('description', 'Descripción'),
+            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
+            $pageName === Crud::PAGE_INDEX
+                ? TextField::new('description', 'Descripción')
+                ->formatValue(function ($value, $entity) {
+                    return mb_strimwidth(strip_tags($value), 0, 100, '...');
+                })
+                : TextEditorField::new('description', 'Descripción'),
         ];
     }
 
@@ -46,9 +51,9 @@ class ServiceCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Ingresos')
-            ->setEntityLabelInPlural('Ingresos')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos')
+            ->setEntityLabelInSingular('Servicios')
+            ->setEntityLabelInPlural('Servicios')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Servicios')
             ->setSearchFields(['description', 'member.name']);
     }
 }
