@@ -9,6 +9,7 @@ use App\Entity\Member;
 use App\Entity\MonthlySummary;
 use App\Entity\Period;
 use App\Entity\Saving;
+use App\Entity\Service;
 
 use App\Controller\Admin\CreditCrudController;
 use App\Controller\Admin\GoalCrudController;
@@ -16,7 +17,7 @@ use App\Controller\Admin\IncomeCrudController;
 use App\Controller\Admin\MemberCrudController;
 use App\Controller\Admin\MonthlySummaryCrudController;
 use App\Controller\Admin\PeriodCrudController;
-use App\Controller\Admin\SavingCrudController;
+use App\Controller\Admin\ServiceCrudController;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -48,22 +49,27 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
 
         yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)
-        ->setController(MemberCrudController::class);
+            ->setController(MemberCrudController::class);
 
         yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)
-        ->setController(IncomeCrudController::class);
+            ->setController(IncomeCrudController::class);
 
         yield MenuItem::linkToCrud('Ahorros', 'fas fa-piggy-bank', Saving::class)
             ->setController(SavingCrudController::class);
+
+        yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)
+            ->setController(ServiceCrudController::class);
 
         yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)
             ->setController(CreditCrudController::class);
 
         // yield MenuItem::linkToCrud('Periodos', 'fas fa-calendar', Period::class)
-        // ->setController(PeriodCrudController::class);
+        //     ->setController(PeriodCrudController::class);
 
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)
             ->setController(GoalCrudController::class);
+
+
 
         // yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)
         //     ->setController(MonthlySummaryCrudController::class);

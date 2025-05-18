@@ -28,7 +28,7 @@ class CreditCrudController extends AbstractCrudController
 
             TextField::new('bank_entity', 'Banco'),
 
-            MoneyField::new('total_amount', 'Monto total')->setCurrency('USD'),
+            MoneyField::new('total_amount', 'Monto total')->setCurrency('EUR'),
 
             ChoiceField::new('frequency', 'Frecuencia')
                 ->setChoices([
@@ -39,9 +39,9 @@ class CreditCrudController extends AbstractCrudController
 
             DateField::new('start_date', 'Fecha de inicio'),
 
-            MoneyField::new('monthly_payment', 'Pago mensual')->setCurrency('USD'),
+            MoneyField::new('monthly_payment', 'Pago mensual')->setCurrency('EUR'),
 
-            MoneyField::new('remaining_amount', 'Monto restante')->setCurrency('USD'),
+            MoneyField::new('remaining_amount', 'Monto restante')->setCurrency('EUR'),
 
             TextField::new('status', 'Estado'),
         ];

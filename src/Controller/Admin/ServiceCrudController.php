@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Income;
+use App\Entity\Service;
 use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -12,8 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class IncomeCrudController extends AbstractCrudController
+class ServiceCrudController extends AbstractCrudController
 {
     private EntityManagerInterface $em;
 
@@ -24,7 +25,7 @@ class IncomeCrudController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return Income::class;
+        return Service::class;
     }
 
     public function configureFields(string $pageName): iterable
@@ -33,22 +34,26 @@ class IncomeCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             AssociationField::new('member', 'Miembro'),
             MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
-            DateField::new('date', 'Fecha'),
-            TextEditorField::new('description', 'Descripción'),
+            $pageName === Crud::PAGE_INDEX
+                ? TextField::new('description', 'Descripción')
+                ->formatValue(function ($value, $entity) {
+                    return mb_strimwidth(strip_tags($value), 0, 100, '...');
+                })
+                : TextEditorField::new('description', 'Descripción'),
         ];
     }
 
     public function createEntity(string $entityFqcn)
     {
-        return new Income();
+        return new Service();
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Ingresos')
-            ->setEntityLabelInPlural('Ingresos')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos')
+            ->setEntityLabelInSingular('Servicios')
+            ->setEntityLabelInPlural('Servicios')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Servicios')
             ->setSearchFields(['description', 'member.name']);
     }
 }
