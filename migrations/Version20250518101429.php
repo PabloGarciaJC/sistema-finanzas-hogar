@@ -14,7 +14,7 @@ final class Version20250518101429 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create table monthly_summary with foreign key to member';
+        return 'Create table monthly_summary';
     }
 
     public function up(Schema $schema): void

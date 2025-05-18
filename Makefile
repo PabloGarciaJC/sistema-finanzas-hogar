@@ -118,3 +118,9 @@ clean-docker:
 	sudo docker rm $$(sudo docker ps -a -q) || true
 	sudo docker rmi -f $$(sudo docker images -q) || true
 	sudo docker volume rm $$(sudo docker volume ls -q) || true
+
+
+
+# Paso 1: Crear Migracion (Crear la Tabla)
+# Paso 2: Crear la Entidad (se crea el repositorio)
+# Paso 3: Crear el Crud con php Easy: php bin/console make:controller Admin/ServiceCrudController
