@@ -16,13 +16,17 @@ class ServiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Service::class);
     }
 
-    public function getTotalServiceSql(): string
+    public function getTotalServiceSql(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) as totalDebt FROM services';
-        $stmt = $conn->executeQuery($sql);
-        $result = $stmt->fetchAssociative();
+        $sql = 'SELECT SUM(amount) AS totalDebt FROM services';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
 
-        return number_format(($result['totalDebt'] ?? 0) / 100, 2, ',', '.');
+        $amount = (float) ($row['totalDebt'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
     }
 }

@@ -15,17 +15,23 @@ class IncomeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Income::class);
     }
-
     /**
-     * @return string
+     * Devuelve un array con opciones para el select: [ 'Etiqueta' => valor, ... ]
+     * @return array<string, float>
      */
-    public function getTotalIncomeSql(): string
+    public function getIncomeOptions(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) as total FROM income';
-        $stmt = $conn->executeQuery($sql);
-        $result = $stmt->fetchAssociative();
+        $sql = 'SELECT SUM(amount) AS total_amount FROM income';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
 
-        return number_format(($result['total'] ?? 0) / 100, 2, ',', '.');
+        $amount = (float) ($row['total_amount'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
     }
+
+    
 }
