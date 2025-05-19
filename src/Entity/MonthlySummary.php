@@ -39,6 +39,9 @@ class MonthlySummary
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
 
+    // NUEVA propiedad virtual para mostrar el ingreso total calculado
+    private ?string $totalIncomeCalculated = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -129,6 +132,18 @@ class MonthlySummary
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+        return $this;
+    }
+
+    // Getter y Setter para la propiedad virtual
+    public function getTotalIncomeCalculated(): ?string
+    {
+        return $this->totalIncomeCalculated;
+    }
+
+    public function setTotalIncomeCalculated(?string $totalIncomeCalculated): self
+    {
+        $this->totalIncomeCalculated = $totalIncomeCalculated;
         return $this;
     }
 }
