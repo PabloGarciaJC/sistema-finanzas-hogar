@@ -36,8 +36,8 @@ class Member
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Goal::class, orphanRemoval: true)]
     private Collection $goals;
 
-    #[ORM\OneToMany(mappedBy: 'member', targetEntity: MonthlySummary::class, orphanRemoval: true)]
-    private Collection $monthlySummaries;
+    // #[ORM\OneToMany(mappedBy: 'member', targetEntity: MonthlySummary::class, orphanRemoval: true)]
+    // private Collection $monthlySummaries;
 
     public function __construct()
     {
@@ -45,7 +45,7 @@ class Member
         $this->credits = new ArrayCollection();
         $this->savings = new ArrayCollection();
         $this->goals = new ArrayCollection();
-        $this->monthlySummaries = new ArrayCollection();
+        // $this->monthlySummaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -186,30 +186,30 @@ class Member
         return $this;
     }
 
-    /** @return Collection<int, MonthlySummary> */
-    public function getMonthlySummaries(): Collection
-    {
-        return $this->monthlySummaries;
-    }
+    // /** @return Collection<int, MonthlySummary> */
+    // public function getMonthlySummaries(): Collection
+    // {
+    //     return $this->monthlySummaries;
+    // }
 
-    public function addMonthlySummary(MonthlySummary $summary): self
-    {
-        if (!$this->monthlySummaries->contains($summary)) {
-            $this->monthlySummaries[] = $summary;
-            $summary->setMember($this);
-        }
-        return $this;
-    }
+    // public function addMonthlySummary(MonthlySummary $summary): self
+    // {
+    //     if (!$this->monthlySummaries->contains($summary)) {
+    //         $this->monthlySummaries[] = $summary;
+    //         $summary->setMember($this);
+    //     }
+    //     return $this;
+    // }
 
-    public function removeMonthlySummary(MonthlySummary $summary): self
-    {
-        if ($this->monthlySummaries->removeElement($summary)) {
-            if ($summary->getMember() === $this) {
-                $summary->setMember(null);
-            }
-        }
-        return $this;
-    }
+    // public function removeMonthlySummary(MonthlySummary $summary): self
+    // {
+    //     if ($this->monthlySummaries->removeElement($summary)) {
+    //         if ($summary->getMember() === $this) {
+    //             $summary->setMember(null);
+    //         }
+    //     }
+    //     return $this;
+    // }
 
     public function __toString(): string
     {   

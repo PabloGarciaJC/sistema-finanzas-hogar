@@ -6,9 +6,6 @@ use App\Entity\MonthlySummary;
 use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -31,15 +28,10 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-
-        $rawOptionsIncome = $this->incomeRepository->getIncomeOptions();
-        $defaultIncomeValue = !empty($rawOptionsIncome) ? reset($rawOptionsIncome) / 100 : null;
-
-        $rawOptionService = $this->serviceRepository->getTotalServiceSql();
-        $defaultServiceValue = !empty($rawOptionService) ? reset($rawOptionService) / 100 : null;
-
-        $defaultServiceSavings =  $defaultIncomeValue - $defaultServiceValue;
-
+        // Valores por defecto
+        $defaultIncomeValue = ($data = $this->incomeRepository->getIncomeOptions()) ? reset($data) / 100 : null;
+        $defaultServiceValue = ($data = $this->serviceRepository->getTotalServiceSql()) ? reset($data) / 100 : null;
+        $defaultSavingsValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue : null;
 
         // Meses
         $months = [
@@ -59,52 +51,38 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         // Años
         $currentYear = (int) date('Y');
-        $years = [];
-        for ($i = $currentYear - 10; $i <= $currentYear + 10; $i++) {
-            $years[$i] = $i;
-        }
+        $years = array_combine(range($currentYear - 10, $currentYear + 10), range($currentYear - 10, $currentYear + 10));
 
-        // Campos
         $monthField = ChoiceField::new('month', 'Mes')->setChoices($months);
         if ($pageName === Crud::PAGE_NEW) {
-            $monthField = $monthField->setFormTypeOption('data', 1);
+            $monthField->setFormTypeOption('data', 1);
         }
 
         $yearField = ChoiceField::new('year', 'Año')->setChoices($years);
         if ($pageName === Crud::PAGE_NEW) {
-            $yearField = $yearField->setFormTypeOption('data', $currentYear);
+            $yearField->setFormTypeOption('data', $currentYear);
         }
 
-        $totalIncomeField = NumberField::new('totalIncome', 'Ingresos Totales')
-            ->setNumDecimals(2);
+        $totalIncomeField = NumberField::new('totalIncome', 'Ingresos Totales')->setNumDecimals(2);
         if ($pageName === Crud::PAGE_NEW && $defaultIncomeValue !== null) {
-            $totalIncomeField = $totalIncomeField->setFormTypeOption('data', $defaultIncomeValue);
+            $totalIncomeField->setFormTypeOption('data', $defaultIncomeValue);
         }
 
-        $totalServiceField = NumberField::new('totalDebt', 'Deuda Total')
-            ->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultServiceValue !== null) {
-            $totalServiceField = $totalServiceField->setFormTypeOption('data', $defaultServiceValue);
+        $savingsField = NumberField::new('savings', 'Ahorros')->setNumDecimals(2);
+        if ($pageName === Crud::PAGE_NEW && $defaultSavingsValue !== null) {
+            $savingsField->setFormTypeOption('data', $defaultSavingsValue);
         }
 
-        $totalServiceSavings = NumberField::new('savings', 'Ahorros')
-            ->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultServiceSavings !== null) {
-            $totalServiceSavings = $totalServiceSavings->setFormTypeOption('data', $defaultServiceSavings);
-        }
+        $bankDebtMenberOneField = NumberField::new('bankDebtMenberOne', 'Deuda Banco Miembro Uno')->setNumDecimals(2);
+        $bankDebtMemberTwoField = NumberField::new('bankDebtMemberTwo', 'Deuda Banco Miembro Dos')->setNumDecimals(2);
 
         return [
-            AssociationField::new('member', 'Miembro'),
             $monthField,
             $yearField,
             $totalIncomeField,
-            $totalServiceField,
-            $totalServiceSavings,
-            MoneyField::new('balance', 'Balance')
-                ->setCurrency('EUR')
-                ->setStoredAsCents(false)
-                ->setNumDecimals(2),
-            TextEditorField::new('notes', 'Notas'),
+            $savingsField,
+            $bankDebtMenberOneField,
+            $bankDebtMemberTwoField,
         ];
     }
 
@@ -112,8 +90,15 @@ class MonthlySummaryCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Resumen Mensual')
-            ->setEntityLabelInPlural('Resumen Mensual')
+            ->setEntityLabelInPlural('Resumen Mensuales')
             ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Resumen Mensual')
-            ->setSearchFields(['member.name', 'month', 'year', 'notes']);
+            ->setSearchFields([
+                'month',
+                'year',
+                'totalIncome',
+                'savings',
+                'bankDebtMenberOne',
+                'bankDebtMemberTwo',
+            ]);
     }
 }
