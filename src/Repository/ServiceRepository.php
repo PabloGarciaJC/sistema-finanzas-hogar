@@ -29,4 +29,32 @@ class ServiceRepository extends ServiceEntityRepository
         // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
+
+    public function getTotalMemberOne(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(amount) AS totalDebtMemberOne FROM services WHERE member_id = 1';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
+
+        $amount = (float) ($row['totalDebtMemberOne'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
+    }
+
+      public function getTotalMemberTwo(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
+
+        $amount = (float) ($row['totalDebtMemberTwo'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
+    }
 }

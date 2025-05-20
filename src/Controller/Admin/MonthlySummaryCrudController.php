@@ -28,12 +28,14 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Valores por defecto
+        // Obtener valores por defecto desde los repositorios para prellenar el formulario
         $defaultIncomeValue = ($data = $this->incomeRepository->getIncomeOptions()) ? reset($data) / 100 : null;
         $defaultServiceValue = ($data = $this->serviceRepository->getTotalServiceSql()) ? reset($data) / 100 : null;
         $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue : null;
+        $defaultServiceMemberOneValue = ($data = $this->serviceRepository->getTotalMemberOne()) ? reset($data) / 100 : null;
+        $defaultServiceMemberTwoValue = ($data = $this->serviceRepository->getTotalMemberTwo()) ? reset($data) / 100 : null;
 
-        // Meses
+        // Definición de los meses para el campo de selección
         $months = [
             'Enero' => 1,
             'Febrero' => 2,
@@ -49,46 +51,63 @@ class MonthlySummaryCrudController extends AbstractCrudController
             'Diciembre' => 12,
         ];
 
-        // Años
-        $currentYear = (int) date('Y');
-        $years = array_combine(range($currentYear - 10, $currentYear + 10), range($currentYear - 10, $currentYear + 10));
-
-        $monthField = ChoiceField::new('month', 'Mes')->setChoices($months);
-        if ($pageName === Crud::PAGE_NEW) {
-            $monthField->setFormTypeOption('data', 1);
-        }
-
-        $yearField = ChoiceField::new('year', 'Año')->setChoices($years);
-        if ($pageName === Crud::PAGE_NEW) {
-            $yearField->setFormTypeOption('data', $currentYear);
-        }
-
+        // Campo numérico para Ingresos Totales
         $totalIncomeField = NumberField::new('totalIncome', 'Ingresos Totales')->setNumDecimals(2);
         if ($pageName === Crud::PAGE_NEW && $defaultIncomeValue !== null) {
             $totalIncomeField->setFormTypeOption('data', $defaultIncomeValue);
         }
 
-        $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
-            $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
-        }
-
+        // Campo numérico para Deuda Total (servicios)
         $serviceTotalField = NumberField::new('debt_total', 'Deuda Total')->setNumDecimals(2);
         if ($pageName === Crud::PAGE_NEW && $defaultServiceValue !== null) {
             $serviceTotalField->setFormTypeOption('data', $defaultServiceValue);
         }
 
-        $bankDebtMenberOneField = NumberField::new('bankDebtMenberOne', 'Importe Banco Pablo')->setNumDecimals(2);
-        $bankDebtMemberTwoField = NumberField::new('bankDebtMemberTwo', 'Importe Banco Vero')->setNumDecimals(2);
+        // Campo numérico para Saldo Restante
+        $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')->setNumDecimals(2);
+        if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
+            $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
+        }
+
+        // Campo numérico para deuda del miembro uno
+        $serviceMemberOneField = NumberField::new('bankDebtMenberOne', 'Importe Banco Pablo')->setNumDecimals(2);
+        if ($pageName === Crud::PAGE_NEW && $defaultServiceMemberOneValue !== null) {
+            $serviceMemberOneField->setFormTypeOption('data', $defaultServiceMemberOneValue);
+        }
+
+        // Campo numérico para deuda del miembro dos
+        $serviceMemberTwoField = NumberField::new('bankDebtMemberTwo', 'Importe Banco Vero')->setNumDecimals(2);
+        if ($pageName === Crud::PAGE_NEW && $defaultServiceMemberTwoValue !== null) {
+            $serviceMemberTwoField->setFormTypeOption('data', $defaultServiceMemberTwoValue);
+        }
+
+        // Campo de selección para el mes
+        $monthField = ChoiceField::new('month', 'Mes')->setChoices($months);
+        if ($pageName === Crud::PAGE_NEW) {
+            $monthField->setFormTypeOption('data', 1);
+        }
+
+        // Rango de años para el selector (desde 10 años atrás hasta 10 años adelante)
+        $currentYear = (int) date('Y');
+        $years = array_combine(
+            range($currentYear - 10, $currentYear + 10),
+            range($currentYear - 10, $currentYear + 10)
+        );
+
+        // Campo de selección para el año
+        $yearField = ChoiceField::new('year', 'Año')->setChoices($years);
+        if ($pageName === Crud::PAGE_NEW) {
+            $yearField->setFormTypeOption('data', $currentYear);
+        }
 
         return [
+            $totalIncomeField,
+            $serviceTotalField,
+            $remainingBalanceField,
+            $serviceMemberOneField,
+            $serviceMemberTwoField,
             $monthField,
             $yearField,
-            $totalIncomeField,
-            $remainingBalanceField,
-            $serviceTotalField,
-            $bankDebtMenberOneField,
-            $bankDebtMemberTwoField,
         ];
     }
 
