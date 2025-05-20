@@ -54,8 +54,6 @@ class MonthlySummaryCrudController extends AbstractCrudController
             $defaultServiceMemberOneValue = $serviceMemberOneValue + $defaultCreditMenberOneValue;
         }
 
-      
-
         // Obtiene el total de servicios del miembro dos, convierte a decimal y almacena en variable intermedia
         $data = $this->serviceRepository->getTotalMemberTwo();
         $serviceMemberTwoValue = $data ? reset($data) / 100 : null;
