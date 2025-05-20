@@ -66,7 +66,6 @@ class CreditCrudController extends AbstractCrudController
                 ->setChoices($years)
                 ->onlyOnForms(),
             MoneyField::new('total_amount', 'Importe total')->setCurrency('EUR'),
-            // MoneyField::new('remaining_amount', 'Importe restante')->setCurrency('EUR'),
             ChoiceField::new('status', 'Estado')
                 ->setChoices([
                     'Activo' => 'Activo',

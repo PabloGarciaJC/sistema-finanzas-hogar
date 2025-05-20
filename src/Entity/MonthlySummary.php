@@ -22,8 +22,8 @@ class MonthlySummary
     #[ORM\Column(name: 'total_income', type: 'decimal', precision: 12, scale: 2)]
     private float $totalIncome;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
-    private float $savings;
+    #[ORM\Column(name: 'remaining_balance', type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
+    private float $remainingBalance = 0.00;
 
     // ¡OJO! La columna tiene un typo: "menber"
     #[ORM\Column(name: 'bank_debt_menber_one', type: 'decimal', precision: 12, scale: 2)]
@@ -31,6 +31,9 @@ class MonthlySummary
 
     #[ORM\Column(name: 'bank_debt_member_two', type: 'decimal', precision: 12, scale: 2)]
     private float $bankDebtMemberTwo;
+
+    #[ORM\Column(name: 'debt_total', type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
+    private float $debtTotal = 0.00;
 
     // Getters y setters
 
@@ -72,16 +75,18 @@ class MonthlySummary
         return $this;
     }
 
-    public function getSavings(): float
+
+    public function getRemainingBalance(): float
     {
-        return $this->savings;
+        return $this->remainingBalance;
     }
 
-    public function setSavings(float $savings): self
+    public function setRemainingBalance(float $remainingBalance): self
     {
-        $this->savings = $savings;
+        $this->remainingBalance = $remainingBalance;
         return $this;
     }
+
 
     public function getBankDebtMenberOne(): float
     {
@@ -102,6 +107,17 @@ class MonthlySummary
     public function setBankDebtMemberTwo(float $bankDebtMemberTwo): self
     {
         $this->bankDebtMemberTwo = $bankDebtMemberTwo;
+        return $this;
+    }
+
+    public function getDebtTotal(): float
+    {
+        return $this->debtTotal;
+    }
+
+    public function setDebtTotal(float $debtTotal): self
+    {
+        $this->debtTotal = $debtTotal;
         return $this;
     }
 }

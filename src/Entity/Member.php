@@ -21,9 +21,6 @@ class Member
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $company = null;
 
-    // #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
-    // private ?string $salary = '0.00';
-
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Income::class, orphanRemoval: true)]
     private Collection $incomes;
 
@@ -36,16 +33,12 @@ class Member
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Goal::class, orphanRemoval: true)]
     private Collection $goals;
 
-    // #[ORM\OneToMany(mappedBy: 'member', targetEntity: MonthlySummary::class, orphanRemoval: true)]
-    // private Collection $monthlySummaries;
-
     public function __construct()
     {
         $this->incomes = new ArrayCollection();
         $this->credits = new ArrayCollection();
         $this->savings = new ArrayCollection();
         $this->goals = new ArrayCollection();
-        // $this->monthlySummaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,17 +67,6 @@ class Member
         $this->company = $company;
         return $this;
     }
-
-    // public function getSalary(): ?string
-    // {
-    //     return $this->salary;
-    // }
-
-    // public function setSalary(string $salary): self
-    // {
-    //     $this->salary = $salary;
-    //     return $this;
-    // }
 
     /** @return Collection<int, Income> */
     public function getIncomes(): Collection
@@ -185,31 +167,6 @@ class Member
         }
         return $this;
     }
-
-    // /** @return Collection<int, MonthlySummary> */
-    // public function getMonthlySummaries(): Collection
-    // {
-    //     return $this->monthlySummaries;
-    // }
-
-    // public function addMonthlySummary(MonthlySummary $summary): self
-    // {
-    //     if (!$this->monthlySummaries->contains($summary)) {
-    //         $this->monthlySummaries[] = $summary;
-    //         $summary->setMember($this);
-    //     }
-    //     return $this;
-    // }
-
-    // public function removeMonthlySummary(MonthlySummary $summary): self
-    // {
-    //     if ($this->monthlySummaries->removeElement($summary)) {
-    //         if ($summary->getMember() === $this) {
-    //             $summary->setMember(null);
-    //         }
-    //     }
-    //     return $this;
-    // }
 
     public function __toString(): string
     {   

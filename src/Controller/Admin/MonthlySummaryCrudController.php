@@ -31,7 +31,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
         // Valores por defecto
         $defaultIncomeValue = ($data = $this->incomeRepository->getIncomeOptions()) ? reset($data) / 100 : null;
         $defaultServiceValue = ($data = $this->serviceRepository->getTotalServiceSql()) ? reset($data) / 100 : null;
-        $defaultSavingsValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue : null;
+        $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue : null;
 
         // Meses
         $months = [
@@ -68,19 +68,25 @@ class MonthlySummaryCrudController extends AbstractCrudController
             $totalIncomeField->setFormTypeOption('data', $defaultIncomeValue);
         }
 
-        $savingsField = NumberField::new('savings', 'Ahorros')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultSavingsValue !== null) {
-            $savingsField->setFormTypeOption('data', $defaultSavingsValue);
+        $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')->setNumDecimals(2);
+        if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
+            $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
         }
 
-        $bankDebtMenberOneField = NumberField::new('bankDebtMenberOne', 'Deuda Banco Miembro Uno')->setNumDecimals(2);
-        $bankDebtMemberTwoField = NumberField::new('bankDebtMemberTwo', 'Deuda Banco Miembro Dos')->setNumDecimals(2);
+        $serviceTotalField = NumberField::new('debt_total', 'Deuda Total')->setNumDecimals(2);
+        if ($pageName === Crud::PAGE_NEW && $defaultServiceValue !== null) {
+            $serviceTotalField->setFormTypeOption('data', $defaultServiceValue);
+        }
+
+        $bankDebtMenberOneField = NumberField::new('bankDebtMenberOne', 'Importe Banco Pablo')->setNumDecimals(2);
+        $bankDebtMemberTwoField = NumberField::new('bankDebtMemberTwo', 'Importe Banco Vero')->setNumDecimals(2);
 
         return [
             $monthField,
             $yearField,
             $totalIncomeField,
-            $savingsField,
+            $remainingBalanceField,
+            $serviceTotalField,
             $bankDebtMenberOneField,
             $bankDebtMemberTwoField,
         ];
@@ -96,7 +102,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
                 'month',
                 'year',
                 'totalIncome',
-                'savings',
+                'remainingBalance',
                 'bankDebtMenberOne',
                 'bankDebtMemberTwo',
             ]);

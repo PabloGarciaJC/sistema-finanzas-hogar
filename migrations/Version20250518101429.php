@@ -22,6 +22,7 @@ final class Version20250518101429 extends AbstractMigration
             year INT NOT NULL,
             total_income NUMERIC(12, 2) NOT NULL,
             savings NUMERIC(12, 2) NOT NULL,
+            debt_total NUMERIC(12, 2) NOT NULL,
             bank_debt_menber_one NUMERIC(12, 2) NOT NULL,
             bank_debt_member_two NUMERIC(12, 2) NOT NULL,
             PRIMARY KEY(id)
