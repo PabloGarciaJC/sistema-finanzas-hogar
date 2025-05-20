@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
-
 class CreditCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

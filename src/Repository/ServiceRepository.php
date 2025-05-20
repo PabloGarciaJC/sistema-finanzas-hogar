@@ -44,7 +44,7 @@ class ServiceRepository extends ServiceEntityRepository
         return [$amount => $amount];
     }
 
-      public function getTotalMemberTwo(): array
+    public function getTotalMemberTwo(): array
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2';

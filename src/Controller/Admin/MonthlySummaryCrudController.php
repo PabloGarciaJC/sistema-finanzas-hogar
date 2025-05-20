@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\MonthlySummary;
 use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
+use App\Repository\CreditRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -14,11 +15,13 @@ class MonthlySummaryCrudController extends AbstractCrudController
 {
     private IncomeRepository $incomeRepository;
     private ServiceRepository $serviceRepository;
+    private CreditRepository $creditRepository;
 
-    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository)
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository,)
     {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
+        $this->creditRepository = $creditRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -28,12 +31,37 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Obtener valores por defecto desde los repositorios para prellenar el formulario
+
+        // Obtiene el primer valor de ingresos desde el repositorio y lo convierte a formato decimal (dividiendo entre 100)
         $defaultIncomeValue = ($data = $this->incomeRepository->getIncomeOptions()) ? reset($data) / 100 : null;
+
+        // Obtiene el total de servicios desde el repositorio y lo convierte a decimal
         $defaultServiceValue = ($data = $this->serviceRepository->getTotalServiceSql()) ? reset($data) / 100 : null;
-        $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue : null;
-        $defaultServiceMemberOneValue = ($data = $this->serviceRepository->getTotalMemberOne()) ? reset($data) / 100 : null;
-        $defaultServiceMemberTwoValue = ($data = $this->serviceRepository->getTotalMemberTwo()) ? reset($data) / 100 : null;
+
+        // Obtiene el crédito total del miembro uno y lo convierte a decimal
+        $defaultCreditMenberOneValue = ($data = $this->creditRepository->getCreditTotalMemberOne()) ? reset($data) / 100 : null;
+
+        // Obtiene el crédito total del miembro Two y lo convierte a decimal
+        $defaultCreditMenberTwoValue = ($data = $this->creditRepository->getCreditTotalMemberTwo()) ? reset($data) / 100 : null;
+
+        // Calcula el saldo restante restando servicios y crédito del miembro uno a los ingresos, si todos existen
+        $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue - $defaultCreditMenberOneValue - $defaultCreditMenberTwoValue: null;
+
+        // Obtiene el total de servicios del miembro uno, convierte a decimal y almacena en variable intermedia
+        $dataTotalMemberOne = $this->serviceRepository->getTotalMemberOne();
+        $serviceMemberOneValue = $dataTotalMemberOne ? reset($dataTotalMemberOne) / 100 : null;
+        if ($serviceMemberOneValue !== null && $defaultCreditMenberOneValue !== null) {
+            $defaultServiceMemberOneValue = $serviceMemberOneValue + $defaultCreditMenberOneValue;
+        }
+
+      
+
+        // Obtiene el total de servicios del miembro dos, convierte a decimal y almacena en variable intermedia
+        $data = $this->serviceRepository->getTotalMemberTwo();
+        $serviceMemberTwoValue = $data ? reset($data) / 100 : null;
+        if ($serviceMemberTwoValue !== null && $defaultCreditMenberTwoValue !== null) {
+            $defaultServiceMemberTwoValue = $serviceMemberTwoValue + $defaultCreditMenberTwoValue;
+        }
 
         // Definición de los meses para el campo de selección
         $months = [
