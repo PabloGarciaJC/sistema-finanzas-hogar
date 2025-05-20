@@ -16,28 +16,45 @@ class ServiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Service::class);
     }
 
-    //    /**
-    //     * @return Service[] Returns an array of Service objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getTotalServiceSql(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(amount) AS totalDebt FROM services';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
 
-    //    public function findOneBySomeField($value): ?Service
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $amount = (float) ($row['totalDebt'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
+    }
+
+    public function getTotalMemberOne(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(amount) AS totalDebtMemberOne FROM services WHERE member_id = 1';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
+
+        $amount = (float) ($row['totalDebtMemberOne'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
+    }
+
+    public function getTotalMemberTwo(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
+
+        $amount = (float) ($row['totalDebtMemberTwo'] ?? 0);
+
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
+    }
 }

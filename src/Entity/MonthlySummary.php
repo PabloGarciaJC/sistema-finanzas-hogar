@@ -2,71 +2,58 @@
 
 namespace App\Entity;
 
-use App\Repository\MonthlySummaryRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: MonthlySummaryRepository::class)]
+#[ORM\Entity]
+#[ORM\Table(name: 'monthly_summary')]
 class MonthlySummary
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(options: ['unsigned' => true])]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'monthlySummaries')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private ?Member $member = null;
+    #[ORM\Column(type: 'integer')]
+    private int $month;
 
-    #[ORM\Column(length: 20)]
-    private ?string $month = null;
+    #[ORM\Column(type: 'integer')]
+    private int $year;
 
-    #[ORM\Column]
-    private ?int $year = null;
+    #[ORM\Column(name: 'total_income', type: 'decimal', precision: 12, scale: 2)]
+    private float $totalIncome;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
-    private ?string $totalIncome = '0.00';
+    #[ORM\Column(name: 'remaining_balance', type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
+    private float $remainingBalance = 0.00;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
-    private ?string $totalDebt = '0.00';
+    // ¡OJO! La columna tiene un typo: "menber"
+    #[ORM\Column(name: 'bank_debt_menber_one', type: 'decimal', precision: 12, scale: 2)]
+    private float $bankDebtMenberOne;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
-    private ?string $savings = '0.00';
+    #[ORM\Column(name: 'bank_debt_member_two', type: 'decimal', precision: 12, scale: 2)]
+    private float $bankDebtMemberTwo;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
-    private ?string $balance = '0.00';
+    #[ORM\Column(name: 'debt_total', type: 'decimal', precision: 12, scale: 2, options: ['default' => 0])]
+    private float $debtTotal = 0.00;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $notes = null;
+    // Getters y setters
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMember(): ?Member
-    {
-        return $this->member;
-    }
-
-    public function setMember(?Member $member): self
-    {
-        $this->member = $member;
-        return $this;
-    }
-
-    public function getMonth(): ?string
+    public function getMonth(): int
     {
         return $this->month;
     }
 
-    public function setMonth(string $month): self
+    public function setMonth(int $month): self
     {
         $this->month = $month;
         return $this;
     }
 
-    public function getYear(): ?int
+    public function getYear(): int
     {
         return $this->year;
     }
@@ -77,58 +64,60 @@ class MonthlySummary
         return $this;
     }
 
-    public function getTotalIncome(): ?string
+    public function getTotalIncome(): float
     {
         return $this->totalIncome;
     }
 
-    public function setTotalIncome(string $totalIncome): self
+    public function setTotalIncome(float $totalIncome): self
     {
         $this->totalIncome = $totalIncome;
         return $this;
     }
 
-    public function getTotalDebt(): ?string
+
+    public function getRemainingBalance(): float
     {
-        return $this->totalDebt;
+        return $this->remainingBalance;
     }
 
-    public function setTotalDebt(string $totalDebt): self
+    public function setRemainingBalance(float $remainingBalance): self
     {
-        $this->totalDebt = $totalDebt;
+        $this->remainingBalance = $remainingBalance;
         return $this;
     }
 
-    public function getSavings(): ?string
+
+    public function getBankDebtMenberOne(): float
     {
-        return $this->savings;
+        return $this->bankDebtMenberOne;
     }
 
-    public function setSavings(string $savings): self
+    public function setBankDebtMenberOne(float $bankDebtMenberOne): self
     {
-        $this->savings = $savings;
+        $this->bankDebtMenberOne = $bankDebtMenberOne;
         return $this;
     }
 
-    public function getBalance(): ?string
+    public function getBankDebtMemberTwo(): float
     {
-        return $this->balance;
+        return $this->bankDebtMemberTwo;
     }
 
-    public function setBalance(string $balance): self
+    public function setBankDebtMemberTwo(float $bankDebtMemberTwo): self
     {
-        $this->balance = $balance;
+        $this->bankDebtMemberTwo = $bankDebtMemberTwo;
         return $this;
     }
 
-    public function getNotes(): ?string
+    public function getDebtTotal(): float
     {
-        return $this->notes;
+        return $this->debtTotal;
     }
 
-    public function setNotes(?string $notes): self
+    public function setDebtTotal(float $debtTotal): self
     {
-        $this->notes = $notes;
+        $this->debtTotal = $debtTotal;
         return $this;
     }
 }

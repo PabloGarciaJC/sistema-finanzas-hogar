@@ -15,29 +15,23 @@ class IncomeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Income::class);
     }
+    /**
+     * Devuelve un array con opciones para el select: [ 'Etiqueta' => valor, ... ]
+     * @return array<string, float>
+     */
+    public function getIncomeOptions(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(amount) AS total_amount FROM income';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
 
-    //    /**
-    //     * @return Income[] Returns an array of Income objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('i.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+        $amount = (float) ($row['total_amount'] ?? 0);
 
-    //    public function findOneBySomeField($value): ?Income
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        // Retorna un array simple para usar como opción por defecto (clave = valor)
+        return [$amount => $amount];
+    }
+
+    
 }
