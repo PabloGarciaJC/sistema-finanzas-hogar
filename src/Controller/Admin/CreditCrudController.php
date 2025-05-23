@@ -51,7 +51,8 @@ class CreditCrudController extends AbstractCrudController
                     'Bimestral' => 'Bimestral',
                     'Trimestral' => 'Trimestral',
                     'Anual' => 'Anual',
-                ]),
+                ])
+                ->setFormTypeOption('placeholder', false),
             DateField::new('start_date', 'Fecha de inicio')
                 ->setFormat('MMMM yyyy')
                 ->onlyOnIndex(),
@@ -63,6 +64,7 @@ class CreditCrudController extends AbstractCrudController
                 ->onlyOnForms(),
             ChoiceField::new('year', 'Año')
                 ->setChoices($years)
+                ->setFormTypeOption('data', 2025)
                 ->onlyOnForms(),
             MoneyField::new('total_amount', 'Importe total')->setCurrency('EUR'),
             ChoiceField::new('status', 'Estado')
@@ -70,11 +72,21 @@ class CreditCrudController extends AbstractCrudController
                     'Activo' => 'Activo',
                     'Cancelado' => 'Cancelado',
                 ])
+                ->setFormTypeOption('placeholder', false)
                 ->renderAsBadges([
                     'Activo' => 'success',
                     'Cancelado' => 'secondary',
                 ]),
         ];
+    }
+
+    public function createEntity(string $entityFqcn)
+    {
+        $credit = new Credit();
+        $credit->setStatus('Activo');
+        $credit->setFrequency('Mensual');
+        $credit->setYear(2025);
+        return $credit;
     }
 
     public function configureCrud(Crud $crud): Crud

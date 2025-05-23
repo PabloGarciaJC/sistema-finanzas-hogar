@@ -25,6 +25,9 @@ class Service
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
+    private ?string $status = 'Activo';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,4 +66,18 @@ class Service
         return $this;
     }
 
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $allowed = ['Activo', 'Cancelado'];
+        if (!in_array($status, $allowed)) {
+            throw new \InvalidArgumentException("Invalid status value");
+        }
+        $this->status = $status;
+        return $this;
+    }
 }

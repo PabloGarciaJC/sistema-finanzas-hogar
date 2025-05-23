@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 
 class ServiceCrudController extends AbstractCrudController
 {
@@ -35,16 +36,28 @@ class ServiceCrudController extends AbstractCrudController
             MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
             $pageName === Crud::PAGE_INDEX
                 ? TextField::new('description', 'Descripción')
-                ->formatValue(function ($value, $entity) {
-                    return mb_strimwidth(strip_tags($value), 0, 100, '...');
-                })
-                : TextEditorField::new('description', 'Descripción'),
+                    ->formatValue(function ($value, $entity) {
+                        return mb_strimwidth(strip_tags($value), 0, 100, '...');
+                    })
+                : TextField::new('description', 'Descripción'),
+            ChoiceField::new('status', 'Estado')
+                ->setChoices([
+                    'Activo' => 'Activo',
+                    'Cancelado' => 'Cancelado',
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->renderAsBadges([
+                    'Activo' => 'success',
+                    'Cancelado' => 'secondary',
+                ]),
         ];
     }
 
     public function createEntity(string $entityFqcn)
     {
-        return new Service();
+        $service = new Service();
+        $service->setStatus('Activo'); // ✅ Valor por defecto en la entidad
+        return $service;
     }
 
     public function configureCrud(Crud $crud): Crud
