@@ -22,7 +22,8 @@ class IncomeRepository extends ServiceEntityRepository
     public function getIncomeOptions(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM income';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM income WHERE status = "Activo"';
+
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();

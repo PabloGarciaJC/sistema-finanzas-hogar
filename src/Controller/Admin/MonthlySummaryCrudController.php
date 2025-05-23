@@ -45,7 +45,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
         $defaultCreditMenberTwoValue = ($data = $this->creditRepository->getCreditTotalMemberTwo()) ? reset($data) / 100 : null;
 
         // Calcula el saldo restante restando servicios y crédito del miembro uno a los ingresos, si todos existen
-        $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue - $defaultCreditMenberOneValue - $defaultCreditMenberTwoValue: null;
+        $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue - $defaultCreditMenberOneValue - $defaultCreditMenberTwoValue : null;
 
         // Obtiene el total de servicios del miembro uno, convierte a decimal y almacena en variable intermedia
         $dataTotalMemberOne = $this->serviceRepository->getTotalMemberOne();
@@ -90,14 +90,14 @@ class MonthlySummaryCrudController extends AbstractCrudController
         }
 
         // Campo numérico para Saldo Restante
-    $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')
-    ->setNumDecimals(2)
-    ->setFormTypeOption('mapped', false)
-    ->setDisabled(true);
+        $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')
+            ->setNumDecimals(2)
+            ->setFormTypeOption('mapped', false)
+            ->setDisabled(true);
 
-if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
-    $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
-}
+        if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
+            $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
+        }
 
         // Campo numérico para deuda del miembro uno
         $serviceMemberOneField = NumberField::new('bankDebtMemberOne', 'Importe Banco Pablo')->setNumDecimals(2);
