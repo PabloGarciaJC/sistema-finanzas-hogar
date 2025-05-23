@@ -44,7 +44,6 @@ class IncomeCrudController extends AbstractCrudController
             AssociationField::new('member', 'Miembro'),
             MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
 
-            // Mostrar fecha solo en listado y detalle, en formato "Mes Año"
             DateField::new('date', 'Fecha')
                 ->setFormat('MMMM yyyy')
                 ->onlyOnIndex(),
@@ -53,20 +52,37 @@ class IncomeCrudController extends AbstractCrudController
                 ->setFormat('MMMM yyyy')
                 ->onlyOnDetail(),
 
-            // Campos virtuales para mes y año, solo en formularios
             ChoiceField::new('month', 'Mes')
                 ->setChoices($months)
+                ->setFormTypeOption('data', 1)
                 ->onlyOnForms(),
 
             ChoiceField::new('year', 'Año')
                 ->setChoices($years)
+                ->setFormTypeOption('data', 2025)
                 ->onlyOnForms(),
+
+            ChoiceField::new('status', 'Estado')
+                ->setChoices([
+                    'Activo' => 'Activo',
+                    'Cancelado' => 'Cancelado',
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->renderAsBadges([
+                    'Activo' => 'success',
+                    'Cancelado' => 'secondary',
+                ])
+                ->setFormTypeOption('data', 'Activo'),
         ];
     }
 
     public function createEntity(string $entityFqcn)
     {
-        return new Income();
+        $income = new Income();
+        $income->setStatus('Activo');
+        $income->setMonth(1);
+        $income->setYear(2025);
+        return $income;
     }
 
     public function configureCrud(Crud $crud): Crud

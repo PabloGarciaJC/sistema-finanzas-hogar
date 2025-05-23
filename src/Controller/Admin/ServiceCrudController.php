@@ -56,7 +56,7 @@ class ServiceCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn)
     {
         $service = new Service();
-        $service->setStatus('Activo'); // ✅ Valor por defecto en la entidad
+        $service->setStatus('Activo');
         return $service;
     }
 

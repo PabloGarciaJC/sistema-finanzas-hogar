@@ -24,6 +24,7 @@ final class Version20250518101230 extends AbstractMigration
             member_id INT UNSIGNED NOT NULL,
             amount NUMERIC(12, 2) NOT NULL,
             date DATE NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT \'Active\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         // Agregar la clave foránea

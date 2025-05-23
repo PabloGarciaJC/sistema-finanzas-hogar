@@ -70,7 +70,9 @@ class GoalCrudController extends AbstractCrudController
                     'Trimestral' => 'Trimestral',
                     'Semestral' => 'Semestral',
                     'Anual' => 'Anual',
-                ]),
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->setFormTypeOption('data', 'Mensual'), // Valor por defecto
             DateField::new('startDate', 'Fecha de inicio')
                 ->onlyOnDetail()
                 ->setFormat('MMMM yyyy'),
@@ -96,7 +98,6 @@ class GoalCrudController extends AbstractCrudController
                     'Completed' => 'success',
                     'Canceled' => 'secondary',
                 ]),
-
         ];
     }
 
