@@ -31,8 +31,7 @@ final class Version20250518094728 extends AbstractMigration
             status VARCHAR(20) NOT NULL DEFAULT \'Active\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-
-        // Agregar foreign key para la relación ManyToOne con Member
+         // Agregar la clave foránea
         $this->addSql('ALTER TABLE credit ADD CONSTRAINT FK_CREDIT_MEMBER FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE');
     }
 

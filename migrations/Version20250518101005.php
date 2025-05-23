@@ -30,8 +30,7 @@ final class Version20250518101005 extends AbstractMigration
             status VARCHAR(20) NOT NULL DEFAULT \'In progress\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-
-        // Agregar la clave foránea hacia member con ON DELETE CASCADE
+        // Agregar la clave foránea
         $this->addSql('ALTER TABLE goal ADD CONSTRAINT FK_GOAL_MEMBER FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE');
     }
 

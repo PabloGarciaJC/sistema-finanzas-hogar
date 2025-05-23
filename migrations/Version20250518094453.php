@@ -23,7 +23,6 @@ final class Version20250518094453 extends AbstractMigration
             id INT UNSIGNED AUTO_INCREMENT NOT NULL,
             name VARCHAR(255) NOT NULL,
             company VARCHAR(255) DEFAULT NULL,
-            -- salary NUMERIC(12, 2) NOT NULL,
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
     }
