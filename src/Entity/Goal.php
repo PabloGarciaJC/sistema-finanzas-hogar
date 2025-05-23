@@ -13,7 +13,7 @@ class Goal
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Member::class)]
+    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: "goals")]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Member $member = null;
 
@@ -34,7 +34,6 @@ class Goal
 
     public function __construct()
     {
-        // Inicializamos startDate para evitar errores al acceder antes de setear
         $this->startDate = new \DateTimeImmutable();
     }
 

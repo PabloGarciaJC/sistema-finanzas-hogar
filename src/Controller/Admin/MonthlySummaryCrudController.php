@@ -90,13 +90,17 @@ class MonthlySummaryCrudController extends AbstractCrudController
         }
 
         // Campo numérico para Saldo Restante
-        $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
-            $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
-        }
+    $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')
+    ->setNumDecimals(2)
+    ->setFormTypeOption('mapped', false)
+    ->setDisabled(true);
+
+if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
+    $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
+}
 
         // Campo numérico para deuda del miembro uno
-        $serviceMemberOneField = NumberField::new('bankDebtMenberOne', 'Importe Banco Pablo')->setNumDecimals(2);
+        $serviceMemberOneField = NumberField::new('bankDebtMemberOne', 'Importe Banco Pablo')->setNumDecimals(2);
         if ($pageName === Crud::PAGE_NEW && $defaultServiceMemberOneValue !== null) {
             $serviceMemberOneField->setFormTypeOption('data', $defaultServiceMemberOneValue);
         }
@@ -148,7 +152,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
                 'year',
                 'totalIncome',
                 'remainingBalance',
-                'bankDebtMenberOne',
+                'bankDebtMemberOne',
                 'bankDebtMemberTwo',
             ]);
     }
