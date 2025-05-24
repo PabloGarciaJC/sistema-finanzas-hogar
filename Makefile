@@ -120,6 +120,11 @@ clean-docker:
 	sudo docker volume rm $$(sudo docker volume ls -q) || true
 
 
+.PHONY: npm-dev
+npm-dev:
+	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzas_hogar npm run dev
+
+
 
 # Paso 1: Crear Migracion (Crear la Tabla)
 # Paso 2: Crear la Entidad (se crea el repositorio)
