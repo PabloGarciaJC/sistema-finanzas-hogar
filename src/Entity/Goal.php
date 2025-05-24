@@ -108,9 +108,9 @@ class Goal
 
     public function setStatus(string $status): self
     {
-        $allowed = ['In progress', 'Completed', 'Canceled'];
+        $allowed = ['Activo', 'Cancelado'];
         if (!in_array($status, $allowed)) {
-            throw new \InvalidArgumentException('Invalid status value');
+            throw new \InvalidArgumentException("Invalid status value");
         }
         $this->status = $status;
         return $this;

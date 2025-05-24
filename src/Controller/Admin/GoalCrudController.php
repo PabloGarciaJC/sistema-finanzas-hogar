@@ -89,14 +89,13 @@ class GoalCrudController extends AbstractCrudController
                 ->setFormat('MMMM yyyy'),
             ChoiceField::new('status', 'Estado')
                 ->setChoices([
-                    'En progreso' => 'In progress',
-                    'Completado' => 'Completed',
-                    'Cancelado' => 'Canceled',
+                    'Activo' => 'Activo',
+                    'Cancelado' => 'Cancelado',
                 ])
+                ->setFormTypeOption('placeholder', false)
                 ->renderAsBadges([
-                    'In progress' => 'warning',
-                    'Completed' => 'success',
-                    'Canceled' => 'secondary',
+                    'Activo' => 'success',
+                    'Cancelado' => 'secondary',
                 ]),
         ];
     }
