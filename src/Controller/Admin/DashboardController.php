@@ -11,6 +11,9 @@ use App\Entity\Period;
 use App\Entity\Saving;
 use App\Entity\Service;
 
+
+use App\Entity\User;
+
 use App\Controller\Admin\CreditCrudController;
 use App\Controller\Admin\GoalCrudController;
 use App\Controller\Admin\IncomeCrudController;
@@ -72,6 +75,9 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)
             ->setController(GoalCrudController::class);
+
+
+        yield MenuItem::linkToCrud('Usuarios', 'fas fa-users', User::class)->setController(UserCrudController::class);
 
         // yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)
         //     ->setController(MonthlySummaryCrudController::class);
