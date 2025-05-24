@@ -34,33 +34,24 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Obtener valores predeterminados
         $defaultIncomeValue = $this->getDefaultValue($this->incomeRepository->getIncomeOptions());
         $defaultServiceValue = $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
         $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
         $defaultCreditMemberTwo = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
         $defaultGoalTotalTwo = $this->getDefaultValue($this->goalRepository->getGoalTotal());
-
-        // Calcular saldo restante
-         $defaultRemainingBalance = $defaultIncomeValue - $defaultServiceValue - $defaultCreditMemberOne - $defaultCreditMemberTwo - $defaultGoalTotalTwo;
-
-        // Calcular Deuda Total
+        $defaultRemainingBalance = $defaultIncomeValue - $defaultServiceValue - $defaultCreditMemberOne - $defaultCreditMemberTwo - $defaultGoalTotalTwo;
         $defaultBankDebtTotal = $defaultServiceValue + $defaultCreditMemberOne + $defaultCreditMemberTwo + $defaultGoalTotalTwo;
-
-        // Calcular importes por miembro
         $defaultBankDebtMemberOne = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $defaultCreditMemberOne);
         $defaultBankDebtMemberTwo = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $defaultCreditMemberTwo);
 
-        // Campos
         $fields = [];
 
         $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue);
-        $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal);
-        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, false, true);
+        $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal, true, true);
+        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, true, true);
         $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne);
         $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo);
 
-        // Campo Mes
         $months = array_combine(
             ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
             range(1, 12)
@@ -71,7 +62,6 @@ class MonthlySummaryCrudController extends AbstractCrudController
         }
         $fields[] = $monthField;
 
-        // Campo Año
         $currentYear = (int) date('Y');
         $years = array_combine(range($currentYear - 10, $currentYear + 10), range($currentYear - 10, $currentYear + 10));
         $yearField = ChoiceField::new('year', 'Año')->setChoices($years);
@@ -83,17 +73,11 @@ class MonthlySummaryCrudController extends AbstractCrudController
         return $fields;
     }
 
-    /**
-     * Extrae el primer valor de un arreglo y lo divide entre 100 si es numérico.
-     */
     private function getDefaultValue($data): ?float
     {
         return $data ? reset($data) / 100 : null;
     }
 
-    /**
-     * Calcula la deuda total del miembro sumando servicio y crédito.
-     */
     private function calculateTotalMemberDebt($serviceData, $creditValue): ?float
     {
         $serviceValue = $this->getDefaultValue($serviceData);
@@ -101,14 +85,25 @@ class MonthlySummaryCrudController extends AbstractCrudController
     }
 
     /**
-     * Crea un campo numérico reutilizable.
+     * Crea un campo numérico reutilizable, con opción readonly para mostrar no editable pero enviar datos.
+     *
+     * @param string $name
+     * @param string $label
+     * @param string $pageName
+     * @param float|null $default
+     * @param bool $mapped
+     * @param bool $readonly
+     * @return NumberField
      */
-    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $disabled = false)
+    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false): NumberField
     {
         $field = NumberField::new($name, $label)
             ->setNumDecimals(2)
-            ->setFormTypeOption('mapped', $mapped)
-            ->setDisabled($disabled);
+            ->setFormTypeOption('mapped', $mapped);
+
+        if ($readonly) {
+            $field->setFormTypeOption('attr', ['readonly' => true]);
+        }
 
         if ($pageName === Crud::PAGE_NEW && $default !== null) {
             $field->setFormTypeOption('data', $default);
@@ -116,7 +111,6 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         return $field;
     }
-
 
     public function configureCrud(Crud $crud): Crud
     {

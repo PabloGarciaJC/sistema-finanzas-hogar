@@ -1,31 +1,46 @@
+document.addEventListener('DOMContentLoaded', function () {
+  const incomeInput = document.querySelector('input[name="MonthlySummary[totalIncome]"]');
+  const serviceInput = document.querySelector('input[name="MonthlySummary[debt_total]"]');
+  const creditOneInput = document.querySelector('input[name="MonthlySummary[bankDebtMemberOne]"]');
+  const creditTwoInput = document.querySelector('input[name="MonthlySummary[bankDebtMemberTwo]"]');
+  const goalInput = document.querySelector('input[name="MonthlySummary[goalTotal]"]');
+  const remainingInput = document.querySelector('input[name="MonthlySummary[remainingBalance]"]');
 
-console.log('es una prueba');
+  function parseEuropeanFloat(value) {
+    return parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+  }
 
-
-  const incomeInput = document.querySelector<HTMLInputElement>('input[name="MonthlySummary[totalIncome]"]');
-  const serviceInput = document.querySelector<HTMLInputElement>('input[name="MonthlySummary[debt_total]"]');
-  const creditOneInput = document.querySelector<HTMLInputElement>('input[name="MonthlySummary[bankDebtMemberOne]"]');
-  const creditTwoInput = document.querySelector<HTMLInputElement>('input[name="MonthlySummary[bankDebtMemberTwo]"]');
-  const goalInput = document.querySelector<HTMLInputElement>('input[name="MonthlySummary[goalTotal]"]');
-
-  const remainingInput = document.querySelector<HTMLInputElement>('input[name="MonthlySummary[remainingBalance]"]');
+  function formatToEuropean(value) {
+    return value.toFixed(2).replace('.', ',');
+  }
 
   function recalculate() {
-    const income = parseFloat(incomeInput?.value || "0");
-    const service = parseFloat(serviceInput?.value || "0");
-    const creditOne = parseFloat(creditOneInput?.value || "0");
-    const creditTwo = parseFloat(creditTwoInput?.value || "0");
-    const goal = parseFloat(goalInput?.value || "0");
+    const income = parseEuropeanFloat(incomeInput?.value || "0");
+    const service = parseEuropeanFloat(serviceInput?.value || "0"); // se sobrescribirá abajo
+    const creditOne = parseEuropeanFloat(creditOneInput?.value || "0");
+    const creditTwo = parseEuropeanFloat(creditTwoInput?.value || "0");
+    const goal = parseEuropeanFloat(goalInput?.value || "0");
 
-    const remaining = income - service - creditOne - creditTwo - goal;
+    const newDebtTotal = creditOne + creditTwo + goal;
+
+    // Actualizar deuda total
+    if (serviceInput) {
+      serviceInput.value = formatToEuropean(newDebtTotal);
+    }
+
+    // Calcular saldo restante con el nuevo valor
+    const remaining = income - newDebtTotal;
+
     if (remainingInput) {
-      remainingInput.value = remaining.toFixed(2);
+      remainingInput.value = formatToEuropean(remaining);
     }
   }
 
-  [incomeInput, serviceInput, creditOneInput, creditTwoInput, goalInput].forEach((input) => {
+  // Listeners
+  [incomeInput, creditOneInput, creditTwoInput, goalInput].forEach((input) => {
     input?.addEventListener("input", recalculate);
   });
 
-  // Llama una vez para inicializar
+  // Inicial
   recalculate();
+});
