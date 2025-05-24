@@ -33,55 +33,19 @@ class GoalCrudController extends AbstractCrudController
     {
         $months = $this->getMonthChoices();
         $years = $this->getYearChoices();
-
-        $descriptionField = $pageName === Crud::PAGE_INDEX
-            ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value))
-            : TextEditorField::new('description', 'Descripción');
+        $descriptionField = $pageName === Crud::PAGE_INDEX ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value)) : TextEditorField::new('description', 'Descripción');
 
         return [
+            AssociationField::new('user', 'Familia'),
             AssociationField::new('member', 'Miembro')->setRequired(true),
             $descriptionField,
-
             MoneyField::new('targetAmount', 'Importe')->setCurrency('EUR'),
-
-            ChoiceField::new('frequency', 'Frecuencia')
-                ->setChoices([
-                    'Mensual' => 'Mensual',
-                    'Trimestral' => 'Trimestral',
-                    'Semestral' => 'Semestral',
-                    'Anual' => 'Anual',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->setFormTypeOption('data', 'Mensual'),
-
-            // Fecha como campo separado en forms
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->onlyOnForms(),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->onlyOnForms(),
-
-            // Fecha combinada para index y detalle
-            DateField::new('startDate', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
-
-            DateField::new('startDate', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
-
-            ChoiceField::new('status', 'Estado')
-                ->setChoices([
-                    'Activo' => 'Activo',
-                    'Cancelado' => 'Cancelado',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges([
-                    'Activo' => 'success',
-                    'Cancelado' => 'secondary',
-                ]),
+            ChoiceField::new('frequency', 'Frecuencia')->setChoices(['Mensual' => 'Mensual', 'Trimestral' => 'Trimestral', 'Semestral' => 'Semestral', 'Anual' => 'Anual',])->setFormTypeOption('placeholder', false)->setFormTypeOption('data', 'Mensual'),
+            ChoiceField::new('month', 'Mes')->setChoices($months)->onlyOnForms(),
+            ChoiceField::new('year', 'Año')->setChoices($years)->onlyOnForms(),
+            DateField::new('startDate', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnIndex(),
+            DateField::new('startDate', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnDetail(),
+            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
         ];
     }
 
@@ -124,11 +88,7 @@ class GoalCrudController extends AbstractCrudController
     // Utilidades privadas para claridad y reutilización
     private function getMonthChoices(): array
     {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
+        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
     }
 
     private function getYearChoices(): array

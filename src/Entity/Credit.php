@@ -39,6 +39,10 @@ class Credit
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Active'])]
     private ?string $status = 'Active';
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
     // --- GETTERS Y SETTERS ---
 
     public function getId(): ?int
@@ -165,6 +169,17 @@ class Credit
     {
         $month = $this->startDate ? (int) $this->startDate->format('m') : 1;
         $this->startDate = new \DateTimeImmutable("$year-$month-01");
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 }

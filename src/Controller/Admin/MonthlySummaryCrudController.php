@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
 class MonthlySummaryCrudController extends AbstractCrudController
 {
@@ -34,6 +35,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+
         $defaultIncomeValue = $this->getDefaultValue($this->incomeRepository->getIncomeOptions());
         $defaultServiceValue = $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
         $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
@@ -46,16 +48,15 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         $fields = [];
 
+        $fields[] = AssociationField::new('user', 'Familia');
         $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue);
         $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal, true, true);
         $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, true, true);
         $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne);
         $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo);
 
-        $months = array_combine(
-            ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            range(1, 12)
-        );
+        $months = array_combine(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], range(1, 12));
+        
         $monthField = ChoiceField::new('month', 'Mes')->setChoices($months);
         if ($pageName === Crud::PAGE_NEW) {
             $monthField->setFormTypeOption('data', 1);

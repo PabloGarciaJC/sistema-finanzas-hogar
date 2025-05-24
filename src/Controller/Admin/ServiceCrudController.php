@@ -28,29 +28,14 @@ class ServiceCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $descriptionField = $pageName === Crud::PAGE_INDEX
-            ? TextField::new('description', 'Descripción')
-                ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'))
-            : TextField::new('description', 'Descripción');
+        $descriptionField = $pageName === Crud::PAGE_INDEX ? TextField::new('description', 'Descripción')->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...')) : TextField::new('description', 'Descripción');
 
         return [
+            AssociationField::new('user', 'Familia'),
             AssociationField::new('member', 'Miembro'),
-
-            MoneyField::new('amount', 'Monto')
-                ->setCurrency('EUR'),
-
+            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
             $descriptionField,
-
-            ChoiceField::new('status', 'Estado')
-                ->setChoices([
-                    'Activo' => 'Activo',
-                    'Cancelado' => 'Cancelado',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges([
-                    'Activo' => 'success',
-                    'Cancelado' => 'secondary',
-                ]),
+            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
         ];
     }
 

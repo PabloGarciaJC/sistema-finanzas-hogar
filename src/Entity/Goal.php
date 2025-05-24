@@ -32,6 +32,11 @@ class Goal
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'In progress'])]
     private string $status = 'In progress';
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
+
     public function __construct()
     {
         $this->startDate = new \DateTimeImmutable();
@@ -140,5 +145,22 @@ class Goal
         $month = $this->startDate ? (int) $this->startDate->format('m') : 1;
         $this->startDate = new \DateTimeImmutable("$year-$month-01");
         return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+
+    public function __toString(): string
+    {
+        return $this->name ?? 'Miembro sin nombre';
     }
 }

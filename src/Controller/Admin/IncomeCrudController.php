@@ -32,40 +32,14 @@ class IncomeCrudController extends AbstractCrudController
         $years = $this->getYearChoices();
 
         return [
+            AssociationField::new('user', 'Familia'),
             AssociationField::new('member', 'Miembro'),
-
-            MoneyField::new('amount', 'Monto')
-                ->setCurrency('EUR'),
-
-            DateField::new('date', 'Fecha')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
-
-            DateField::new('date', 'Fecha')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
-
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->setFormTypeOption('data', 1)
-                ->onlyOnForms(),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->setFormTypeOption('data', 2025)
-                ->onlyOnForms(),
-
-            ChoiceField::new('status', 'Estado')
-                ->setChoices([
-                    'Activo' => 'Activo',
-                    'Cancelado' => 'Cancelado',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges([
-                    'Activo' => 'success',
-                    'Cancelado' => 'secondary',
-                ])
-                ->setFormTypeOption('data', 'Activo'),
+            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
+            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnIndex(),
+            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnDetail(),
+            ChoiceField::new('month', 'Mes')->setChoices($months)->setFormTypeOption('data', 1)->onlyOnForms(),
+            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
+            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',])->setFormTypeOption('data', 'Activo'),
         ];
     }
 
@@ -75,7 +49,6 @@ class IncomeCrudController extends AbstractCrudController
         $income->setStatus('Activo');
         $income->setMonth(1);
         $income->setYear(2025);
-
         return $income;
     }
 
@@ -90,11 +63,7 @@ class IncomeCrudController extends AbstractCrudController
     // 🔒 Métodos auxiliares privados para mantener organizado
     private function getMonthChoices(): array
     {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
+        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
     }
 
     private function getYearChoices(): array

@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
 class MemberCrudController extends AbstractCrudController
 {
@@ -19,6 +20,7 @@ class MemberCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            AssociationField::new('user', 'Familia'),
             TextField::new('name', 'Nombre'),
             TextField::new('company', 'Empresa'),
         ];
@@ -29,6 +31,6 @@ class MemberCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Miembro')
             ->setEntityLabelInPlural('Miembros')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Miembros');   
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Miembros');
     }
 }
