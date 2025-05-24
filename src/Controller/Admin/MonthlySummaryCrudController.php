@@ -6,6 +6,7 @@ use App\Entity\MonthlySummary;
 use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\CreditRepository;
+use App\Repository\GoalRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -16,12 +17,14 @@ class MonthlySummaryCrudController extends AbstractCrudController
     private IncomeRepository $incomeRepository;
     private ServiceRepository $serviceRepository;
     private CreditRepository $creditRepository;
+    private GoalRepository $goalRepository;
 
-    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository,)
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository)
     {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
+        $this->goalRepository = $goalRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -36,6 +39,10 @@ class MonthlySummaryCrudController extends AbstractCrudController
         $defaultServiceValue = $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
         $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
         $defaultCreditMemberTwo = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
+
+        $defaultGoalTotalTwo = $this->getDefaultValue($this->goalRepository->getGoalTotal());
+
+        dd($defaultGoalTotalTwo);
 
         // Calcular saldo restante
          $defaultRemainingBalance = $defaultIncomeValue - $defaultServiceValue - $defaultCreditMemberOne - $defaultCreditMemberTwo;

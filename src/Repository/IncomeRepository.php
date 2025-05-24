@@ -23,14 +23,10 @@ class IncomeRepository extends ServiceEntityRepository
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = 'SELECT SUM(amount) AS total_amount FROM income WHERE status = "Activo"';
-
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['total_amount'] ?? 0);
-
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 

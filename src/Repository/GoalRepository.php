@@ -16,28 +16,14 @@ class GoalRepository extends ServiceEntityRepository
         parent::__construct($registry, Goal::class);
     }
 
-    //    /**
-    //     * @return Goal[] Returns an array of Goal objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('g')
-    //            ->andWhere('g.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('g.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Goal
-    //    {
-    //        return $this->createQueryBuilder('g')
-    //            ->andWhere('g.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getGoalTotal(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(target_amount) AS target_amount FROM goal WHERE status = "Activo"';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
+        $amount = (float) ($row['target_amount'] ?? 0);
+        return [$amount => $amount];
+    }
 }

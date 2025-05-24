@@ -19,15 +19,11 @@ class ServiceRepository extends ServiceEntityRepository
     public function getTotalServiceSql(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        // Corregido: WHERE en lugar de AND
         $sql = 'SELECT SUM(amount) AS totalDebt FROM services WHERE status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['totalDebt'] ?? 0);
-
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 
@@ -38,9 +34,7 @@ class ServiceRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['totalDebtMemberOne'] ?? 0);
-
         return [$amount => $amount];
     }
 
@@ -51,9 +45,7 @@ class ServiceRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['totalDebtMemberTwo'] ?? 0);
-
         return [$amount => $amount];
     }
 }
