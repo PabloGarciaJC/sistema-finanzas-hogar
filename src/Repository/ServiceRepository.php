@@ -19,42 +19,33 @@ class ServiceRepository extends ServiceEntityRepository
     public function getTotalServiceSql(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebt FROM services';
+        $sql = 'SELECT SUM(amount) AS totalDebt FROM services WHERE status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['totalDebt'] ?? 0);
-
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 
     public function getTotalMemberOne(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebtMemberOne FROM services WHERE member_id = 1';
+        $sql = 'SELECT SUM(amount) AS totalDebtMemberOne FROM services WHERE member_id = 1 AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['totalDebtMemberOne'] ?? 0);
-
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 
     public function getTotalMemberTwo(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2';
+        $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2 AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['totalDebtMemberTwo'] ?? 0);
-
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 }

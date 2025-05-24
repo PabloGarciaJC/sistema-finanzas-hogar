@@ -6,6 +6,7 @@ use App\Entity\MonthlySummary;
 use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\CreditRepository;
+use App\Repository\GoalRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -16,12 +17,14 @@ class MonthlySummaryCrudController extends AbstractCrudController
     private IncomeRepository $incomeRepository;
     private ServiceRepository $serviceRepository;
     private CreditRepository $creditRepository;
+    private GoalRepository $goalRepository;
 
-    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository,)
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository)
     {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
+        $this->goalRepository = $goalRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -31,111 +34,89 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        // Obtener valores predeterminados
+        $defaultIncomeValue = $this->getDefaultValue($this->incomeRepository->getIncomeOptions());
+        $defaultServiceValue = $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
+        $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
+        $defaultCreditMemberTwo = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
+        $defaultGoalTotalTwo = $this->getDefaultValue($this->goalRepository->getGoalTotal());
 
-        // Obtiene el primer valor de ingresos desde el repositorio y lo convierte a formato decimal (dividiendo entre 100)
-        $defaultIncomeValue = ($data = $this->incomeRepository->getIncomeOptions()) ? reset($data) / 100 : null;
+        // Calcular saldo restante
+         $defaultRemainingBalance = $defaultIncomeValue - $defaultServiceValue - $defaultCreditMemberOne - $defaultCreditMemberTwo - $defaultGoalTotalTwo;
 
-        // Obtiene el total de servicios desde el repositorio y lo convierte a decimal
-        $defaultServiceValue = ($data = $this->serviceRepository->getTotalServiceSql()) ? reset($data) / 100 : null;
+        // Calcular Deuda Total
+        $defaultBankDebtTotal = $defaultServiceValue + $defaultCreditMemberOne + $defaultCreditMemberTwo + $defaultGoalTotalTwo;
 
-        // Obtiene el crédito total del miembro uno y lo convierte a decimal
-        $defaultCreditMenberOneValue = ($data = $this->creditRepository->getCreditTotalMemberOne()) ? reset($data) / 100 : null;
+        // Calcular importes por miembro
+        $defaultBankDebtMemberOne = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $defaultCreditMemberOne);
+        $defaultBankDebtMemberTwo = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $defaultCreditMemberTwo);
 
-        // Obtiene el crédito total del miembro Two y lo convierte a decimal
-        $defaultCreditMenberTwoValue = ($data = $this->creditRepository->getCreditTotalMemberTwo()) ? reset($data) / 100 : null;
+        // Campos
+        $fields = [];
 
-        // Calcula el saldo restante restando servicios y crédito del miembro uno a los ingresos, si todos existen
-        $defaultRemainingBalanceValue = $defaultIncomeValue !== null && $defaultServiceValue !== null ? $defaultIncomeValue - $defaultServiceValue - $defaultCreditMenberOneValue - $defaultCreditMenberTwoValue: null;
+        $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue);
+        $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal);
+        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, false, true);
+        $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne);
+        $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo);
 
-        // Obtiene el total de servicios del miembro uno, convierte a decimal y almacena en variable intermedia
-        $dataTotalMemberOne = $this->serviceRepository->getTotalMemberOne();
-        $serviceMemberOneValue = $dataTotalMemberOne ? reset($dataTotalMemberOne) / 100 : null;
-        if ($serviceMemberOneValue !== null && $defaultCreditMenberOneValue !== null) {
-            $defaultServiceMemberOneValue = $serviceMemberOneValue + $defaultCreditMenberOneValue;
-        }
-
-        // Obtiene el total de servicios del miembro dos, convierte a decimal y almacena en variable intermedia
-        $data = $this->serviceRepository->getTotalMemberTwo();
-        $serviceMemberTwoValue = $data ? reset($data) / 100 : null;
-        if ($serviceMemberTwoValue !== null && $defaultCreditMenberTwoValue !== null) {
-            $defaultServiceMemberTwoValue = $serviceMemberTwoValue + $defaultCreditMenberTwoValue;
-        }
-
-        // Definición de los meses para el campo de selección
-        $months = [
-            'Enero' => 1,
-            'Febrero' => 2,
-            'Marzo' => 3,
-            'Abril' => 4,
-            'Mayo' => 5,
-            'Junio' => 6,
-            'Julio' => 7,
-            'Agosto' => 8,
-            'Septiembre' => 9,
-            'Octubre' => 10,
-            'Noviembre' => 11,
-            'Diciembre' => 12,
-        ];
-
-        // Campo numérico para Ingresos Totales
-        $totalIncomeField = NumberField::new('totalIncome', 'Ingresos Totales')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultIncomeValue !== null) {
-            $totalIncomeField->setFormTypeOption('data', $defaultIncomeValue);
-        }
-
-        // Campo numérico para Deuda Total (servicios)
-        $serviceTotalField = NumberField::new('debt_total', 'Deuda Total')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultServiceValue !== null) {
-            $serviceTotalField->setFormTypeOption('data', $defaultServiceValue);
-        }
-
-        // Campo numérico para Saldo Restante
-        $remainingBalanceField = NumberField::new('remainingBalance', 'Saldo Restante')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultRemainingBalanceValue !== null) {
-            $remainingBalanceField->setFormTypeOption('data', $defaultRemainingBalanceValue);
-        }
-
-        // Campo numérico para deuda del miembro uno
-        $serviceMemberOneField = NumberField::new('bankDebtMenberOne', 'Importe Banco Pablo')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultServiceMemberOneValue !== null) {
-            $serviceMemberOneField->setFormTypeOption('data', $defaultServiceMemberOneValue);
-        }
-
-        // Campo numérico para deuda del miembro dos
-        $serviceMemberTwoField = NumberField::new('bankDebtMemberTwo', 'Importe Banco Vero')->setNumDecimals(2);
-        if ($pageName === Crud::PAGE_NEW && $defaultServiceMemberTwoValue !== null) {
-            $serviceMemberTwoField->setFormTypeOption('data', $defaultServiceMemberTwoValue);
-        }
-
-        // Campo de selección para el mes
+        // Campo Mes
+        $months = array_combine(
+            ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            range(1, 12)
+        );
         $monthField = ChoiceField::new('month', 'Mes')->setChoices($months);
         if ($pageName === Crud::PAGE_NEW) {
             $monthField->setFormTypeOption('data', 1);
         }
+        $fields[] = $monthField;
 
-        // Rango de años para el selector (desde 10 años atrás hasta 10 años adelante)
+        // Campo Año
         $currentYear = (int) date('Y');
-        $years = array_combine(
-            range($currentYear - 10, $currentYear + 10),
-            range($currentYear - 10, $currentYear + 10)
-        );
-
-        // Campo de selección para el año
+        $years = array_combine(range($currentYear - 10, $currentYear + 10), range($currentYear - 10, $currentYear + 10));
         $yearField = ChoiceField::new('year', 'Año')->setChoices($years);
         if ($pageName === Crud::PAGE_NEW) {
             $yearField->setFormTypeOption('data', $currentYear);
         }
+        $fields[] = $yearField;
 
-        return [
-            $totalIncomeField,
-            $serviceTotalField,
-            $remainingBalanceField,
-            $serviceMemberOneField,
-            $serviceMemberTwoField,
-            $monthField,
-            $yearField,
-        ];
+        return $fields;
     }
+
+    /**
+     * Extrae el primer valor de un arreglo y lo divide entre 100 si es numérico.
+     */
+    private function getDefaultValue($data): ?float
+    {
+        return $data ? reset($data) / 100 : null;
+    }
+
+    /**
+     * Calcula la deuda total del miembro sumando servicio y crédito.
+     */
+    private function calculateTotalMemberDebt($serviceData, $creditValue): ?float
+    {
+        $serviceValue = $this->getDefaultValue($serviceData);
+        return ($serviceValue !== null && $creditValue !== null) ? $serviceValue + $creditValue : null;
+    }
+
+    /**
+     * Crea un campo numérico reutilizable.
+     */
+    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $disabled = false)
+    {
+        $field = NumberField::new($name, $label)
+            ->setNumDecimals(2)
+            ->setFormTypeOption('mapped', $mapped)
+            ->setDisabled($disabled);
+
+        if ($pageName === Crud::PAGE_NEW && $default !== null) {
+            $field->setFormTypeOption('data', $default);
+        }
+
+        return $field;
+    }
+
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -148,7 +129,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
                 'year',
                 'totalIncome',
                 'remainingBalance',
-                'bankDebtMenberOne',
+                'bankDebtMemberOne',
                 'bankDebtMemberTwo',
             ]);
     }

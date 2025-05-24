@@ -12,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20250518105633 extends AbstractMigration
 {
- public function getDescription(): string
+    public function getDescription(): string
     {
         return 'Create table services';
     }
@@ -23,11 +23,11 @@ final class Version20250518105633 extends AbstractMigration
             id INT UNSIGNED AUTO_INCREMENT NOT NULL,
             member_id INT UNSIGNED NOT NULL,
             amount NUMERIC(12, 2) NOT NULL,
-            -- date DATE NOT NULL,
             description TEXT NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT \'Active\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-
+        // Agregar la clave foránea
         $this->addSql('ALTER TABLE services ADD CONSTRAINT FK_SERVICES_MEMBER FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE');
     }
 

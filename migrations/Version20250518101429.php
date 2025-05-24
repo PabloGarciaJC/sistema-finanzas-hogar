@@ -11,7 +11,7 @@ final class Version20250518101429 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create table monthly_summary (sin relación con member)';
+        return 'Create table monthly_summary';
     }
 
     public function up(Schema $schema): void
@@ -23,7 +23,7 @@ final class Version20250518101429 extends AbstractMigration
             total_income NUMERIC(12, 2) NOT NULL,
             savings NUMERIC(12, 2) NOT NULL,
             debt_total NUMERIC(12, 2) NOT NULL,
-            bank_debt_menber_one NUMERIC(12, 2) NOT NULL,
+            bank_debt_member_one NUMERIC(12, 2) NOT NULL,
             bank_debt_member_two NUMERIC(12, 2) NOT NULL,
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');

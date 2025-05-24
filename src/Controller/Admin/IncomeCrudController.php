@@ -5,12 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\Income;
 use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 
 class IncomeCrudController extends AbstractCrudController
 {
@@ -28,23 +28,15 @@ class IncomeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $months = [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
-
-        $currentYear = (int) date('Y');
-        $years = [];
-        for ($i = $currentYear - 10; $i <= $currentYear + 10; $i++) {
-            $years[$i] = $i;
-        }
+        $months = $this->getMonthChoices();
+        $years = $this->getYearChoices();
 
         return [
             AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
 
-            // Mostrar fecha solo en listado y detalle, en formato "Mes Año"
+            MoneyField::new('amount', 'Monto')
+                ->setCurrency('EUR'),
+
             DateField::new('date', 'Fecha')
                 ->setFormat('MMMM yyyy')
                 ->onlyOnIndex(),
@@ -53,20 +45,38 @@ class IncomeCrudController extends AbstractCrudController
                 ->setFormat('MMMM yyyy')
                 ->onlyOnDetail(),
 
-            // Campos virtuales para mes y año, solo en formularios
             ChoiceField::new('month', 'Mes')
                 ->setChoices($months)
+                ->setFormTypeOption('data', 1)
                 ->onlyOnForms(),
 
             ChoiceField::new('year', 'Año')
                 ->setChoices($years)
+                ->setFormTypeOption('data', 2025)
                 ->onlyOnForms(),
+
+            ChoiceField::new('status', 'Estado')
+                ->setChoices([
+                    'Activo' => 'Activo',
+                    'Cancelado' => 'Cancelado',
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->renderAsBadges([
+                    'Activo' => 'success',
+                    'Cancelado' => 'secondary',
+                ])
+                ->setFormTypeOption('data', 'Activo'),
         ];
     }
 
     public function createEntity(string $entityFqcn)
     {
-        return new Income();
+        $income = new Income();
+        $income->setStatus('Activo');
+        $income->setMonth(1);
+        $income->setYear(2025);
+
+        return $income;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -75,5 +85,24 @@ class IncomeCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Ingreso')
             ->setEntityLabelInPlural('Ingresos')
             ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos');
+    }
+
+    // 🔒 Métodos auxiliares privados para mantener organizado
+    private function getMonthChoices(): array
+    {
+        return [
+            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
+            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
+            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
+        ];
+    }
+
+    private function getYearChoices(): array
+    {
+        $currentYear = (int) date('Y');
+        return array_combine(
+            range($currentYear - 10, $currentYear + 10),
+            range($currentYear - 10, $currentYear + 10)
+        );
     }
 }

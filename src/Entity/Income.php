@@ -24,6 +24,9 @@ class Income
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
+    private ?string $status = 'Activo';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -85,6 +88,21 @@ class Income
     {
         $month = $this->date ? (int) $this->date->format('m') : 1;
         $this->date = new \DateTimeImmutable("$year-$month-01");
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $allowed = ['Activo', 'Cancelado'];
+        if (!in_array($status, $allowed)) {
+            throw new \InvalidArgumentException("Invalid status value");
+        }
+        $this->status = $status;
         return $this;
     }
 }

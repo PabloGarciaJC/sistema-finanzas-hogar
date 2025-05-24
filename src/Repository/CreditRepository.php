@@ -23,10 +23,7 @@ class CreditRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-
         $amount = (float) ($row['creditMemberOne'] ?? 0);
-
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 
@@ -38,7 +35,6 @@ class CreditRepository extends ServiceEntityRepository
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
         $amount = (float) ($row['creditMemberTwo'] ?? 0);
-        // Retorna un array simple para usar como opción por defecto (clave = valor)
         return [$amount => $amount];
     }
 }
