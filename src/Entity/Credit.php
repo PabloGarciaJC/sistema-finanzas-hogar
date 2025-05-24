@@ -22,7 +22,7 @@ class Credit
     private ?string $bankEntity = null;
 
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
-    private ?string $totalAmount = null;
+    private ?string $totalAmount = '0.00';
 
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $frequency = null;
