@@ -5,15 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\Service;
 use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ServiceCrudController extends AbstractCrudController
 {
@@ -31,15 +28,19 @@ class ServiceCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $descriptionField = $pageName === Crud::PAGE_INDEX
+            ? TextField::new('description', 'Descripción')
+                ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'))
+            : TextField::new('description', 'Descripción');
+
         return [
             AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
-            $pageName === Crud::PAGE_INDEX
-                ? TextField::new('description', 'Descripción')
-                    ->formatValue(function ($value, $entity) {
-                        return mb_strimwidth(strip_tags($value), 0, 100, '...');
-                    })
-                : TextField::new('description', 'Descripción'),
+
+            MoneyField::new('amount', 'Monto')
+                ->setCurrency('EUR'),
+
+            $descriptionField,
+
             ChoiceField::new('status', 'Estado')
                 ->setChoices([
                     'Activo' => 'Activo',
@@ -63,7 +64,7 @@ class ServiceCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Servicios')
+            ->setEntityLabelInSingular('Servicio')
             ->setEntityLabelInPlural('Servicios')
             ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Servicios')
             ->setSearchFields(['description', 'member.name']);
