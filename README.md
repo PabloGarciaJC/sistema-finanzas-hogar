@@ -5,6 +5,7 @@ El **Sistema de Finanzas de Hogar** es una aplicación diseñada para ayudarte a
 ---
 
 ## Demo del Proyecto  
+
 [https://finanzas-hogar.ejemplo.com/login](https://finanzas-hogar.ejemplo.com/login)
 
 ---
@@ -104,8 +105,4 @@ El **Sistema de Finanzas de Hogar** es una aplicación diseñada para ayudarte a
 | **Twitter**  | Proyectos, pensamientos y actualizaciones.                | [Presiona aquí](https://twitter.com/tu-usuario)   |
 
 ---
-
-
-
 > _"El buen manejo de tus finanzas hoy construye la seguridad del mañana."_
-
