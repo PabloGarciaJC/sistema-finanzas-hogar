@@ -13,8 +13,8 @@ body {background-color: #def2ff;}
 .contn-wrapper__form {display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;	width: 100%; max-width: 1200px;}
 .card-body__inf {display: flex; flex-direction: column; justify-content: center;}
 
-@media only screen and(min-width: 768px) and(max-width: 991px),
-only screen and(max-width: 767px) {
+@media only screen and (min-width: 768px) and (max-width: 991px),
+screen and (max-width: 767px) {
 .contn-wrapper__form {grid-template-columns: 1fr; gap: 0px;}
 }
 
