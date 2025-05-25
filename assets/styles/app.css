@@ -1,3 +1,11 @@
 body {
-    background-color: lightgray;
+    background-color: #def2ff;
 }
+.register-link, .credits-link {color: #007bff; font-weight: 600; text-decoration: none; transition: color 0.3s ease, text-decoration 0.3s ease;}
+.register-link:hover, .credits-link:hover {color: #0056b3; text-decoration: underline;}
+.bg-card {background: #ffffa4b8; border: 1px solid #007bff;}
+.user-card {transition: transform 0.3s ease;}
+.user-card:hover {transform: scale(1.05);}
+.user-card.active {border: 1px solid #d1f0ff; background-color: #d1f0ff; box-shadow: 0 0 3px 0 #66b9fb; transition: background-color 0.15s ease-in-out;}
+.select-action {display: inline-block; padding: 5px 10px; border-radius: 5px; font-weight: bold; color: #fff !important; background-color: #007bff; text-decoration: none; transition: background-color 0.3s ease, box-shadow 0.3s ease;}
+.select-action:hover {opacity: 1;}
