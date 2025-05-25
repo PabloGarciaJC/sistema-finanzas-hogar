@@ -44,48 +44,23 @@ class DashboardController extends AbstractDashboardController
 
     public function configureDashboard(): Dashboard
     {
-        return Dashboard::new()
-            ->setTitle('<i class="fas fa-wallet"></i> Finanzas Hogar');
+        return Dashboard::new()->setTitle('<i class="fas fa-wallet"></i> Finanzas Hogar');
     }
 
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-
-        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)
-            ->setController(MonthlySummaryCrudController::class);
-
-        yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)
-            ->setController(MemberCrudController::class);
-
-        yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)
-            ->setController(IncomeCrudController::class);
-
-        // yield MenuItem::linkToCrud('Ahorros', 'fas fa-piggy-bank', Saving::class)
-        //     ->setController(SavingCrudController::class);
-
-        yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)
-            ->setController(ServiceCrudController::class);
-
-        yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)
-            ->setController(CreditCrudController::class);
-
-        // yield MenuItem::linkToCrud('Periodos', 'fas fa-calendar', Period::class)
-        //     ->setController(PeriodCrudController::class);
-
-        yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)
-            ->setController(GoalCrudController::class);
-
-
-        yield MenuItem::linkToCrud('Usuarios', 'fas fa-users', User::class)->setController(UserCrudController::class);
-
-        // yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)
-        //     ->setController(MonthlySummaryCrudController::class);
+        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryCrudController::class);
+        yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberCrudController::class);
+        yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)->setController(IncomeCrudController::class);
+        yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)->setController(ServiceCrudController::class);
+        yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)->setController(CreditCrudController::class);
+        yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)->setController(GoalCrudController::class);
+        yield MenuItem::linkToRoute('Documentación', 'fas fa-book', 'app_admin_documentation');
     }
 
     public function configureAssets(): Assets
     {
-        return Assets::new()
-            ->addWebpackEncoreEntry('admin/monthly-summary');
+        return Assets::new()->addWebpackEncoreEntry('admin/monthly-summary');
     }
 }
