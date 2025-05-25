@@ -15,7 +15,7 @@ body {background-color: #def2ff;}
 
 @media only screen and(min-width: 768px) and(max-width: 991px),
 only screen and(max-width: 767px) {
-.contn-wrapper__form {grid-template-columns: 1fr; gap: 0;}
+.contn-wrapper__form {grid-template-columns: 1fr; gap: 0px;}
 }
 
 /* Documentacion */
