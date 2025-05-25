@@ -126,6 +126,10 @@ npm-dev:
 
 
 
+# git add -f public/build
+# git commit -m "Subiendo archivos compilados de public/build"
+# git push origin master
+
 # Paso 1: Crear Migracion (Crear la Tabla)
 # Paso 2: Crear la Entidad (se crea el repositorio)
 # Paso 3: Crear el Crud con php Easy: php bin/console make:controller Admin/ServiceCrudController
