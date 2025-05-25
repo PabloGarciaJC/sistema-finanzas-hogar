@@ -1,0 +1,649 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block content %}
+
+	<div class="card-body">
+
+		<h2 class="mb-4 mt-4">¿Qué funcionalidades ofrece el Sistema de Finanzas de Hogar?</h2>
+
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+
+			<!-- Autenticación -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-user-check"></i>
+							Autenticación
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Inicio de sesión y registro de usuarios con sistema seguro. Cada usuario tiene acceso individual a sus datos financieros.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Ingresos -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-dollar-sign"></i>
+							Ingresos
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Registra y visualiza tus entradas de dinero. Útil para llevar un control claro de tus fuentes de ingresos.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Ahorros -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-piggy-bank"></i>
+							Ahorros
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Administra tus ahorros. Establece montos reservados mensualmente y lleva un seguimiento de tu crecimiento financiero.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Metas Financieras -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-bullseye"></i>
+							Metas Financieras
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Define objetivos como comprar un coche o pagar una deuda. Controla el progreso hacia tus metas económicas.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Resumen Mensual -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-chart-bar"></i>
+							Resumen Mensual
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Consulta un resumen detallado de tus ingresos, gastos y ahorros mes a mes para evaluar tu salud financiera.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Servicios -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-concierge-bell"></i>
+							Servicios
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Registra y gestiona servicios contratados como agua, luz o internet para llevar control de tus gastos fijos.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Períodos -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-calendar-alt"></i>
+							Períodos
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Organiza la información financiera por períodos (ej. mensual, trimestral) para un análisis estructurado.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Créditos -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-credit-card"></i>
+							Créditos
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Administra deudas o créditos activos, visualiza pagos realizados y saldo pendiente.</p>
+					</div>
+				</div>
+			</div>
+			<!-- Miembros del Hogar -->
+			<div class="col">
+				<div class="card info-card feature-card h-100">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-users"></i>
+							Miembros del Hogar
+						</h3>
+					</div>
+					<div class="card-body-info p-2">
+						<p class="fs-6">Asocia miembros del hogar a los ingresos o gastos, ideal para controlar finanzas familiares.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<h2 class="mb-4 mt-4">Tecnologías Empleadas para el Desarrollo</h2>
+
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+
+			<!-- Symfony -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Symfony</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Framework PHP para desarrollo web robusto y seguro.</p>
+						<div class="mt-auto">
+							<a href="https://symfony.com/doc/current/" target="_blank" class="btn btn-sm">
+								Documentación Backend
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- EasyAdmin -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>EasyAdmin</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Panel de administración para Symfony, agilizando la gestión de datos.</p>
+						<div class="mt-auto">
+							<a href="https://symfony.com/doc/current/bundles/EasyAdminBundle/index.html" target="_blank" class="btn btn-sm">
+								Documentación EasyAdmin
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Doctrine ORM -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Doctrine ORM</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Mapeo objeto-relacional para manejar la base de datos.</p>
+						<div class="mt-auto">
+							<a href="https://www.doctrine-project.org/projects/orm.html" target="_blank" class="btn btn-sm">
+								Documentación Doctrine
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- PHP 8+ -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>PHP 8+</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Lenguaje principal del backend.</p>
+						<div class="mt-auto">
+							<a href="https://www.php.net/manual/es/" target="_blank" class="btn btn-sm">
+								Documentación PHP
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Bootstrap 5 -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Bootstrap 5</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Framework CSS para diseño responsive y componentes UI.</p>
+						<div class="mt-auto">
+							<a href="https://getbootstrap.com/docs/5.0/getting-started/introduction/" target="_blank" class="btn btn-sm">
+								Documentación Bootstrap
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- FontAwesome -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>FontAwesome</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Iconos vectoriales usados en la interfaz.</p>
+						<div class="mt-auto">
+							<a href="https://fontawesome.com/docs" target="_blank" class="btn btn-sm">
+								Documentación FontAwesome
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Twig -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Twig</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Motor de plantillas para renderizado de vistas en Symfony.</p>
+						<div class="mt-auto">
+							<a href="https://twig.symfony.com/doc/3.x/" target="_blank" class="btn btn-sm">
+								Documentación Twig
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- JavaScript -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>JavaScript</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Para interactividad y mejoras UI.</p>
+						<div class="mt-auto">
+							<a href="https://developer.mozilla.org/es/docs/Web/JavaScript" target="_blank" class="btn btn-sm">
+								Documentación JavaScript
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- MySQL / MariaDB -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>MySQL / MariaDB</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Sistema gestor de base de datos relacional.</p>
+						<div class="mt-auto">
+							<a href="https://mariadb.com/kb/en/documentation/" target="_blank" class="btn btn-sm">
+								Documentación MariaDB
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Doctrine Migrations -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Doctrine Migrations</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Control de versiones para esquema de base de datos.</p>
+						<div class="mt-auto">
+							<a href="https://www.doctrine-project.org/projects/migrations.html" target="_blank" class="btn btn-sm">
+								Documentación Migrations
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Composer -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Composer</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Gestión de dependencias en PHP.</p>
+						<div class="mt-auto">
+							<a href="https://getcomposer.org/doc/" target="_blank" class="btn btn-sm">
+								Documentación Composer
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Webpack Encore -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Webpack Encore</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Build tool para assets frontend (JS, CSS).</p>
+						<div class="mt-auto">
+							<a href="https://symfony.com/doc/current/frontend/encore/" target="_blank" class="btn btn-sm">
+								Documentación Webpack Encore
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Git -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Git</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Control de versiones.</p>
+						<div class="mt-auto">
+							<a href="https://git-scm.com/doc" target="_blank" class="btn btn-sm">
+								Documentación Git
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- GitHub -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>GitHub</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Plataforma para hospedaje y colaboración en proyectos con Git.</p>
+						<div class="mt-auto">
+							<a href="https://github.com/" target="_blank" class="btn btn-sm">
+								Visitar GitHub
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Symfony Flex -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Symfony Flex</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Automatización de instalación de paquetes Symfony.</p>
+						<div class="mt-auto">
+							<a href="https://symfony.com/doc/current/setup/flex.html" target="_blank" class="btn btn-sm">
+								Documentación Symfony Flex
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- PHPUnit -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>PHPUnit</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Testing unitario para asegurar calidad del código.</p>
+						<div class="mt-auto">
+							<a href="https://phpunit.de/documentation.html" target="_blank" class="btn btn-sm">
+								Documentación PHPUnit
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Docker -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Docker</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Contenedores para crear entornos aislados y reproducibles.</p>
+						<div class="mt-auto">
+							<a href="https://docs.docker.com/" target="_blank" class="btn btn-sm">
+								Documentación Docker
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Docker Compose -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Docker Compose</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Herramienta para definir y correr aplicaciones Docker multi-contenedor.</p>
+						<div class="mt-auto">
+							<a href="https://docs.docker.com/compose/" target="_blank" class="btn btn-sm">
+								Documentación Docker Compose
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Docker (con WSL) -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Docker (con WSL)</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Uso de Docker en Windows mediante Windows Subsystem for Linux.</p>
+						<div class="mt-auto">
+							<a href="https://docs.docker.com/docker-for-windows/wsl/" target="_blank" class="btn btn-sm">
+								Documentación Docker WSL
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Make -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Make</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Herramienta para automatización de tareas y compilación.</p>
+						<div class="mt-auto">
+							<a href="https://www.gnu.org/software/make/manual/make.html" target="_blank" class="btn btn-sm">
+								Documentación Make
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Linux Mint -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Linux Mint</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Distribución Linux basada en Ubuntu, amigable y estable.</p>
+						<div class="mt-auto">
+							<a href="https://linuxmint.com/documentation.php" target="_blank" class="btn btn-sm">
+								Documentación Linux Mint
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<h2 class="mb-4 mt-4">Contáctame / Sígueme en mis redes sociales</h2>
+
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+			<!-- GitHub -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>GitHub</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Visita mi perfil en GitHub para ver mis proyectos y contribuciones al código abierto.</p>
+						<div class="mt-auto">
+							<a href="https://github.com/PabloGarciaJC" target="_blank" class="btn btn-sm">
+								Visitar GitHub
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Facebook -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Facebook</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Conéctate conmigo en Facebook y mantente al tanto de mis actualizaciones personales y profesionales.</p>
+						<div class="mt-auto">
+							<a href="https://www.facebook.com/PabloGarciaJC" target="_blank" class="btn btn-sm">
+								Visitar Facebook
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- YouTube -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>YouTube</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Visita mi canal de YouTube para ver videos sobre desarrollo web, tutoriales y más.</p>
+						<div class="mt-auto">
+							<a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" target="_blank" class="btn btn-sm">
+								Visitar YouTube
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Página Web -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Página Web</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Visita mi página web personal donde encontrarás más sobre mis proyectos y servicios.</p>
+						<div class="mt-auto">
+							<a href="https://pablogarciajc.com/" target="_blank" class="btn btn-sm">
+								Visitar Página Web
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- LinkedIn -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>LinkedIn</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Conéctate conmigo en LinkedIn para seguir mi carrera profesional y establecer conexiones.</p>
+						<div class="mt-auto">
+							<a href="https://www.linkedin.com/in/pablogarciajc/" target="_blank" class="btn btn-sm">
+								Visitar LinkedIn
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Instagram -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Instagram</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Sigue mi cuenta de Instagram para ver fotos, proyectos y más contenido relacionado con mi trabajo.</p>
+						<div class="mt-auto">
+							<a href="https://www.instagram.com/pablogarciajc/" target="_blank" class="btn btn-sm">
+								Visitar Instagram
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Twitter -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>Twitter</h3>
+					</div>
+					<div class="card-body-info p-2 d-flex flex-column flex-grow-1">
+						<p class="fs-6">Sigue mi cuenta de Twitter para estar al tanto de mis proyectos, pensamientos y actualizaciones.</p>
+						<div class="mt-auto">
+							<a href="https://x.com/PabloGarciaJC?t=lct1gxvE8DkqAr8dgxrHIw&s=09" target="_blank" class="btn btn-sm">
+								Visitar Twitter
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+{% endblock %}
