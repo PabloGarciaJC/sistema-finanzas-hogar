@@ -11,7 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import * as bootstrap from 'bootstrap';
 
-// Inicio de Sesion
+// Inicio de Sesion - Carga de Usuarios en Automatico
 document.addEventListener('DOMContentLoaded', function () {
     const userCards = document.querySelectorAll('.user-card');
     const form = document.getElementById('login-form');
