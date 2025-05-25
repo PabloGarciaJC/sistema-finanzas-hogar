@@ -7,10 +7,17 @@ use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\CreditRepository;
 use App\Repository\GoalRepository;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
 class MonthlySummaryCrudController extends AbstractCrudController
 {
@@ -39,23 +46,24 @@ class MonthlySummaryCrudController extends AbstractCrudController
         $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
         $defaultCreditMemberTwo = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
         $defaultGoalTotalTwo = $this->getDefaultValue($this->goalRepository->getGoalTotal());
+
         $defaultRemainingBalance = $defaultIncomeValue - $defaultServiceValue - $defaultCreditMemberOne - $defaultCreditMemberTwo - $defaultGoalTotalTwo;
         $defaultBankDebtTotal = $defaultServiceValue + $defaultCreditMemberOne + $defaultCreditMemberTwo + $defaultGoalTotalTwo;
+
         $defaultBankDebtMemberOne = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $defaultCreditMemberOne);
         $defaultBankDebtMemberTwo = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $defaultCreditMemberTwo);
 
         $fields = [];
 
+        $fields[] = AssociationField::new('user', 'Familia')->hideOnForm();
         $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue);
         $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal, true, true);
         $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, true, true);
         $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne);
         $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo);
 
-        $months = array_combine(
-            ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            range(1, 12)
-        );
+        $months = array_combine(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], range(1, 12));
+
         $monthField = ChoiceField::new('month', 'Mes')->setChoices($months);
         if ($pageName === Crud::PAGE_NEW) {
             $monthField->setFormTypeOption('data', 1);
@@ -73,6 +81,35 @@ class MonthlySummaryCrudController extends AbstractCrudController
         return $fields;
     }
 
+    public function createEntity(string $entityFqcn)
+    {
+        $entity = new MonthlySummary();
+        $entity->setUser($this->getUser());
+        return $entity;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Resumen Mensual')
+            ->setEntityLabelInPlural('Resumen Mensuales')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Resumen Mensual')
+            ->setSearchFields(['month', 'year', 'totalIncome', 'remainingBalance', 'bankDebtMemberOne', 'bankDebtMemberTwo',]);
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $user = $this->getUser();
+        if ($user) {
+            $qb->andWhere('entity.user = :currentUser')
+                ->setParameter('currentUser', $user);
+        }
+
+        return $qb;
+    }
+
     private function getDefaultValue($data): ?float
     {
         return $data ? reset($data) / 100 : null;
@@ -84,17 +121,6 @@ class MonthlySummaryCrudController extends AbstractCrudController
         return ($serviceValue !== null && $creditValue !== null) ? $serviceValue + $creditValue : null;
     }
 
-    /**
-     * Crea un campo numérico reutilizable, con opción readonly para mostrar no editable pero enviar datos.
-     *
-     * @param string $name
-     * @param string $label
-     * @param string $pageName
-     * @param float|null $default
-     * @param bool $mapped
-     * @param bool $readonly
-     * @return NumberField
-     */
     private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false): NumberField
     {
         $field = NumberField::new($name, $label)
@@ -110,21 +136,5 @@ class MonthlySummaryCrudController extends AbstractCrudController
         }
 
         return $field;
-    }
-
-    public function configureCrud(Crud $crud): Crud
-    {
-        return $crud
-            ->setEntityLabelInSingular('Resumen Mensual')
-            ->setEntityLabelInPlural('Resumen Mensuales')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Resumen Mensual')
-            ->setSearchFields([
-                'month',
-                'year',
-                'totalIncome',
-                'remainingBalance',
-                'bankDebtMemberOne',
-                'bankDebtMemberTwo',
-            ]);
     }
 }

@@ -10,6 +10,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 
 class CreditCrudController extends AbstractCrudController
 {
@@ -23,53 +28,19 @@ class CreditCrudController extends AbstractCrudController
         // Opciones para los campos de selección
         $months = $this->getMonthChoices();
         $years = $this->getYearChoices();
-
+        $user = $this->getUser();
         return [
+          AssociationField::new('user', 'Familia')->hideOnForm(),
             AssociationField::new('member'),
             TextField::new('bank_entity', 'Banco'),
-
-            MoneyField::new('monthly_payment', 'Importe')
-                ->setCurrency('EUR'),
-
-            ChoiceField::new('frequency', 'Frecuencia')
-                ->setChoices([
-                    'Mensual' => 'Mensual',
-                    'Bimestral' => 'Bimestral',
-                    'Trimestral' => 'Trimestral',
-                    'Anual' => 'Anual',
-                ])
-                ->setFormTypeOption('placeholder', false),
-
-            DateField::new('start_date', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
-
-            DateField::new('start_date', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
-
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->onlyOnForms(),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->setFormTypeOption('data', 2025)
-                ->onlyOnForms(),
-
-            MoneyField::new('total_amount', 'Importe total')
-                ->setCurrency('EUR'),
-
-            ChoiceField::new('status', 'Estado')
-                ->setChoices([
-                    'Activo' => 'Activo',
-                    'Cancelado' => 'Cancelado',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges([
-                    'Activo' => 'success',
-                    'Cancelado' => 'secondary',
-                ]),
+            MoneyField::new('monthly_payment', 'Importe')->setCurrency('EUR'),
+            ChoiceField::new('frequency', 'Frecuencia')->setChoices(['Mensual' => 'Mensual', 'Bimestral' => 'Bimestral', 'Trimestral' => 'Trimestral', 'Anual' => 'Anual',])->setFormTypeOption('placeholder', false),
+            DateField::new('start_date', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnIndex(),
+            DateField::new('start_date', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnDetail(),
+            ChoiceField::new('month', 'Mes')->setChoices($months)->onlyOnForms(),
+            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
+            MoneyField::new('total_amount', 'Importe total')->setCurrency('EUR'),
+            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
         ];
     }
 
@@ -79,7 +50,7 @@ class CreditCrudController extends AbstractCrudController
         $credit->setStatus('Activo');
         $credit->setFrequency('Mensual');
         $credit->setYear(2025);
-
+         $credit->setUser($this->getUser()); 
         return $credit;
     }
 
@@ -92,13 +63,23 @@ class CreditCrudController extends AbstractCrudController
             ->setSearchFields(['member.name', 'bankEntity', 'status']);
     }
 
+    // Filtrar la lista para mostrar solo créditos del usuario logueado
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $user = $this->getUser();
+        if ($user) {
+            $qb->andWhere('entity.user = :currentUser')
+               ->setParameter('currentUser', $user);
+        }
+
+        return $qb;
+    }
+
     private function getMonthChoices(): array
     {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
+        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
     }
 
     private function getYearChoices(): array

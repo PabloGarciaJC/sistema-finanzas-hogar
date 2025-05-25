@@ -33,6 +33,10 @@ class Member
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Goal::class, orphanRemoval: true)]
     private Collection $goals;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->incomes = new ArrayCollection();
@@ -168,8 +172,20 @@ class Member
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
     public function __toString(): string
     {   
         return $this->name ?? 'Miembro sin nombre';
     }
+    
 }

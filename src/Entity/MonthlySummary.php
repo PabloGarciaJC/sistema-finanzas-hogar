@@ -34,6 +34,10 @@ class MonthlySummary
     #[ORM\Column(type: "float", nullable: true)]
     private ?float $bankDebtMemberTwo = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,5 +123,16 @@ class MonthlySummary
     public function getRemainingBalance(): float
     {
         return ($this->totalIncome ?? 0) - ($this->debtTotal ?? 0) - ($this->savings ?? 0);
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
     }
 }

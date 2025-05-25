@@ -28,6 +28,10 @@ class Service
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
     private ?string $status = 'Activo';
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -78,6 +82,17 @@ class Service
             throw new \InvalidArgumentException("Invalid status value");
         }
         $this->status = $status;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 }

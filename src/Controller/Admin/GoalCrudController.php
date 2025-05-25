@@ -5,9 +5,14 @@ namespace App\Controller\Admin;
 use App\Entity\Goal;
 use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -33,56 +38,29 @@ class GoalCrudController extends AbstractCrudController
     {
         $months = $this->getMonthChoices();
         $years = $this->getYearChoices();
-
-        $descriptionField = $pageName === Crud::PAGE_INDEX
-            ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value))
-            : TextEditorField::new('description', 'Descripción');
+        $descriptionField = $pageName === Crud::PAGE_INDEX ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value)) : TextEditorField::new('description', 'Descripción');
 
         return [
+            AssociationField::new('user', 'Familia')->hideOnForm(),
             AssociationField::new('member', 'Miembro')->setRequired(true),
             $descriptionField,
-
             MoneyField::new('targetAmount', 'Importe')->setCurrency('EUR'),
-
-            ChoiceField::new('frequency', 'Frecuencia')
-                ->setChoices([
-                    'Mensual' => 'Mensual',
-                    'Trimestral' => 'Trimestral',
-                    'Semestral' => 'Semestral',
-                    'Anual' => 'Anual',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->setFormTypeOption('data', 'Mensual'),
-
-            // Fecha como campo separado en forms
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->onlyOnForms(),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->onlyOnForms(),
-
-            // Fecha combinada para index y detalle
-            DateField::new('startDate', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
-
-            DateField::new('startDate', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
-
-            ChoiceField::new('status', 'Estado')
-                ->setChoices([
-                    'Activo' => 'Activo',
-                    'Cancelado' => 'Cancelado',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges([
-                    'Activo' => 'success',
-                    'Cancelado' => 'secondary',
-                ]),
+            ChoiceField::new('frequency', 'Frecuencia')->setChoices(['Mensual' => 'Mensual', 'Trimestral' => 'Trimestral', 'Semestral' => 'Semestral', 'Anual' => 'Anual',])->setFormTypeOption('placeholder', false)->setFormTypeOption('data', 'Mensual'),
+            ChoiceField::new('month', 'Mes')->setChoices($months)->onlyOnForms(),
+            ChoiceField::new('year', 'Año')->setChoices($years)->onlyOnForms(),
+            DateField::new('startDate', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnIndex(),
+            DateField::new('startDate', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnDetail(),
+            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
         ];
+    }
+
+    public function createEntity(string $entityFqcn)
+    {
+        $goal = new Goal();
+        $goal->setUser($this->getUser());
+        $goal->setStatus('Activo');
+        $goal->setFrequency('Mensual');
+        return $goal;
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
@@ -121,14 +99,22 @@ class GoalCrudController extends AbstractCrudController
             ->setSearchFields(['member.name', 'description', 'status']);
     }
 
-    // Utilidades privadas para claridad y reutilización
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $user = $this->getUser();
+        if ($user) {
+            $qb->andWhere('entity.user = :currentUser')
+               ->setParameter('currentUser', $user);
+        }
+
+        return $qb;
+    }
+
     private function getMonthChoices(): array
     {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
+        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
     }
 
     private function getYearChoices(): array

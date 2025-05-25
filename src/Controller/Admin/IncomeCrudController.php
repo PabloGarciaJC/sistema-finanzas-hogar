@@ -5,8 +5,13 @@ namespace App\Controller\Admin;
 use App\Entity\Income;
 use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -32,40 +37,14 @@ class IncomeCrudController extends AbstractCrudController
         $years = $this->getYearChoices();
 
         return [
+            AssociationField::new('user', 'Familia')->hideOnForm(),
             AssociationField::new('member', 'Miembro'),
-
-            MoneyField::new('amount', 'Monto')
-                ->setCurrency('EUR'),
-
-            DateField::new('date', 'Fecha')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
-
-            DateField::new('date', 'Fecha')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
-
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->setFormTypeOption('data', 1)
-                ->onlyOnForms(),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->setFormTypeOption('data', 2025)
-                ->onlyOnForms(),
-
-            ChoiceField::new('status', 'Estado')
-                ->setChoices([
-                    'Activo' => 'Activo',
-                    'Cancelado' => 'Cancelado',
-                ])
-                ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges([
-                    'Activo' => 'success',
-                    'Cancelado' => 'secondary',
-                ])
-                ->setFormTypeOption('data', 'Activo'),
+            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
+            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnIndex(),
+            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnDetail(),
+            ChoiceField::new('month', 'Mes')->setChoices($months)->setFormTypeOption('data', 1)->onlyOnForms(),
+            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
+            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])->setFormTypeOption('data', 'Activo'),
         ];
     }
 
@@ -75,8 +54,23 @@ class IncomeCrudController extends AbstractCrudController
         $income->setStatus('Activo');
         $income->setMonth(1);
         $income->setYear(2025);
-
+        $income->setUser($this->getUser());
         return $income;
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Income) {
+            return;
+        }
+
+        // Calcular fecha combinando mes y año
+        if ($entityInstance->getMonth() && $entityInstance->getYear()) {
+            $date = \DateTime::createFromFormat('Y-n-j', "{$entityInstance->getYear()}-{$entityInstance->getMonth()}-1");
+            $entityInstance->setDate($date);
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -87,7 +81,19 @@ class IncomeCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos');
     }
 
-    // 🔒 Métodos auxiliares privados para mantener organizado
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $user = $this->getUser();
+        if ($user) {
+            $qb->andWhere('entity.user = :currentUser')
+               ->setParameter('currentUser', $user);
+        }
+
+        return $qb;
+    }
+
     private function getMonthChoices(): array
     {
         return [
