@@ -2,20 +2,22 @@
 {% block title %}Log in!
 {% endblock %}
 {% block body %}
+
+
 	<div class="contn-wrapper">
 		<div class="contn-wrapper__form">
 			<div class="card w-100 mb-3">
 				<div class="card-body card-body__inf">
 					<div class="card bg-warning-soft p-4 bg-card">
-						<h1 class="text-center fs-4 fw-bold text-dark">Información Importante</h1>
+						<span class="text-center form__title">Información Importante</span>
 						<p class="text-center mt-3">Estos usuarios son ficticios y están disponibles solo para pruebas.</p>
 					</div>
 					<div class="d-flex justify-content-center align-items-center flex-wrap mt-4">
-						<h2 class="text-center fs-4 fw-bold text-dark w-100 mb-3">Selecciona un usuario</h2>
+						<h2 class="text-center form__title w-100 mb-3">Selecciona un usuario</h2>
 						<div class="row row-cols-1 row-cols-md-2 g-4 text-center w-100">
 							{% set users = [
-                                    {'name': 'Usuario Prueba 1', 'email': 'user1@pablogarciajc.com', 'password': 'password'},
-                                    {'name': 'Usuario Prueba 2', 'email': 'user2@pablogarciajc.com', 'password': 'password'},
+                                    {'name': 'Usuario Prueba 1', 'email': 'user1@user.com', 'password': 'password'},
+                                    {'name': 'Usuario Prueba 2', 'email': 'user2@user.com', 'password': 'password'},
                                 ] %}
 							{% for user in users %}
 								<div class="col">
@@ -37,15 +39,13 @@
 			</div>
 			<div class="card w-100 mb-3">
 				<div class="card-body d-flex flex-column align-items-center">
-					<div class="">
-						<h1 class="text-center fs-4 fw-bold text-dark">Ingrese a su cuenta</h1>
-						<p class="text-center small">Indique email y contraseña para iniciar sesión</p>
+					<div class="text-center">
+						<span class="form__title">Ingrese a su cuenta</span>
+						<p class="small">Indique email y contraseña para iniciar sesión</p>
 					</div>
-
 					{% if error %}
 						<div class="alert alert-danger w-100">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 					{% endif %}
-
 					{% if app.user %}
 						<div class="mb-3 w-100">
 							You are logged in as
@@ -53,11 +53,10 @@
 							<a href="{{ path('app_logout') }}">Logout</a>
 						</div>
 					{% endif %}
-
 					<form method="post" id="login-form" style="width: 100%;">
 						<label for="inputEmail">Email</label>
 						<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control mb-3" autocomplete="email" required autofocus>
-						<label for="inputPassword">Password</label>
+						<label for="inputPassword">Contraseña</label>
 						<input type="password" name="password" id="inputPassword" class="form-control mb-3" autocomplete="current-password" required>
 						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 						<div class="form-check mb-3">
@@ -85,3 +84,5 @@
 		</div>
 	</div>
 {% endblock %}
+
+
