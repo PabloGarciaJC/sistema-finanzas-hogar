@@ -1,24 +1,14 @@
-/*
- * Welcome to your app's main JavaScript file!
- *
- * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
- */
-
-// any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
-import * as bootstrap from 'bootstrap';
-
-// Inicio de Sesion - Carga de Usuarios en Automatico
 document.addEventListener('DOMContentLoaded', function () {
     const userCards = document.querySelectorAll('.user-card');
     const form = document.getElementById('login-form');
     const emailInput = document.getElementById('inputEmail');
     const passwordInput = document.getElementById('inputPassword');
     const loadingIndicator = document.getElementById('loading-indicator');
+
+    //  Siempre ocultamos el loader al cargar
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+    }
 
     userCards.forEach(card => {
         const selectLink = card.querySelector('.select-action');
