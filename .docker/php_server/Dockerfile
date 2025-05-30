@@ -55,12 +55,6 @@
     COPY . /var/www/html
 
     ## ---------------------------------------------------------
-    ## Añadir node_modules/.bin al PATH (para que funcione "encore")
-    ## ---------------------------------------------------------
-  
-    ENV PATH="/var/www/html/node_modules/.bin:${PATH}"
-        
-    ## ---------------------------------------------------------
     ## Copiar y habilitar la configuración de Apache
     ## ---------------------------------------------------------
         
