@@ -120,7 +120,11 @@ clean-docker:
 	sudo docker rmi -f $$(sudo docker images -q) || true
 	sudo docker volume rm $$(sudo docker volume ls -q) || true
 
-
 .PHONY: npm-dev
 npm-dev:
 	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzas_hogar npm run dev
+
+.PHONY: cache-prod
+cache-prod:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console cache:clear --env=prod
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console cache:warmup --env=prod
