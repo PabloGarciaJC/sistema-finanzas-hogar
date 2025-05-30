@@ -1,3 +1,9 @@
+// Importá tus estilos CSS para que se incluyan en el build
+import './styles/app.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const userCards = document.querySelectorAll('.user-card');
     const form = document.getElementById('login-form');

@@ -126,5 +126,15 @@ npm-dev:
 
 .PHONY: cache-prod
 cache-prod:
+	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzas_hogar npm run build
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console cache:clear --env=prod
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console cache:warmup --env=prod
+
+
+
+# # 1. Generar assets para producción
+# npm run build
+
+# # 2. Limpiar cache en prod y calentar cache
+# php bin/console cache:clear --env=prod
+# php bin/console cache:warmup --env=prod

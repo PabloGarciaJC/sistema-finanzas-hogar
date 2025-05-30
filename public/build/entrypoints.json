@@ -2,14 +2,18 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.9b90c2b9.js",
+        "/build/runtime.01d89035.js",
         "/build/542.c63b5a78.js",
-        "/build/app.40806977.js"
+        "/build/app.859b8d90.js"
+      ],
+      "css": [
+        "/build/512.d7ab1e96.css",
+        "/build/app.ed5f20b0.css"
       ]
     },
     "admin/monthly-summary": {
       "js": [
-        "/build/runtime.9b90c2b9.js",
+        "/build/runtime.01d89035.js",
         "/build/542.c63b5a78.js",
         "/build/admin/monthly-summary.a4bd8031.js"
       ]
