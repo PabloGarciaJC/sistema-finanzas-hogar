@@ -130,11 +130,8 @@ cache-prod:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console cache:clear --env=prod
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console cache:warmup --env=prod
 
-
-
-# # 1. Generar assets para producción
-# npm run build
-
-# # 2. Limpiar cache en prod y calentar cache
-# php bin/console cache:clear --env=prod
-# php bin/console cache:warmup --env=prod
+.PHONY: push-build
+push-build:
+	git add -f public/build
+	git commit -m "Agrego assets compilados para producción"
+	git push origin master
