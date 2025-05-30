@@ -36,7 +36,8 @@
         tzdata \
         curl \
         sudo \
-        nodejs npm && \
+        nodejs \
+        npm && \
         ln -fs /usr/share/zoneinfo/Europe/Madrid /etc/localtime && \
         dpkg-reconfigure -f noninteractive tzdata && \
         docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg && \
@@ -45,12 +46,19 @@
         a2enmod rewrite && \
         apt-get clean && rm -rf /var/lib/apt/lists/* && \
         curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+
         
     ## ---------------------------------------------------------
     ## Copiar el contenido de la aplicación
     ## ---------------------------------------------------------
         
     COPY . /var/www/html
+
+    ## ---------------------------------------------------------
+    ## Añadir node_modules/.bin al PATH (para que funcione "encore")
+    ## ---------------------------------------------------------
+  
+    ENV PATH="/var/www/html/node_modules/.bin:${PATH}"
         
     ## ---------------------------------------------------------
     ## Copiar y habilitar la configuración de Apache

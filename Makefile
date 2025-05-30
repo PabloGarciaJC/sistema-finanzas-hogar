@@ -20,6 +20,7 @@ permissions:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 public
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar chmod -R 777 templates
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer install
+	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzas_hogar npm install
 
 .PHONY: create-symlink
 create-symlink:
@@ -123,13 +124,3 @@ clean-docker:
 .PHONY: npm-dev
 npm-dev:
 	$(DOCKER_COMPOSE) exec --user pablogarciajc php_apache_finanzas_hogar npm run dev
-
-
-
-# git add -f public/build
-# git commit -m "Subiendo archivos compilados de public/build"
-# git push origin master
-
-# Paso 1: Crear Migracion (Crear la Tabla)
-# Paso 2: Crear la Entidad (se crea el repositorio)
-# Paso 3: Crear el Crud con php Easy: php bin/console make:controller Admin/ServiceCrudController
