@@ -1,6 +1,10 @@
 # Sistema de Finanzas de Hogar
 
-El **Sistema de Finanzas de Hogar** es una aplicación diseñada para ayudarte a administrar tus finanzas personales y familiares de forma sencilla y segura, facilitando el control de ingresos, gastos, ahorros y metas financieras.
+El **Sistema de Finanzas de Hogar** es una aplicación desarrollada con el paquete **EasyAdmin** para **Symfony**, diseñada para ayudarte a administrar tus finanzas personales y familiares de forma sencilla y segura.
+
+Este sistema facilita el control y seguimiento de ingresos, gastos, ahorros y metas financieras, ofreciendo una interfaz amigable y funcionalidades robustas para la gestión financiera diaria.
+
+El proyecto está pensado como una solución práctica para aprender y aplicar conceptos de administración de datos, seguridad y experiencia de usuario en aplicaciones web.
 
 ---
 
