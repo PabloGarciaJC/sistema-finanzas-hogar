@@ -19,6 +19,7 @@ final class Version20250518094452 extends AbstractMigration
         $this->addSql('CREATE TABLE user (
             id INT UNSIGNED AUTO_INCREMENT NOT NULL,
             email VARCHAR(180) NOT NULL UNIQUE,
+            alias VARCHAR(255) NOT NULL,
             roles JSON NOT NULL,
             password VARCHAR(255) NOT NULL,
             PRIMARY KEY(id)
