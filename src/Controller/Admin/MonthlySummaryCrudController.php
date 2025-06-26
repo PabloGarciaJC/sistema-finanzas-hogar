@@ -7,7 +7,6 @@ use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\CreditRepository;
 use App\Repository\GoalRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -46,21 +45,20 @@ class MonthlySummaryCrudController extends AbstractCrudController
         $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
         $defaultCreditMemberTwo = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
         $defaultGoalTotalTwo = $this->getDefaultValue($this->goalRepository->getGoalTotal());
-
         $defaultRemainingBalance = $defaultIncomeValue - $defaultServiceValue - $defaultCreditMemberOne - $defaultCreditMemberTwo - $defaultGoalTotalTwo;
         $defaultBankDebtTotal = $defaultServiceValue + $defaultCreditMemberOne + $defaultCreditMemberTwo + $defaultGoalTotalTwo;
-
         $defaultBankDebtMemberOne = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $defaultCreditMemberOne);
         $defaultBankDebtMemberTwo = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $defaultCreditMemberTwo);
 
         $fields = [];
 
         $fields[] = AssociationField::new('user', 'Familia')->hideOnForm();
-        $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue);
+        // Aquí los campos de solo lectura:
+        $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue, true, true);
         $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal, true, true);
         $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, true, true);
-        $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne);
-        $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo);
+        $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne, true, true);
+        $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo, true, true);
 
         $months = array_combine(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], range(1, 12));
 
@@ -125,7 +123,8 @@ class MonthlySummaryCrudController extends AbstractCrudController
     {
         $field = NumberField::new($name, $label)
             ->setNumDecimals(2)
-            ->setFormTypeOption('mapped', $mapped);
+            ->setFormTypeOption('mapped', $mapped)
+            ->setFormTypeOption('grouping', true);
 
         if ($readonly) {
             $field->setFormTypeOption('attr', ['readonly' => true]);

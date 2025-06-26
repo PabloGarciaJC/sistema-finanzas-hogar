@@ -100,16 +100,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)->setController(ServiceCrudController::class);
         yield MenuItem::linkToCrud('Pago al contado', 'fas fa-credit-card', SingleCreditPayment::class)->setController(SingleCreditPaymentController::class);
         yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)->setController(CreditCrudController::class);
-
-
-
-
-   
-
- 
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)->setController(GoalCrudController::class);
         yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberCrudController::class);
-
         yield MenuItem::linkToRoute('Documentación', 'fas fa-book', 'app_admin_documentation');
     }
 
