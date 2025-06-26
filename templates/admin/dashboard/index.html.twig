@@ -7,16 +7,17 @@
         </section>
 
         <section id="main" class="content-body">
+        
             {% set tarjetas = [
-            {'label': 'Miembros', 'value': totalMiembros, 'icon': 'fas fa-users', 'color': '#4e73df'},
-            {'label': 'Ingresos', 'value': totalIngresos, 'icon': 'fas fa-dollar-sign', 'color': '#1cc88a'},
-            {'label': 'Créditos', 'value': totalCreditos, 'icon': 'fas fa-money-bill', 'color': '#e0a800'},
-            {'label': 'Servicios', 'value': totalServicios, 'icon': 'fas fa-briefcase', 'color': '#17a2b8'},
-            {'label': 'Metas', 'value': totalMetas, 'icon': 'fas fa-bullseye', 'color': '#6f42c1'},
-            {'label': 'Ahorros', 'value': totalAhorros, 'icon': 'fas fa-piggy-bank', 'color': '#fd7e14'},
-            {'label': 'Pagos al Contado', 'value': totalPagosAlContado, 'icon': 'fas fa-credit-card', 'color': '#00bcd4'},
-            {'label': 'Gastos Anuales', 'value': 100, 'icon': 'fas fa-chart-pie', 'color': '#e74a3b'}
-        ] %}
+                {'label': 'Miembros', 'value': totalMiembros, 'icon': 'fas fa-users', 'color': '#4e73df'},
+                {'label': 'Ingresos', 'value': totalIngresos, 'icon': 'fas fa-dollar-sign', 'color': '#1cc88a'},
+                {'label': 'Créditos', 'value': totalCreditos, 'icon': 'fas fa-money-bill', 'color': '#e0a800'},
+                {'label': 'Servicios', 'value': totalServicios, 'icon': 'fas fa-briefcase', 'color': '#17a2b8'},
+                {'label': 'Metas', 'value': totalMetas, 'icon': 'fas fa-bullseye', 'color': '#6f42c1'},
+                {'label': 'Ahorros', 'value': totalAhorros, 'icon': 'fas fa-piggy-bank', 'color': '#fd7e14'},
+                {'label': 'Pagos al Contado', 'value': totalPagosAlContado, 'icon': 'fas fa-credit-card', 'color': '#00bcd4'},
+                {'label': 'Gastos Anuales', 'value': 100, 'icon': 'fas fa-chart-pie', 'color': '#e74a3b'}
+            ] %}
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-5">
                 {% for item in tarjetas %}
