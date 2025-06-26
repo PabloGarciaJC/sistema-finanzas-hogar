@@ -91,7 +91,6 @@ sync-metadata:
 ## Gestión de Contenedores
 ## ---------------------------------------------------------
 
-# si sebe de crear una condicional para verificar que si ya existe urls. no la ejecute dos veces
 .PHONY: up 
 up:
 	$(DOCKER_COMPOSE) up -d

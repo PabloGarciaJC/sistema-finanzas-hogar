@@ -20,10 +20,7 @@ use App\Controller\Admin\GoalCrudController;
 use App\Controller\Admin\IncomeCrudController;
 use App\Controller\Admin\MemberCrudController;
 use App\Controller\Admin\MonthlySummaryCrudController;
-use App\Controller\Admin\PeriodCrudController;
 use App\Controller\Admin\ServiceCrudController;
-use App\Controller\Admin\SingleCreditPaymentCrudController;
-
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -35,14 +32,28 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-    public function index(): Response
-    {
-        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+   public function index(): Response
+{
+    $totalMiembros = 10;
+    $totalIngresos = 25;
+    $totalCreditos = 10;
+    $totalServicios = 8;
+    $totalMetas = 5;
+    $totalAhorros = 12;
+    $totalPagosAlContado = 4;
+    $totalResumenMensual = 7;
 
-        return $this->redirect(
-            $adminUrlGenerator->setController(MonthlySummaryCrudController::class)->generateUrl()
-        );
-    }
+    return $this->render('admin/dashboard/index.html.twig', [
+        'totalMiembros' => $totalMiembros,
+        'totalIngresos' => $totalIngresos,
+        'totalCreditos' => $totalCreditos,
+        'totalServicios' => $totalServicios,
+        'totalMetas' => $totalMetas,
+        'totalAhorros' => $totalAhorros,
+        'totalPagosAlContado' => $totalPagosAlContado,
+        'totalResumenMensual' => $totalResumenMensual,
+    ]);
+}
 
     public function configureDashboard(): Dashboard
     {
@@ -52,13 +63,13 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryCrudController::class);
         yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberCrudController::class);
         yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)->setController(IncomeCrudController::class);
         yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)->setController(ServiceCrudController::class);
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)->setController(GoalCrudController::class);
         yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)->setController(CreditCrudController::class);
         yield MenuItem::linkToCrud('Créditos al Contado', 'fas fa-credit-card', SingleCreditPayment::class)->setController(SingleCreditPaymentController::class);
-        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryCrudController::class);
         yield MenuItem::linkToRoute('Documentación', 'fas fa-book', 'app_admin_documentation');
     }
 
