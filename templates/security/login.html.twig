@@ -54,27 +54,37 @@
 						</div>
 					{% endif %}
 					<form method="post" id="login-form" style="width: 100%;">
+						<label for="inputAlias">Alias</label>
+						<input type="text" name="alias" id="inputAlias" class="form-control mb-3" placeholder="Tu alias" disabled>
+
 						<label for="inputEmail">Email</label>
 						<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control mb-3" autocomplete="email" required autofocus>
+
 						<label for="inputPassword">Contraseña</label>
 						<input type="password" name="password" id="inputPassword" class="form-control mb-3" autocomplete="current-password" required>
+
 						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
 						<div class="form-check mb-3">
 							<input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
 							<label for="remember_me" class="form-check-label">Recordar contraseña</label>
 						</div>
+
 						<div id="loading-indicator" class="spinner-border text-primary" role="status" style="display: none; margin-bottom: 15px;">
 							<span class="sr-only">
 								<i class="fa fa-history" aria-hidden="true"></i>
 							</span>
 						</div>
+
 						<button class="btn btn-lg btn-primary w-100" type="submit">Iniciar sesión</button>
+
 						<div class="col-12 text-center mt-3">
 							<p class="small mb-0">
 								¿No tienes cuenta?
 								<a href="{{ path('app_register') }}" class="register-link">Crea una cuenta</a>
 							</p>
-							<a href="https://pablogarciajc.com/" class="credits-link pt-2 fw-bold text-dark d-block">Desarrollado por
+							<a href="https://pablogarciajc.com/" class="credits-link pt-2 fw-bold text-dark d-block">
+								Desarrollado por
 								<strong>PabloGarciaJC</strong>
 							</a>
 						</div>
@@ -84,5 +94,3 @@
 		</div>
 	</div>
 {% endblock %}
-
-
