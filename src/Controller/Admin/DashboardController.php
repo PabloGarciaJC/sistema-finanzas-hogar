@@ -32,28 +32,60 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-   public function index(): Response
-{
-    $totalMiembros = 10;
-    $totalIngresos = 25;
-    $totalCreditos = 10;
-    $totalServicios = 8;
-    $totalMetas = 5;
-    $totalAhorros = 12;
-    $totalPagosAlContado = 4;
-    $totalResumenMensual = 7;
+    public function index(): Response
+    {
+        $totalMiembros = 10;
+        $totalIngresos = 25;
+        $totalCreditos = 10;
+        $totalServicios = 8;
+        $totalMetas = 5;
+        $totalAhorros = 12;
+        $totalPagosAlContado = 4;
 
-    return $this->render('admin/dashboard/index.html.twig', [
-        'totalMiembros' => $totalMiembros,
-        'totalIngresos' => $totalIngresos,
-        'totalCreditos' => $totalCreditos,
-        'totalServicios' => $totalServicios,
-        'totalMetas' => $totalMetas,
-        'totalAhorros' => $totalAhorros,
-        'totalPagosAlContado' => $totalPagosAlContado,
-        'totalResumenMensual' => $totalResumenMensual,
-    ]);
-}
+        // Datos de ejemplo para meses y gastos mensuales
+        $meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $gastosPorMes = [1200, 1500, 1000, 1300, 1250, 1400, 1100, 1600, 1350, 1450, 1550, 1700];
+
+        // Ejemplo de mes actual y gasto total de ese mes
+        $mesActualNombre = date('F'); // Esto devuelve mes en inglés, si quieres en español, deberías mapearlo
+        // Para mapear a español:
+        $mesesEsp = [
+            'January' => 'Enero',
+            'February' => 'Febrero',
+            'March' => 'Marzo',
+            'April' => 'Abril',
+            'May' => 'Mayo',
+            'June' => 'Junio',
+            'July' => 'Julio',
+            'August' => 'Agosto',
+            'September' => 'Septiembre',
+            'October' => 'Octubre',
+            'November' => 'Noviembre',
+            'December' => 'Diciembre'
+        ];
+        $mesActualNombre = $mesesEsp[$mesActualNombre];
+
+        // Obtener el índice del mes actual para sacar el gasto
+        $indiceMesActual = array_search($mesActualNombre, $meses);
+        $gastoTotalMesActual = $gastosPorMes[$indiceMesActual] ?? 0;
+
+        return $this->render('admin/dashboard/index.html.twig', [
+            'totalMiembros' => $totalMiembros,
+            'totalIngresos' => $totalIngresos,
+            'totalCreditos' => $totalCreditos,
+            'totalServicios' => $totalServicios,
+            'totalMetas' => $totalMetas,
+            'totalAhorros' => $totalAhorros,
+            'totalPagosAlContado' => $totalPagosAlContado,
+
+            'meses' => $meses,
+            'gastosPorMes' => $gastosPorMes,
+            'mesActualNombre' => $mesActualNombre,
+            'gastoTotalMesActual' => $gastoTotalMesActual,
+             'gastosAnuales' => '100',
+        ]);
+    }
+
 
     public function configureDashboard(): Dashboard
     {

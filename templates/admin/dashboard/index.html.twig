@@ -7,14 +7,16 @@
         </section>
 
         <section id="main" class="content-body">
+        
             {% set tarjetas = [
                 {'label': 'Miembros', 'value': totalMiembros, 'icon': 'fas fa-users', 'color': '#4e73df'},
                 {'label': 'Ingresos', 'value': totalIngresos, 'icon': 'fas fa-dollar-sign', 'color': '#1cc88a'},
                 {'label': 'Créditos', 'value': totalCreditos, 'icon': 'fas fa-money-bill', 'color': '#e0a800'},
-                {'label': 'Servicios', 'value': totalServicios, 'icon': 'fas fa-briefcase', 'color': '#e74a3b'},
+                {'label': 'Servicios', 'value': totalServicios, 'icon': 'fas fa-briefcase', 'color': '#17a2b8'},
                 {'label': 'Metas', 'value': totalMetas, 'icon': 'fas fa-bullseye', 'color': '#6f42c1'},
                 {'label': 'Ahorros', 'value': totalAhorros, 'icon': 'fas fa-piggy-bank', 'color': '#fd7e14'},
-                {'label': 'Pagos al Contado', 'value': totalPagosAlContado, 'icon': 'fas fa-credit-card', 'color': '#00bcd4'}
+                {'label': 'Pagos al Contado', 'value': totalPagosAlContado, 'icon': 'fas fa-credit-card', 'color': '#00bcd4'},
+                {'label': 'Gastos Anuales', 'value': 100, 'icon': 'fas fa-chart-pie', 'color': '#e74a3b'}
             ] %}
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-5">
@@ -46,8 +48,11 @@
             </div>
 
             <div class="row mt-5">
-                <div class="col-md-10 mx-auto" style="height: 370px;">
-                    <canvas id="dashboardChart" style="width: 100%; height: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
+                <div class="col-md-6" style="height: 370px;">
+                    <canvas id="monthlyExpensesChart" style="width: 100%; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
+                </div>
+                <div class="col-md-6" style="height: 370px;">
+                    <canvas id="dashboardDoughnutChart" style="width: 100%; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
                 </div>
             </div>
         </section>
@@ -58,22 +63,21 @@
     {{ parent() }}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const ctx = document.getElementById('dashboardChart').getContext('2d');
+        const ctxDoughnut = document.getElementById('dashboardDoughnutChart').getContext('2d');
 
-        const barColors = [
-            '#4e73df', // Miembros
-            '#1cc88a', // Ingresos
-            '#e0a800', // Créditos
-            '#e74a3b', // Servicios
-            '#6f42c1', // Metas
-            '#fd7e14', // Ahorros
-            '#00bcd4'  // Pagos al Contado
+        const doughnutColors = [
+            '#4e73df',
+            '#1cc88a',
+            '#e0a800',
+            '#17a2b8',
+            '#6f42c1',
+            '#fd7e14',
+            '#00bcd4'
         ];
 
-        const data = {
+        const doughnutData = {
             labels: ['Miembros', 'Ingresos', 'Créditos', 'Servicios', 'Metas', 'Ahorros', 'Pagos al Contado'],
             datasets: [{
-                label: 'Cantidad',
                 data: [
                     {{ totalMiembros }},
                     {{ totalIngresos }},
@@ -83,15 +87,16 @@
                     {{ totalAhorros }},
                     {{ totalPagosAlContado }}
                 ],
-                backgroundColor: barColors,
-                barThickness: 60
-                // borderRadius removed for rect bars
+                backgroundColor: doughnutColors,
+                borderColor: '#fff',
+                borderWidth: 2,
+                hoverOffset: 30
             }]
         };
 
-        const config = {
-            type: 'bar',
-            data: data,
+        const doughnutConfig = {
+            type: 'doughnut',
+            data: doughnutData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -101,7 +106,11 @@
                 },
                 plugins: {
                     legend: {
-                        display: false
+                        position: 'right',
+                        labels: {
+                            color: '#444',
+                            font: { size: 14, weight: '600' }
+                        }
                     },
                     tooltip: {
                         backgroundColor: '#2a2a2a',
@@ -109,44 +118,63 @@
                         bodyColor: '#fff',
                         padding: 10,
                         borderRadius: 6,
-                        titleFont: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            size: 13
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: '#eee'
-                        },
-                        ticks: {
-                            color: '#666',
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#444',
-                            font: {
-                                weight: '600',
-                                size: 13
-                            }
-                        }
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 13 }
                     }
                 }
             }
         };
 
-        new Chart(ctx, config);
+        new Chart(ctxDoughnut, doughnutConfig);
+
+        const ctxMonthly = document.getElementById('monthlyExpensesChart').getContext('2d');
+
+        const monthlyExpensesData = {
+            labels: {{ meses|json_encode|raw }},
+            datasets: [{
+                label: 'Gastos Mensuales',
+                data: {{ gastosPorMes|json_encode|raw }},
+                backgroundColor: '#e74a3b',
+                barThickness: 50
+            }]
+        };
+
+        const monthlyExpensesConfig = {
+            type: 'bar',
+            data: monthlyExpensesData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 800,
+                    easing: 'easeOutQuart'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#eee' },
+                        ticks: { color: '#666', font: { size: 12 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#444', font: { weight: '600', size: 13 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#2a2a2a',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        padding: 10,
+                        borderRadius: 6,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 13 }
+                    }
+                }
+            }
+        };
+
+        new Chart(ctxMonthly, monthlyExpensesConfig);
     </script>
 {% endblock %}
