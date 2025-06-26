@@ -32,19 +32,31 @@ class ServiceCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+
         $descriptionField = $pageName === Crud::PAGE_INDEX
-            ? TextField::new('description', 'Descripción')->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'))
-            : TextField::new('description', 'Descripción');
+            ? TextField::new('description', 'Descripción')
+                ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'))
+            : TextField::new('description', 'Descripción')
+                ->setFormTypeOption('row_attr', $rowClass);
 
         return [
             AssociationField::new('user', 'Familia')->hideOnForm(),
-            AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
+
+            AssociationField::new('member', 'Miembro')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            MoneyField::new('amount', 'Monto')
+                ->setCurrency('EUR')
+                ->setFormTypeOption('row_attr', $rowClass),
+
             $descriptionField,
+
             ChoiceField::new('status', 'Estado')
                 ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
                 ->setFormTypeOption('placeholder', false)
-                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary']),
+                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+                ->setFormTypeOption('row_attr', $rowClass),
         ];
     }
 

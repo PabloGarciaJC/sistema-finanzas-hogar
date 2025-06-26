@@ -36,21 +36,64 @@ class GoalCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $months = $this->getMonthChoices();
         $years = $this->getYearChoices();
-        $descriptionField = $pageName === Crud::PAGE_INDEX ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value)) : TextEditorField::new('description', 'Descripción');
+
+        $descriptionField = $pageName === Crud::PAGE_INDEX
+            ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value))
+            : TextEditorField::new('description', 'Descripción')->setFormTypeOption('row_attr', $rowClass);
 
         return [
             AssociationField::new('user', 'Familia')->hideOnForm(),
-            AssociationField::new('member', 'Miembro')->setRequired(true),
-            $descriptionField,
-            MoneyField::new('targetAmount', 'Importe')->setCurrency('EUR'),
-            ChoiceField::new('frequency', 'Frecuencia')->setChoices(['Mensual' => 'Mensual', 'Trimestral' => 'Trimestral', 'Semestral' => 'Semestral', 'Anual' => 'Anual',])->setFormTypeOption('placeholder', false)->setFormTypeOption('data', 'Mensual'),
-            ChoiceField::new('month', 'Mes')->setChoices($months)->onlyOnForms(),
-            ChoiceField::new('year', 'Año')->setChoices($years)->onlyOnForms(),
-            DateField::new('startDate', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnIndex(),
-            DateField::new('startDate', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnDetail(),
-            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
+
+            AssociationField::new('member', 'Miembro')
+                ->setRequired(true)
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            $descriptionField->setFormTypeOption('row_attr', $rowClass),
+
+            MoneyField::new('targetAmount', 'Importe')
+                ->setCurrency('EUR')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('frequency', 'Frecuencia')
+                ->setChoices([
+                    'Mensual' => 'Mensual',
+                    'Trimestral' => 'Trimestral',
+                    'Semestral' => 'Semestral',
+                    'Anual' => 'Anual',
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->setFormTypeOption('data', 'Mensual')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('month', 'Mes')
+                ->setChoices($months)
+                ->onlyOnForms()
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('year', 'Año')
+                ->setChoices($years)
+                ->onlyOnForms()
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            DateField::new('startDate', 'Fecha de inicio')
+                ->setFormat('MMMM yyyy')
+                ->onlyOnIndex(),
+
+            DateField::new('startDate', 'Fecha de inicio')
+                ->setFormat('MMMM yyyy')
+                ->onlyOnDetail(),
+
+            ChoiceField::new('status', 'Estado')
+                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+                ->setFormTypeOption('placeholder', false)
+                ->renderAsBadges([
+                    'Activo' => 'success',
+                    'Cancelado' => 'secondary',
+                ])
+                ->setFormTypeOption('row_attr', $rowClass),
         ];
     }
 
@@ -69,13 +112,11 @@ class GoalCrudController extends AbstractCrudController
             return;
         }
 
-        // Calcular startDate desde mes y año
         if ($entityInstance->getMonth() && $entityInstance->getYear()) {
             $startDate = \DateTime::createFromFormat('Y-n-j', "{$entityInstance->getYear()}-{$entityInstance->getMonth()}-1");
             $entityInstance->setStartDate($startDate);
         }
 
-        // Asignar miembro automáticamente si no se asigna
         if ($entityInstance->getMember() === null) {
             $user = $this->security->getUser();
             $member = $entityManager->getRepository(Member::class)->findOneBy(['user' => $user]);
@@ -114,7 +155,11 @@ class GoalCrudController extends AbstractCrudController
 
     private function getMonthChoices(): array
     {
-        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
+        return [
+            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
+            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
+            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
+        ];
     }
 
     private function getYearChoices(): array

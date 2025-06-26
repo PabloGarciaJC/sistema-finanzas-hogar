@@ -25,22 +25,62 @@ class CreditCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Opciones para los campos de selección
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+
         $months = $this->getMonthChoices();
         $years = $this->getYearChoices();
-        $user = $this->getUser();
+
         return [
-          AssociationField::new('user', 'Familia')->hideOnForm(),
-            AssociationField::new('member'),
-            TextField::new('bank_entity', 'Banco'),
-            MoneyField::new('monthly_payment', 'Importe')->setCurrency('EUR'),
-            ChoiceField::new('frequency', 'Frecuencia')->setChoices(['Mensual' => 'Mensual', 'Bimestral' => 'Bimestral', 'Trimestral' => 'Trimestral', 'Anual' => 'Anual',])->setFormTypeOption('placeholder', false),
-            DateField::new('start_date', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnIndex(),
-            DateField::new('start_date', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnDetail(),
-            ChoiceField::new('month', 'Mes')->setChoices($months)->onlyOnForms(),
-            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
-            MoneyField::new('total_amount', 'Importe total')->setCurrency('EUR'),
-            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
+            AssociationField::new('user', 'Familia')->hideOnForm(),
+
+            AssociationField::new('member')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            TextField::new('bank_entity', 'Banco')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            MoneyField::new('monthly_payment', 'Importe')
+                ->setCurrency('EUR')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('frequency', 'Frecuencia')
+                ->setChoices([
+                    'Mensual' => 'Mensual',
+                    'Bimestral' => 'Bimestral',
+                    'Trimestral' => 'Trimestral',
+                    'Anual' => 'Anual',
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            DateField::new('start_date', 'Fecha de inicio')
+                ->setFormat('MMMM yyyy')
+                ->onlyOnIndex(),
+
+            DateField::new('start_date', 'Fecha de inicio')
+                ->setFormat('MMMM yyyy')
+                ->onlyOnDetail(),
+
+            ChoiceField::new('month', 'Mes')
+                ->setChoices($months)
+                ->onlyOnForms()
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('year', 'Año')
+                ->setChoices($years)
+                ->setFormTypeOption('data', 2025)
+                ->onlyOnForms()
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            MoneyField::new('total_amount', 'Importe total')
+                ->setCurrency('EUR')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('status', 'Estado')
+                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+                ->setFormTypeOption('placeholder', false)
+                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+                ->setFormTypeOption('row_attr', $rowClass),
         ];
     }
 
@@ -50,7 +90,7 @@ class CreditCrudController extends AbstractCrudController
         $credit->setStatus('Activo');
         $credit->setFrequency('Mensual');
         $credit->setYear(2025);
-         $credit->setUser($this->getUser()); 
+        $credit->setUser($this->getUser());
         return $credit;
     }
 
@@ -79,7 +119,11 @@ class CreditCrudController extends AbstractCrudController
 
     private function getMonthChoices(): array
     {
-        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
+        return [
+            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
+            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
+            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
+        ];
     }
 
     private function getYearChoices(): array

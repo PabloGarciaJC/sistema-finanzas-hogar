@@ -33,18 +33,46 @@ class IncomeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $months = $this->getMonthChoices();
         $years = $this->getYearChoices();
 
         return [
             AssociationField::new('user', 'Familia')->hideOnForm(),
-            AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
-            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnIndex(),
-            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnDetail(),
-            ChoiceField::new('month', 'Mes')->setChoices($months)->setFormTypeOption('data', 1)->onlyOnForms(),
-            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
-            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])->setFormTypeOption('data', 'Activo'),
+
+            AssociationField::new('member', 'Miembro')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            MoneyField::new('amount', 'Monto')
+                ->setCurrency('EUR')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            DateField::new('date', 'Fecha')
+                ->setFormat('MMMM yyyy')
+                ->onlyOnIndex(),
+
+            DateField::new('date', 'Fecha')
+                ->setFormat('MMMM yyyy')
+                ->onlyOnDetail(),
+
+            ChoiceField::new('month', 'Mes')
+                ->setChoices($months)
+                ->setFormTypeOption('data', 1)
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->onlyOnForms(),
+
+            ChoiceField::new('year', 'Año')
+                ->setChoices($years)
+                ->setFormTypeOption('data', 2025)
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->onlyOnForms(),
+
+            ChoiceField::new('status', 'Estado')
+                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+                ->setFormTypeOption('placeholder', false)
+                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+                ->setFormTypeOption('data', 'Activo')
+                ->setFormTypeOption('row_attr', $rowClass),
         ];
     }
 

@@ -44,6 +44,8 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+
         $defaultIncomeValue = $this->getDefaultValue($this->incomeRepository->getIncomeOptions());
         $defaultServiceValue = $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
         $defaultCreditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
@@ -58,19 +60,19 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         $fields[] = AssociationField::new('user', 'Familia')->hideOnForm();
 
-        $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue, true, true)
+        $fields[] = $this->createNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaultIncomeValue, true, true, $rowClass)
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') : '');
 
-        $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal, true, true)
+        $fields[] = $this->createNumberField('debt_total', 'Deuda Total', $pageName, $defaultBankDebtTotal, true, true, $rowClass)
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') : '');
 
-        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, true, true)
+        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaultRemainingBalance, true, true, $rowClass)
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') : '');
 
-        $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne, true, true)
+        $fields[] = $this->createNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaultBankDebtMemberOne, true, true, $rowClass)
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') : '');
 
-        $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo, true, true)
+        $fields[] = $this->createNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaultBankDebtMemberTwo, true, true, $rowClass)
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') : '');
 
         $months = array_combine(
@@ -80,21 +82,24 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         $monthField = ChoiceField::new('month', 'Mes')
             ->setChoices($months)
-            ->setFormTypeOption('row_attr', ['class' => 'form-group col-md-4 col-xxl-7']);
+            ->setFormTypeOption('row_attr', $rowClass);
+
         if ($pageName === Crud::PAGE_NEW) {
             $monthField->setFormTypeOption('data', 1);
         }
-        
+
         $fields[] = $monthField;
 
         $currentYear = (int) date('Y');
         $years = array_combine(range($currentYear - 10, $currentYear + 10), range($currentYear - 10, $currentYear + 10));
         $yearField = ChoiceField::new('year', 'Año')
             ->setChoices($years)
-            ->setFormTypeOption('row_attr', ['class' => 'form-group col-md-4 col-xxl-7']);
+            ->setFormTypeOption('row_attr', $rowClass);
+
         if ($pageName === Crud::PAGE_NEW) {
             $yearField->setFormTypeOption('data', $currentYear);
         }
+
         $fields[] = $yearField;
 
         return $fields;
@@ -147,8 +152,15 @@ class MonthlySummaryCrudController extends AbstractCrudController
         return ($serviceValue !== null && $creditValue !== null) ? $serviceValue + $creditValue : null;
     }
 
-    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false): NumberField {
-        
+    private function createNumberField(
+        string $name,
+        string $label,
+        string $pageName,
+        ?float $default = null,
+        bool $mapped = true,
+        bool $readonly = false,
+        array $rowClass = []
+    ): NumberField {
         $attr = ['class' => 'form-control'];
         if ($readonly) {
             $attr['readonly'] = true;
@@ -159,7 +171,8 @@ class MonthlySummaryCrudController extends AbstractCrudController
             ->setFormTypeOption('mapped', $mapped)
             ->setFormTypeOption('grouping', true)
             ->setFormTypeOption('attr', $attr)
-            ->setFormTypeOption('label_attr', ['class' => 'form-control-label']);
+            ->setFormTypeOption('label_attr', ['class' => 'form-control-label'])
+            ->setFormTypeOption('row_attr', $rowClass);
 
         if ($pageName === Crud::PAGE_NEW && $default !== null) {
             $field->setFormTypeOption('data', $default);
