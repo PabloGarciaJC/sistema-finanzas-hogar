@@ -64,7 +64,7 @@ class SingleCreditPaymentController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Crédito al Contado')
             ->setEntityLabelInPlural('Créditos al Contado')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Créditos al Contado')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Pago al contado')
             ->setSearchFields(['description', 'member.name']);
     }
 

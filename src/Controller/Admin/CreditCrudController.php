@@ -59,7 +59,7 @@ class CreditCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Crédito')
             ->setEntityLabelInPlural('Créditos')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Créditos')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Créditos')
             ->setSearchFields(['member.name', 'bankEntity', 'status']);
     }
 
