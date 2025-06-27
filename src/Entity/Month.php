@@ -16,9 +16,6 @@ class Month
     #[ORM\Column(type: 'string', length: 20)]
     private string $name;
 
-    #[ORM\Column(type: 'smallint', options: ['unsigned' => true])]
-    private int $number;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -32,18 +29,6 @@ class Month
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getNumber(): int
-    {
-        return $this->number;
-    }
-
-    public function setNumber(int $number): self
-    {
-        $this->number = $number;
 
         return $this;
     }
