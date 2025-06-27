@@ -68,7 +68,11 @@ class MonthlySummaryCrudController extends AbstractCrudController
         // Campos numéricos con formato moneda
         $fields[] = $this->createFormattedNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaults['income'], $currencySymbol, $rowClass);
         $fields[] = $this->createFormattedNumberField('debt_total', 'Deuda Total', $pageName, $defaults['bankDebtTotal'], $currencySymbol, $rowClass);
-        $fields[] = $this->createFormattedNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaults['remainingBalance'], $currencySymbol, $rowClass);
+
+        // Campo remainingBalance solo lectura y no mapeado
+        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaults['remainingBalance'], false, true, $rowClass)
+        ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
+
         $fields[] = $this->createFormattedNumberField('bankDebtMemberOne', 'Importe Banco Pablo', $pageName, $defaults['bankDebtMemberOne'], $currencySymbol, $rowClass);
         $fields[] = $this->createFormattedNumberField('bankDebtMemberTwo', 'Importe Banco Vero', $pageName, $defaults['bankDebtMemberTwo'], $currencySymbol, $rowClass);
 
@@ -78,6 +82,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         return $fields;
     }
+
 
     /**
      * Calcula valores por defecto a mostrar en los campos numéricos,
@@ -237,8 +242,15 @@ class MonthlySummaryCrudController extends AbstractCrudController
      * Crea un campo NumberField configurado con opciones comunes,
      * como número de decimales, atributos y modo solo lectura.
      */
-    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = []): NumberField
-    {
+    private function createNumberField(
+        string $name,
+        string $label,
+        string $pageName,
+        ?float $default = null,
+        bool $mapped = true,
+        bool $readonly = false,
+        array $rowClass = []
+    ): NumberField {
         $inputAttributes = ['class' => 'form-control'];
         if ($readonly) {
             $inputAttributes['readonly'] = true;
@@ -259,6 +271,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         return $field;
     }
+
 
     /**
      * Obtiene el símbolo de la moneda activa en la configuración.
