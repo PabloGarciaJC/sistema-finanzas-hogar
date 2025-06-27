@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Service;
 use App\Repository\MonthRepository;
 use App\Repository\YearRepository;
+use App\Repository\CurrencyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -15,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 
@@ -22,11 +24,16 @@ class ServiceCrudController extends AbstractCrudController
 {
     private MonthRepository $monthRepository;
     private YearRepository $yearRepository;
+    private CurrencyRepository $currencyRepository;
 
-    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository)
-    {
+    public function __construct(
+        MonthRepository $monthRepository, 
+        YearRepository $yearRepository,
+        CurrencyRepository $currencyRepository
+    ) {
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
+        $this->currencyRepository = $currencyRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -37,7 +44,9 @@ class ServiceCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+        $currencySymbol = $this->getActiveCurrencySymbol();
 
+        // Campo description según página
         if ($pageName === Crud::PAGE_INDEX) {
             $descriptionField = TextField::new('description', 'Descripción')
                 ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'));
@@ -53,6 +62,9 @@ class ServiceCrudController extends AbstractCrudController
         return [
             AssociationField::new('member', 'Miembro')
                 ->setFormTypeOption('row_attr', $rowClass),
+
+            $this->createFormattedNumberField('amount', 'Importe', $pageName, 0.00, true, false, $rowClass, $currencySymbol),
+
             $descriptionField,
             $this->createPaymentDayField($rowClass),
             $this->createMonthChoiceField($pageName, $rowClass),
@@ -62,6 +74,66 @@ class ServiceCrudController extends AbstractCrudController
                 ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
+    }
+
+    private function createFormattedNumberField(
+        string $name,
+        string $label,
+        string $pageName,
+        ?float $default = null,
+        bool $mapped = true,
+        bool $readonly = false,
+        array $rowClass = [],
+        string $currencySymbol = ''
+    ): NumberField {
+        $inputAttributes = ['class' => 'form-control'];
+        if ($readonly) {
+            $inputAttributes['readonly'] = true;
+        }
+
+        $field = NumberField::new($name, $label)
+            ->setNumDecimals(2)
+            ->setFormTypeOption('mapped', $mapped)
+            ->setFormTypeOption('grouping', true)
+            ->setFormTypeOption('attr', $inputAttributes)
+            ->setFormTypeOption('label_attr', ['class' => 'form-control-label'])
+            ->setFormTypeOption('row_attr', $rowClass)
+            ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
+
+        if ($pageName === Crud::PAGE_NEW && $default !== null) {
+            $field->setFormTypeOption('data', $default);
+        }
+
+        return $field;
+    }
+
+    private function createNumberField(
+        string $name,
+        string $label,
+        string $pageName,
+        ?float $default = null,
+        bool $mapped = true,
+        bool $readonly = false,
+        array $rowClass = []
+    ): NumberField {
+        $inputAttributes = ['class' => 'form-control'];
+        if ($readonly) {
+            $inputAttributes['readonly'] = true;
+        }
+
+        $field = NumberField::new($name, $label)
+            ->setNumDecimals(2)
+            ->setFormTypeOption('mapped', $mapped)
+            ->setFormTypeOption('grouping', true)
+            ->setFormTypeOption('attr', $inputAttributes)
+            ->setFormTypeOption('label_attr', ['class' => 'form-control-label'])
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW && $default !== null) {
+            $field->setFormTypeOption('data', $default);
+        }
+
+        return $field;
     }
 
     public function createEntity(string $entityFqcn)
@@ -76,17 +148,17 @@ class ServiceCrudController extends AbstractCrudController
         // Seleccionar año activo por defecto
         $activeYears = $this->yearRepository->findBy(['status' => 1]);
         if ($activeYears) {
-            // Por ejemplo el primero
             $service->setYear($activeYears[0]->getId());
         }
 
         // Establecer día de pago por defecto a 1
         $service->setPaymentDay(1);
 
+        // Valor por defecto para amount
+        $service->setAmount(0.00);
+
         return $service;
     }
-
-
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -94,7 +166,7 @@ class ServiceCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Servicio')
             ->setEntityLabelInPlural('Servicios')
             ->setPageTitle(Crud::PAGE_INDEX, 'Servicios')
-            ->setSearchFields(['description', 'member.name']);
+            ->setSearchFields(['description', 'member.name', 'amount']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -144,7 +216,6 @@ class ServiceCrudController extends AbstractCrudController
             $defaultYearId = reset($years);
             $yearField->setFormTypeOption('data', $defaultYearId);
         }
-
 
         return $yearField;
     }
@@ -202,5 +273,14 @@ class ServiceCrudController extends AbstractCrudController
         }
 
         parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    /**
+     * Obtiene el símbolo de la moneda activa en la configuración.
+     */
+    private function getActiveCurrencySymbol(): string
+    {
+        $currency = $this->currencyRepository->findOneBy(['status' => 1]);
+        return $currency ? $currency->getSymbol() : '';
     }
 }
