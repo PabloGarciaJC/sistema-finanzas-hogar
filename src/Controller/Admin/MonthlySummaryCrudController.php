@@ -94,8 +94,8 @@ class MonthlySummaryCrudController extends AbstractCrudController
         $creditMemberTwo =     $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
         $goalTotal =           $this->getDefaultValue($this->goalRepository->getGoalTotal());
 
-        $remainingBalance = $income - $service - $creditMemberOne - $creditMemberTwo - $goalTotal;
-        $bankDebtTotal = $service + $creditMemberOne + $creditMemberTwo + $goalTotal;
+        $remainingBalance =    $income - $service - $creditMemberOne - $creditMemberTwo - $goalTotal;
+        $bankDebtTotal =       $service + $creditMemberOne + $creditMemberTwo + $goalTotal;
 
         $bankDebtMemberOne =   $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $creditMemberOne);
         $bankDebtMemberTwo =   $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $creditMemberTwo);
