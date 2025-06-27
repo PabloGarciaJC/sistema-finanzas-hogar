@@ -189,7 +189,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Resumen Mensual')
             ->setEntityLabelInPlural('Resumen Mensuales')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Resumen Mensual')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Resumen Mensual')
             ->setSearchFields([
                 'month',
                 'year',
