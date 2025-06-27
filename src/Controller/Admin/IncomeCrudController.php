@@ -3,27 +3,38 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Income;
-use App\Entity\Member;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
+use App\Repository\IncomeRepository;
+use App\Repository\MonthRepository;
+use App\Repository\YearRepository;
+use App\Repository\CurrencyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 
 class IncomeCrudController extends AbstractCrudController
 {
-    private EntityManagerInterface $em;
+    private IncomeRepository $incomeRepository;
+    private MonthRepository $monthRepository;
+    private YearRepository $yearRepository;
+    private CurrencyRepository $currencyRepository;
 
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
+    public function __construct(
+        IncomeRepository $incomeRepository,
+        MonthRepository $monthRepository,
+        YearRepository $yearRepository,
+        CurrencyRepository $currencyRepository
+    ) {
+        $this->incomeRepository = $incomeRepository;
+        $this->monthRepository = $monthRepository;
+        $this->yearRepository = $yearRepository;
+        $this->currencyRepository = $currencyRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -33,44 +44,76 @@ class IncomeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $months = $this->getMonthChoices();
-        $years = $this->getYearChoices();
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+        $currencySymbol = $this->getActiveCurrencySymbol();
+        $fields = [];
+        $fields[] = AssociationField::new('member', 'Miembro');
+        $fields[] = $this->createFormattedNumberField('amount', 'Monto', $pageName, null, $currencySymbol, $rowClass);
+        $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
+        $fields[] = $this->createYearChoiceField($pageName, $rowClass);
 
-        return [
-            AssociationField::new('user', 'Familia')->hideOnForm(),
-            AssociationField::new('member', 'Miembro'),
-            MoneyField::new('amount', 'Monto')->setCurrency('EUR'),
-            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnIndex(),
-            DateField::new('date', 'Fecha')->setFormat('MMMM yyyy')->onlyOnDetail(),
-            ChoiceField::new('month', 'Mes')->setChoices($months)->setFormTypeOption('data', 1)->onlyOnForms(),
-            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
-            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])->setFormTypeOption('data', 'Activo'),
-        ];
+        $fields[] = ChoiceField::new('status', 'Estado')
+            ->setChoices([
+                'Activo' => 'Activo',
+                'Cancelado' => 'Cancelado',
+            ])
+            ->setFormTypeOption('row_attr', $rowClass)
+            ->setFormTypeOption('data', 'Activo');
+
+        return $fields;
+    }
+
+    private function createFormattedNumberField(string $name, string $label, string $pageName, ?float $default, string $currencySymbol, array $rowClass): NumberField
+    {
+        return $this->createNumberField($name, $label, $pageName, $default, true, false, $rowClass)
+            ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
+    }
+
+    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $monthsEntities = $this->monthRepository->findAll();
+        $months = [];
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
+        }
+
+        $monthField = ChoiceField::new('month', 'Mes')
+            ->setChoices($months)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW) {
+            $monthField->setFormTypeOption('data', 1);
+        }
+
+        return $monthField;
+    }
+
+    private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
+        
+        $years = [];
+        foreach ($activeYearsEntities as $yearEntity) {
+            $years[$yearEntity->getYear()] = $yearEntity->getId();
+        }
+
+        $yearField = ChoiceField::new('year', 'Año')
+            ->setChoices($years)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
+            $defaultYearId = reset($years);
+            $yearField->setFormTypeOption('data', $defaultYearId);
+        }
+
+        return $yearField;
     }
 
     public function createEntity(string $entityFqcn)
     {
-        $income = new Income();
-        $income->setStatus('Activo');
-        $income->setMonth(1);
-        $income->setYear(2025);
-        $income->setUser($this->getUser());
-        return $income;
-    }
-
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof Income) {
-            return;
-        }
-
-        // Calcular fecha combinando mes y año
-        if ($entityInstance->getMonth() && $entityInstance->getYear()) {
-            $date = \DateTime::createFromFormat('Y-n-j', "{$entityInstance->getYear()}-{$entityInstance->getMonth()}-1");
-            $entityInstance->setDate($date);
-        }
-
-        parent::persistEntity($entityManager, $entityInstance);
+        $entity = new Income();
+        $entity->setUser($this->getUser());
+        return $entity;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -78,7 +121,8 @@ class IncomeCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Ingreso')
             ->setEntityLabelInPlural('Ingresos')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos');
+            ->setPageTitle(Crud::PAGE_INDEX, 'Ingresos')
+            ->setSearchFields(['member.name', 'amount', 'month', 'year', 'status']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -88,27 +132,44 @@ class IncomeCrudController extends AbstractCrudController
         $user = $this->getUser();
         if ($user) {
             $qb->andWhere('entity.user = :currentUser')
-               ->setParameter('currentUser', $user);
+                ->setParameter('currentUser', $user);
         }
 
         return $qb;
     }
 
-    private function getMonthChoices(): array
-    {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
+    private function createNumberField(
+        string $name,
+        string $label,
+        string $pageName,
+        ?float $default = null,
+        bool $mapped = true,
+        bool $readonly = false,
+        array $rowClass = []
+    ): NumberField {
+        $inputAttributes = ['class' => 'form-control'];
+        if ($readonly) {
+            $inputAttributes['readonly'] = true;
+        }
+
+        $field = NumberField::new($name, $label)
+            ->setNumDecimals(2)
+            ->setFormTypeOption('mapped', $mapped)
+            ->setFormTypeOption('grouping', true)
+            ->setFormTypeOption('attr', $inputAttributes)
+            ->setFormTypeOption('label_attr', ['class' => 'form-control-label'])
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW && $default !== null) {
+            $field->setFormTypeOption('data', $default);
+        }
+
+        return $field;
     }
 
-    private function getYearChoices(): array
+    private function getActiveCurrencySymbol(): string
     {
-        $currentYear = (int) date('Y');
-        return array_combine(
-            range($currentYear - 10, $currentYear + 10),
-            range($currentYear - 10, $currentYear + 10)
-        );
+        $currency = $this->currencyRepository->findOneBy(['status' => 1]);
+        return $currency ? $currency->getSymbol() : '';
     }
 }

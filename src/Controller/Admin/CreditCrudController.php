@@ -3,21 +3,43 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Credit;
+use App\Repository\MonthRepository;
+use App\Repository\YearRepository;
+use App\Repository\CurrencyRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 
 class CreditCrudController extends AbstractCrudController
 {
+    private MonthRepository $monthRepository;
+    private YearRepository $yearRepository;
+    private CurrencyRepository $currencyRepository;
+    private EntityManagerInterface $em;
+
+    public function __construct(
+        MonthRepository $monthRepository,
+        YearRepository $yearRepository,
+        CurrencyRepository $currencyRepository,
+        EntityManagerInterface $em
+    ) {
+        $this->monthRepository = $monthRepository;
+        $this->yearRepository = $yearRepository;
+        $this->currencyRepository = $currencyRepository;
+        $this->em = $em;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Credit::class;
@@ -25,23 +47,81 @@ class CreditCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Opciones para los campos de selección
-        $months = $this->getMonthChoices();
-        $years = $this->getYearChoices();
-        $user = $this->getUser();
+        $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+        $currencySymbol = $this->getActiveCurrencySymbol();
+
         return [
-          AssociationField::new('user', 'Familia')->hideOnForm(),
-            AssociationField::new('member'),
-            TextField::new('bank_entity', 'Banco'),
-            MoneyField::new('monthly_payment', 'Importe')->setCurrency('EUR'),
-            ChoiceField::new('frequency', 'Frecuencia')->setChoices(['Mensual' => 'Mensual', 'Bimestral' => 'Bimestral', 'Trimestral' => 'Trimestral', 'Anual' => 'Anual',])->setFormTypeOption('placeholder', false),
-            DateField::new('start_date', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnIndex(),
-            DateField::new('start_date', 'Fecha de inicio')->setFormat('MMMM yyyy')->onlyOnDetail(),
-            ChoiceField::new('month', 'Mes')->setChoices($months)->onlyOnForms(),
-            ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('data', 2025)->onlyOnForms(),
-            MoneyField::new('total_amount', 'Importe total')->setCurrency('EUR'),
-            ChoiceField::new('status', 'Estado')->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado',])->setFormTypeOption('placeholder', false)->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary',]),
+            AssociationField::new('user', 'Familia')->hideOnForm(),
+
+            AssociationField::new('member', 'Miembro')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            TextField::new('bankEntity', 'Banco')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            NumberField::new('installmentAmount', 'Importe por cuota')
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
+
+            IntegerField::new('installments', 'Número de cuotas')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            ChoiceField::new('frequency', 'Frecuencia')
+                ->setChoices([
+                    'Mensual' => 'Mensual',
+                    'Bimestral' => 'Bimestral',
+                    'Trimestral' => 'Trimestral',
+                    'Anual' => 'Anual',
+                ])
+                ->setFormTypeOption('placeholder', false)
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            $this->createMonthChoiceField($pageName, $rowClass),
+
+            $this->createYearChoiceField($pageName, $rowClass),
+
+            NumberField::new('totalAmount', 'Importe total')
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
+
+            ChoiceField::new('status', 'Estado')
+                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+                ->setFormTypeOption('row_attr', $rowClass),
         ];
+    }
+
+
+    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $monthsEntities = $this->monthRepository->findAll();
+        $months = [];
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
+        }
+
+        return ChoiceField::new('month', 'Mes')
+            ->setChoices($months)
+            ->setFormTypeOption('row_attr', $rowClass);
+    }
+
+    private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $yearsEntities = $this->yearRepository->findBy(['status' => 1]);
+        $years = [];
+        foreach ($yearsEntities as $yearEntity) {
+            $years[$yearEntity->getYear()] = $yearEntity->getYear();
+        }
+
+        $yearField = ChoiceField::new('year', 'Año')
+            ->setChoices($years)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
+            $yearField->setFormTypeOption('data', reset($years));
+        }
+
+        return $yearField;
     }
 
     public function createEntity(string $entityFqcn)
@@ -49,10 +129,20 @@ class CreditCrudController extends AbstractCrudController
         $credit = new Credit();
         $credit->setStatus('Activo');
         $credit->setFrequency('Mensual');
-        $credit->setYear(2025);
-         $credit->setUser($this->getUser()); 
+        $credit->setUser($this->getUser());
+
+        // Seleccionar mes por defecto (Enero)
+        $credit->setMonth(1);
+
+        // Seleccionar año activo por defecto (similar a como haces en configureYearField)
+        $activeYears = $this->yearRepository->findBy(['status' => 1]);
+        if ($activeYears) {
+            $credit->setYear($activeYears[0]->getYear());
+        }
+
         return $credit;
     }
+
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -63,7 +153,6 @@ class CreditCrudController extends AbstractCrudController
             ->setSearchFields(['member.name', 'bankEntity', 'status']);
     }
 
-    // Filtrar la lista para mostrar solo créditos del usuario logueado
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
@@ -71,23 +160,20 @@ class CreditCrudController extends AbstractCrudController
         $user = $this->getUser();
         if ($user) {
             $qb->andWhere('entity.user = :currentUser')
-               ->setParameter('currentUser', $user);
+                ->setParameter('currentUser', $user);
         }
 
         return $qb;
     }
 
-    private function getMonthChoices(): array
+    private function getActiveCurrencySymbol(): string
     {
-        return ['Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4, 'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8, 'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,];
-    }
+        $currency = $this->currencyRepository->findOneBy(['status' => 1]);
+        if ($currency) {
+            $this->em->refresh($currency); // Forzar actualización
+            return $currency->getSymbol();
+        }
 
-    private function getYearChoices(): array
-    {
-        $currentYear = (int) date('Y');
-        return array_combine(
-            range($currentYear - 10, $currentYear + 10),
-            range($currentYear - 10, $currentYear + 10)
-        );
+        return '';
     }
 }

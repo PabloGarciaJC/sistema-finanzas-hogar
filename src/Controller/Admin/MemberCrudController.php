@@ -22,10 +22,16 @@ class MemberCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $halfWidth = ['class' => 'cntn-inputs'];
+
         return [
             AssociationField::new('user', 'Familia')->hideOnForm(),
-            TextField::new('name', 'Nombre'),
-            TextField::new('company', 'Empresa'),
+
+            TextField::new('name', 'Nombre')
+                ->setFormTypeOption('row_attr', $halfWidth),
+
+            TextField::new('company', 'Empresa')
+                ->setFormTypeOption('row_attr', $halfWidth),
         ];
     }
 
@@ -44,8 +50,12 @@ class MemberCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Miembros');
     }
 
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
+    public function createIndexQueryBuilder(
+        SearchDto $searchDto,
+        EntityDto $entityDto,
+        FieldCollection $fields,
+        FilterCollection $filters
+    ): QueryBuilder {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
         $user = $this->getUser();
