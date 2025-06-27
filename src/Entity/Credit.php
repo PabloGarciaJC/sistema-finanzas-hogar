@@ -18,30 +18,33 @@ class Credit
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Member $member = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $bankEntity = null;
 
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
     private ?string $totalAmount = '0.00';
 
+    #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
+    private ?string $installmentAmount = '0.00';
+
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
+    private ?int $installments = 1;
+
     #[ORM\Column(type: 'string', length: 20)]
-    private ?string $frequency = null;
+    private ?string $frequency = 'Mensual';
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $startDate = null;
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
-    private ?string $monthlyPayment = null;
-
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
     private ?string $remainingAmount = null;
 
-    #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Active'])]
-    private ?string $status = 'Active';
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private ?User $user = null;
+    #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
+    private ?string $status = 'Activo';
 
     // --- GETTERS Y SETTERS ---
 
@@ -58,6 +61,17 @@ class Credit
     public function setMember(?Member $member): self
     {
         $this->member = $member;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 
@@ -83,6 +97,28 @@ class Credit
         return $this;
     }
 
+    public function getInstallmentAmount(): ?string
+    {
+        return $this->installmentAmount;
+    }
+
+    public function setInstallmentAmount(string $installmentAmount): self
+    {
+        $this->installmentAmount = $installmentAmount;
+        return $this;
+    }
+
+    public function getInstallments(): ?int
+    {
+        return $this->installments;
+    }
+
+    public function setInstallments(int $installments): self
+    {
+        $this->installments = $installments;
+        return $this;
+    }
+
     public function getFrequency(): ?string
     {
         return $this->frequency;
@@ -92,7 +128,7 @@ class Credit
     {
         $allowed = ['Mensual', 'Bimestral', 'Trimestral', 'Anual'];
         if (!in_array($frequency, $allowed)) {
-            throw new \InvalidArgumentException("Valor de frecuencia inválido: $frequency");
+            throw new \InvalidArgumentException("Frecuencia inválida: $frequency");
         }
         $this->frequency = $frequency;
         return $this;
@@ -106,17 +142,6 @@ class Credit
     public function setStartDate(\DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
-        return $this;
-    }
-
-    public function getMonthlyPayment(): ?string
-    {
-        return $this->monthlyPayment;
-    }
-
-    public function setMonthlyPayment(string $monthlyPayment): self
-    {
-        $this->monthlyPayment = $monthlyPayment;
         return $this;
     }
 
@@ -140,21 +165,24 @@ class Credit
     {
         $allowed = ['Activo', 'Cancelado'];
         if (!in_array($status, $allowed)) {
-            throw new \InvalidArgumentException("Invalid status value");
+            throw new \InvalidArgumentException("Estado inválido: $status");
         }
         $this->status = $status;
         return $this;
     }
 
-    // --- MÉTODOS AUXILIARES PARA FORMULARIO DE MES Y AÑO ---
+    // --- Métodos auxiliares para formulario (Mes/Año) ---
 
     public function getMonth(): ?int
     {
         return $this->startDate ? (int) $this->startDate->format('m') : null;
     }
 
-    public function setMonth(int $month): self
+    public function setMonth(?int $month): self
     {
+        if ($month === null) {
+            return $this;
+        }
         $year = $this->startDate ? (int) $this->startDate->format('Y') : (int) date('Y');
         $this->startDate = new \DateTimeImmutable("$year-$month-01");
         return $this;
@@ -165,21 +193,13 @@ class Credit
         return $this->startDate ? (int) $this->startDate->format('Y') : null;
     }
 
-    public function setYear(int $year): self
+    public function setYear(?int $year): self
     {
+        if ($year === null) {
+            return $this;
+        }
         $month = $this->startDate ? (int) $this->startDate->format('m') : 1;
         $this->startDate = new \DateTimeImmutable("$year-$month-01");
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
         return $this;
     }
 }

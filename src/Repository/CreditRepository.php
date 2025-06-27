@@ -19,7 +19,7 @@ class CreditRepository extends ServiceEntityRepository
     public function getCreditTotalMemberOne(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(monthly_payment) AS creditMemberOne FROM credit WHERE member_id = 1 AND status = "Activo"';
+        $sql = 'SELECT SUM(installment_amount) AS creditMemberOne FROM credit WHERE member_id = 1 AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
@@ -30,7 +30,7 @@ class CreditRepository extends ServiceEntityRepository
      public function getCreditTotalMemberTwo(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(monthly_payment) AS creditMemberTwo FROM credit WHERE member_id = 2 AND status = "Activo"';
+        $sql = 'SELECT SUM(installment_amount) AS creditMemberTwo FROM credit WHERE member_id = 2 AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();

@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Credit;
+use App\Repository\MonthRepository;
+use App\Repository\YearRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -15,9 +17,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 
 class CreditCrudController extends AbstractCrudController
 {
+    private MonthRepository $monthRepository;
+    private YearRepository $yearRepository;
+
+    public function __construct(
+        MonthRepository $monthRepository,
+        YearRepository $yearRepository
+    ) {
+        $this->monthRepository = $monthRepository;
+        $this->yearRepository = $yearRepository;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Credit::class;
@@ -27,20 +41,20 @@ class CreditCrudController extends AbstractCrudController
     {
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
 
-        $months = $this->getMonthChoices();
-        $years = $this->getYearChoices();
-
         return [
             AssociationField::new('user', 'Familia')->hideOnForm(),
 
-            AssociationField::new('member')
+            AssociationField::new('member', 'Miembro')
                 ->setFormTypeOption('row_attr', $rowClass),
 
-            TextField::new('bank_entity', 'Banco')
+            TextField::new('bankEntity', 'Banco')
                 ->setFormTypeOption('row_attr', $rowClass),
 
-            MoneyField::new('monthly_payment', 'Importe')
+            MoneyField::new('installmentAmount', 'Importe por cuota')
                 ->setCurrency('EUR')
+                ->setFormTypeOption('row_attr', $rowClass),
+
+            IntegerField::new('installments', 'Número de cuotas')
                 ->setFormTypeOption('row_attr', $rowClass),
 
             ChoiceField::new('frequency', 'Frecuencia')
@@ -53,43 +67,61 @@ class CreditCrudController extends AbstractCrudController
                 ->setFormTypeOption('placeholder', false)
                 ->setFormTypeOption('row_attr', $rowClass),
 
-            DateField::new('start_date', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
+            $this->createMonthChoiceField($pageName, $rowClass),
 
-            DateField::new('start_date', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
+            $this->createYearChoiceField($pageName, $rowClass),
 
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->onlyOnForms()
-                ->setFormTypeOption('row_attr', $rowClass),
-
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->setFormTypeOption('data', 2025)
-                ->onlyOnForms()
-                ->setFormTypeOption('row_attr', $rowClass),
-
-            MoneyField::new('total_amount', 'Importe total')
+            MoneyField::new('totalAmount', 'Importe total')
                 ->setCurrency('EUR')
                 ->setFormTypeOption('row_attr', $rowClass),
 
             ChoiceField::new('status', 'Estado')
                 ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
-                ->setFormTypeOption('placeholder', false)
                 ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
     }
+
+
+    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $monthsEntities = $this->monthRepository->findAll();
+        $months = [];
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
+        }
+
+        return ChoiceField::new('month', 'Mes')
+            ->setChoices($months)
+            ->setFormTypeOption('row_attr', $rowClass);
+    }
+
+    private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $yearsEntities = $this->yearRepository->findBy(['status' => 1]);
+        $years = [];
+        foreach ($yearsEntities as $yearEntity) {
+            // Clave y valor iguales, el año numérico
+            $years[$yearEntity->getYear()] = $yearEntity->getYear();
+        }
+
+        $yearField = ChoiceField::new('year', 'Año')
+            ->setChoices($years)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
+            $yearField->setFormTypeOption('data', reset($years));
+        }
+
+        return $yearField;
+    }
+
 
     public function createEntity(string $entityFqcn)
     {
         $credit = new Credit();
         $credit->setStatus('Activo');
         $credit->setFrequency('Mensual');
-        $credit->setYear(2025);
         $credit->setUser($this->getUser());
         return $credit;
     }
@@ -97,13 +129,12 @@ class CreditCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-             ->setEntityLabelInSingular('Créditos')
+            ->setEntityLabelInSingular('Crédito')
             ->setEntityLabelInPlural('Créditos')
             ->setPageTitle(Crud::PAGE_INDEX, 'Créditos')
             ->setSearchFields(['member.name', 'bankEntity', 'status']);
     }
 
-    // Filtrar la lista para mostrar solo créditos del usuario logueado
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
@@ -111,27 +142,9 @@ class CreditCrudController extends AbstractCrudController
         $user = $this->getUser();
         if ($user) {
             $qb->andWhere('entity.user = :currentUser')
-               ->setParameter('currentUser', $user);
+                ->setParameter('currentUser', $user);
         }
 
         return $qb;
-    }
-
-    private function getMonthChoices(): array
-    {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
-    }
-
-    private function getYearChoices(): array
-    {
-        $currentYear = (int) date('Y');
-        return array_combine(
-            range($currentYear - 10, $currentYear + 10),
-            range($currentYear - 10, $currentYear + 10)
-        );
     }
 }
