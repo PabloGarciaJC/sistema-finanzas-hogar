@@ -22,6 +22,9 @@ class Currency
     #[ORM\Column(length: 5)]
     private ?string $symbol = null;
 
+    #[ORM\Column(type: "boolean", options: ["default" => 0])]
+    private bool $status = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Currency
     public function setSymbol(string $symbol): self
     {
         $this->symbol = $symbol;
+
+        return $this;
+    }
+
+    public function getStatus(): bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

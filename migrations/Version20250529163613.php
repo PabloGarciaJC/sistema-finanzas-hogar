@@ -21,18 +21,10 @@ final class Version20250627121500 extends AbstractMigration
             code VARCHAR(3) NOT NULL,
             name VARCHAR(50) NOT NULL,
             symbol VARCHAR(5) NOT NULL,
+             status TINYINT(1) NOT NULL DEFAULT 0,
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
 
-        $this->addSql("INSERT INTO currency (code, name, symbol) VALUES 
-            ('USD', 'Dólar estadounidense', '$'),
-            ('EUR', 'Euro', '€'),
-            ('PEN', 'Sol peruano', 'S/.'),
-            ('MXN', 'Peso mexicano', '$'),
-            ('CLP', 'Peso chileno', '$'),
-            ('COP', 'Peso colombiano', '$'),
-            ('ARS', 'Peso argentino', '$')
-        ");
     }
 
     public function down(Schema $schema): void

@@ -25,7 +25,7 @@ class CurrencyFixture extends Fixture
             $currency->setCode($code);
             $currency->setName($name);
             $currency->setSymbol($symbol);
-
+            $currency->setStatus($code === 'EUR');
             $manager->persist($currency);
         }
 
