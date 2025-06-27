@@ -139,7 +139,7 @@ class IncomeCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Ingreso')
             ->setEntityLabelInPlural('Ingresos')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Ingresos');
+            ->setPageTitle(Crud::PAGE_INDEX, 'Ingresos');
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder

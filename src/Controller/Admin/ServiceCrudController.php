@@ -68,19 +68,32 @@ class ServiceCrudController extends AbstractCrudController
         $service = new Service();
         $service->setStatus('Activo');
         $service->setUser($this->getUser());
+
+        // Seleccionar mes por defecto
+        $service->setMonth(1); // Enero
+
+        // Seleccionar año activo por defecto
+        $activeYears = $this->yearRepository->findBy(['status' => 1]);
+        if ($activeYears) {
+            // Por ejemplo el primero
+            $service->setYear($activeYears[0]->getId());
+        }
+
         return $service;
     }
+
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
             ->setEntityLabelInSingular('Servicio')
             ->setEntityLabelInPlural('Servicios')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Servicios')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Servicios')
             ->setSearchFields(['description', 'member.name']);
     }
 
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder {
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $user = $this->getUser();
         if ($user) {
@@ -126,6 +139,7 @@ class ServiceCrudController extends AbstractCrudController
             $defaultYearId = reset($years);
             $yearField->setFormTypeOption('data', $defaultYearId);
         }
+
 
         return $yearField;
     }
