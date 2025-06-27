@@ -43,7 +43,6 @@ class MonthlySummaryCrudController extends AbstractCrudController
         $this->yearRepository = $yearRepository;
     }
 
-
     /**
      * Devuelve la clase de la entidad administrada.
      */
@@ -97,7 +96,7 @@ class MonthlySummaryCrudController extends AbstractCrudController
 
         $remainingBalance = $income - $service - $creditMemberOne - $creditMemberTwo - $goalTotal;
         $bankDebtTotal = $service + $creditMemberOne + $creditMemberTwo + $goalTotal;
-        
+
         $bankDebtMemberOne =   $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $creditMemberOne);
         $bankDebtMemberTwo =   $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $creditMemberTwo);
 
