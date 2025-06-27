@@ -46,46 +46,48 @@ symfony-install:
 ## Symfony - Configuración de Componentes
 ## ---------------------------------------------------------
 
-# Trabajar con plantillas
 .PHONY: require-twig
 require-twig:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require twig
 
-# ORM (gestión de bases de datos)
 require-orm-pack:
 	docker compose -f ./.docker/docker-compose.yml exec php_apache_finanzas_hogar composer require symfony/orm-pack
 
-# Depuración en desarrollo
 .PHONY: require-debug
 require-debug:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require --dev symfony/debug-bundle
 
-# Paquete para generar automáticamente código (controladores, entidades, etc.)
 .PHONY: require-maker
 require-maker:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require --dev symfony/maker-bundle
 
-# Paquete EasyAdmin Bundle para la administración del panel en Symfony
 .PHONY: require-easyadmin
 require-easyadmin:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require easycorp/easyadmin-bundle
 
+## ---------------------------------------------------------
+## Symfony - Base de Datos y Migraciones
+## ---------------------------------------------------------
+
 .PHONY: migracion
 migracion:
 	@echo "⏳ Esperando a que MySQL esté disponible..."
-	@sleep 5  # Ajusta el tiempo si es necesario
+	@sleep 5
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:migrate --no-interaction
-	@echo "Migraciones aplicadas!"
+	@$(MAKE) fixtures-load
+	@echo "Migraciones y fixtures aplicadas!"
 
-# Genera un archivo de migración vacío para edición manual
 .PHONY: generate-migration
 generate-migration:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:generate
 
-# Sincroniza el estado interno de Doctrine sobre migraciones aplicadas
 .PHONY: sync-metadata
 sync-metadata:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:migrations:sync-metadata-storage
+
+.PHONY: fixtures-load
+fixtures-load:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console doctrine:fixtures:load --no-interaction --env=dev
 
 ## ---------------------------------------------------------
 ## Gestión de Contenedores
@@ -134,3 +136,8 @@ push-build:
 	git add -f public/build
 	git commit -m "Agrego assets compilados para producción"
 	git push origin master
+
+
+
+# php bin/console make:fixture CurrencyFixture
+# php bin/console doctrine:fixtures:load
