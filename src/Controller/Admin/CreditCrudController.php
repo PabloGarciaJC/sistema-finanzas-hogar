@@ -5,31 +5,39 @@ namespace App\Controller\Admin;
 use App\Entity\Credit;
 use App\Repository\MonthRepository;
 use App\Repository\YearRepository;
+use App\Repository\CurrencyRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 
 class CreditCrudController extends AbstractCrudController
 {
     private MonthRepository $monthRepository;
     private YearRepository $yearRepository;
+    private CurrencyRepository $currencyRepository;
+    private EntityManagerInterface $em;
 
     public function __construct(
         MonthRepository $monthRepository,
-        YearRepository $yearRepository
+        YearRepository $yearRepository,
+        CurrencyRepository $currencyRepository,
+        EntityManagerInterface $em
     ) {
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
+        $this->currencyRepository = $currencyRepository;
+        $this->em = $em;
     }
 
     public static function getEntityFqcn(): string
@@ -40,6 +48,7 @@ class CreditCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
+        $currencySymbol = $this->getActiveCurrencySymbol();
 
         return [
             AssociationField::new('user', 'Familia')->hideOnForm(),
@@ -50,9 +59,9 @@ class CreditCrudController extends AbstractCrudController
             TextField::new('bankEntity', 'Banco')
                 ->setFormTypeOption('row_attr', $rowClass),
 
-            MoneyField::new('installmentAmount', 'Importe por cuota')
-                ->setCurrency('EUR')
-                ->setFormTypeOption('row_attr', $rowClass),
+            NumberField::new('installmentAmount', 'Importe por cuota')
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
 
             IntegerField::new('installments', 'Número de cuotas')
                 ->setFormTypeOption('row_attr', $rowClass),
@@ -71,9 +80,9 @@ class CreditCrudController extends AbstractCrudController
 
             $this->createYearChoiceField($pageName, $rowClass),
 
-            MoneyField::new('totalAmount', 'Importe total')
-                ->setCurrency('EUR')
-                ->setFormTypeOption('row_attr', $rowClass),
+            NumberField::new('totalAmount', 'Importe total')
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
 
             ChoiceField::new('status', 'Estado')
                 ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
@@ -101,7 +110,6 @@ class CreditCrudController extends AbstractCrudController
         $yearsEntities = $this->yearRepository->findBy(['status' => 1]);
         $years = [];
         foreach ($yearsEntities as $yearEntity) {
-            // Clave y valor iguales, el año numérico
             $years[$yearEntity->getYear()] = $yearEntity->getYear();
         }
 
@@ -116,15 +124,25 @@ class CreditCrudController extends AbstractCrudController
         return $yearField;
     }
 
-
     public function createEntity(string $entityFqcn)
     {
         $credit = new Credit();
         $credit->setStatus('Activo');
         $credit->setFrequency('Mensual');
         $credit->setUser($this->getUser());
+
+        // Seleccionar mes por defecto (Enero)
+        $credit->setMonth(1);
+
+        // Seleccionar año activo por defecto (similar a como haces en configureYearField)
+        $activeYears = $this->yearRepository->findBy(['status' => 1]);
+        if ($activeYears) {
+            $credit->setYear($activeYears[0]->getYear());
+        }
+
         return $credit;
     }
+
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -146,5 +164,16 @@ class CreditCrudController extends AbstractCrudController
         }
 
         return $qb;
+    }
+
+    private function getActiveCurrencySymbol(): string
+    {
+        $currency = $this->currencyRepository->findOneBy(['status' => 1]);
+        if ($currency) {
+            $this->em->refresh($currency); // Forzar actualización
+            return $currency->getSymbol();
+        }
+
+        return '';
     }
 }

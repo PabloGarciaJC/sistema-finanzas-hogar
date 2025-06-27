@@ -3,30 +3,43 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Goal;
-use App\Entity\Member;
+use App\Repository\CurrencyRepository;
+use App\Repository\YearRepository;
+use App\Repository\MonthRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Bundle\SecurityBundle\Security;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class GoalCrudController extends AbstractCrudController
 {
     private Security $security;
+    private CurrencyRepository $currencyRepository;
+    private YearRepository $yearRepository;
+    private MonthRepository $monthRepository;
+    private EntityManagerInterface $em;
 
-    public function __construct(Security $security)
-    {
+    public function __construct(
+        Security $security,
+        CurrencyRepository $currencyRepository,
+        YearRepository $yearRepository,
+        MonthRepository $monthRepository,
+        EntityManagerInterface $em
+    ) {
         $this->security = $security;
+        $this->currencyRepository = $currencyRepository;
+        $this->yearRepository = $yearRepository;
+        $this->monthRepository = $monthRepository;
+        $this->em = $em;
     }
 
     public static function getEntityFqcn(): string
@@ -34,17 +47,33 @@ class GoalCrudController extends AbstractCrudController
         return Goal::class;
     }
 
+    // Aquí el método para asignar el usuario al crear la entidad
+    public function createEntity(string $entityFqcn)
+    {
+        $goal = new Goal();
+        $goal->setUser($this->security->getUser()); // asigna usuario actual
+        return $goal;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Meta')
+            ->setEntityLabelInPlural('Metas')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Metas')
+            ->setSearchFields(['member.name', 'description', 'status']);
+    }
+
     public function configureFields(string $pageName): iterable
     {
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
-        $months = $this->getMonthChoices();
-        $years = $this->getYearChoices();
+        $currencySymbol = $this->getActiveCurrencySymbol();
 
         $descriptionField = $pageName === Crud::PAGE_INDEX
-            ? TextField::new('description', 'Descripción')->formatValue(fn($value) => strip_tags($value))
-            : TextEditorField::new('description', 'Descripción')->setFormTypeOption('row_attr', $rowClass);
+            ? TextField::new('description', 'Descripción')->formatValue(fn ($value) => strip_tags($value))
+            : TextEditorField::new('description', 'Descripción');
 
-        return [
+        $fields = [
             AssociationField::new('user', 'Familia')->hideOnForm(),
 
             AssociationField::new('member', 'Miembro')
@@ -53,9 +82,9 @@ class GoalCrudController extends AbstractCrudController
 
             $descriptionField->setFormTypeOption('row_attr', $rowClass),
 
-            MoneyField::new('targetAmount', 'Importe')
-                ->setCurrency('EUR')
-                ->setFormTypeOption('row_attr', $rowClass),
+            NumberField::new('targetAmount', 'Importe')
+                ->setFormTypeOption('row_attr', $rowClass)
+                ->formatValue(fn ($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
 
             ChoiceField::new('frequency', 'Frecuencia')
                 ->setChoices([
@@ -68,26 +97,15 @@ class GoalCrudController extends AbstractCrudController
                 ->setFormTypeOption('data', 'Mensual')
                 ->setFormTypeOption('row_attr', $rowClass),
 
-            ChoiceField::new('month', 'Mes')
-                ->setChoices($months)
-                ->onlyOnForms()
-                ->setFormTypeOption('row_attr', $rowClass),
+            $this->createMonthChoiceField($pageName, $rowClass),
 
-            ChoiceField::new('year', 'Año')
-                ->setChoices($years)
-                ->onlyOnForms()
-                ->setFormTypeOption('row_attr', $rowClass),
-
-            DateField::new('startDate', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnIndex(),
-
-            DateField::new('startDate', 'Fecha de inicio')
-                ->setFormat('MMMM yyyy')
-                ->onlyOnDetail(),
+            $this->createYearChoiceField($pageName, $rowClass),
 
             ChoiceField::new('status', 'Estado')
-                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+                ->setChoices([
+                    'Activo' => 'Activo',
+                    'Cancelado' => 'Cancelado',
+                ])
                 ->setFormTypeOption('placeholder', false)
                 ->renderAsBadges([
                     'Activo' => 'success',
@@ -95,79 +113,55 @@ class GoalCrudController extends AbstractCrudController
                 ])
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
+
+        return $fields;
     }
 
-    public function createEntity(string $entityFqcn)
+    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        $goal = new Goal();
-        $goal->setUser($this->getUser());
-        $goal->setStatus('Activo');
-        $goal->setFrequency('Mensual');
-        return $goal;
-    }
-
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof Goal) {
-            return;
+        $monthsEntities = $this->monthRepository->findAll();
+        $months = [];
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
         }
 
-        if ($entityInstance->getMonth() && $entityInstance->getYear()) {
-            $startDate = \DateTime::createFromFormat('Y-n-j', "{$entityInstance->getYear()}-{$entityInstance->getMonth()}-1");
-            $entityInstance->setStartDate($startDate);
+        $monthField = ChoiceField::new('month', 'Mes')
+            ->setChoices($months)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW) {
+            $monthField->setFormTypeOption('data', 1);
         }
 
-        if ($entityInstance->getMember() === null) {
-            $user = $this->security->getUser();
-            $member = $entityManager->getRepository(Member::class)->findOneBy(['user' => $user]);
+        return $monthField;
+    }
 
-            if ($member) {
-                $entityInstance->setMember($member);
-            } else {
-                throw new \Exception('No se encontró un miembro asociado al usuario actual.');
-            }
+    private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
+        $years = [];
+        foreach ($activeYearsEntities as $yearEntity) {
+            $years[$yearEntity->getYear()] = $yearEntity->getId();
         }
 
-        parent::persistEntity($entityManager, $entityInstance);
-    }
+        $yearField = ChoiceField::new('year', 'Año')
+            ->setChoices($years)
+            ->setFormTypeOption('row_attr', $rowClass);
 
-    public function configureCrud(Crud $crud): Crud
-    {
-        return $crud
-            ->setEntityLabelInSingular('Meta')
-            ->setEntityLabelInPlural('Metas')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Gestión de Metas')
-            ->setSearchFields(['member.name', 'description', 'status']);
-    }
-
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
-        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-
-        $user = $this->getUser();
-        if ($user) {
-            $qb->andWhere('entity.user = :currentUser')
-               ->setParameter('currentUser', $user);
+        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
+            $yearField->setFormTypeOption('data', reset($years));
         }
 
-        return $qb;
+        return $yearField;
     }
 
-    private function getMonthChoices(): array
+    private function getActiveCurrencySymbol(): string
     {
-        return [
-            'Enero' => 1, 'Febrero' => 2, 'Marzo' => 3, 'Abril' => 4,
-            'Mayo' => 5, 'Junio' => 6, 'Julio' => 7, 'Agosto' => 8,
-            'Septiembre' => 9, 'Octubre' => 10, 'Noviembre' => 11, 'Diciembre' => 12,
-        ];
-    }
-
-    private function getYearChoices(): array
-    {
-        $currentYear = (int) date('Y');
-        return array_combine(
-            range($currentYear - 10, $currentYear + 10),
-            range($currentYear - 10, $currentYear + 10)
-        );
+        $currency = $this->currencyRepository->findOneBy(['status' => 1]);
+        if ($currency) {
+            $this->em->refresh($currency);
+            return $currency->getSymbol();
+        }
+        return '';
     }
 }

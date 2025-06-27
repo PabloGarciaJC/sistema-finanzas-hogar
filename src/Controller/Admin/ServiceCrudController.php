@@ -46,6 +46,7 @@ class ServiceCrudController extends AbstractCrudController
                 ->renderAsHtml();
         } else {
             $descriptionField = TextEditorField::new('description', 'Descripción')
+                ->setRequired(true)
                 ->setFormTypeOption('row_attr', $rowClass);
         }
 
@@ -79,8 +80,12 @@ class ServiceCrudController extends AbstractCrudController
             $service->setYear($activeYears[0]->getId());
         }
 
+        // Establecer día de pago por defecto a 1
+        $service->setPaymentDay(1);
+
         return $service;
     }
+
 
 
     public function configureCrud(Crud $crud): Crud
