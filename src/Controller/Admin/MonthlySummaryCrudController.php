@@ -83,23 +83,23 @@ class MonthlySummaryCrudController extends AbstractCrudController
         return $fields;
     }
 
-
     /**
      * Calcula valores por defecto a mostrar en los campos numéricos,
      * sumando y restando datos de distintos repositorios.
      */
     private function calculateDefaultValues(): array
     {
-        $income = $this->getDefaultValue($this->incomeRepository->getIncomeOptions());
-        $service = $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
-        $creditMemberOne = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
-        $creditMemberTwo = $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
-        $goalTotal = $this->getDefaultValue($this->goalRepository->getGoalTotal());
+        $income =              $this->getDefaultValue($this->incomeRepository->getIncomeOptions());
+        $service =             $this->getDefaultValue($this->serviceRepository->getTotalServiceSql());
+        $creditMemberOne =     $this->getDefaultValue($this->creditRepository->getCreditTotalMemberOne());
+        $creditMemberTwo =     $this->getDefaultValue($this->creditRepository->getCreditTotalMemberTwo());
+        $goalTotal =           $this->getDefaultValue($this->goalRepository->getGoalTotal());
 
         $remainingBalance = $income - $service - $creditMemberOne - $creditMemberTwo - $goalTotal;
         $bankDebtTotal = $service + $creditMemberOne + $creditMemberTwo + $goalTotal;
-        $bankDebtMemberOne = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $creditMemberOne);
-        $bankDebtMemberTwo = $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $creditMemberTwo);
+        
+        $bankDebtMemberOne =   $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberOne(), $creditMemberOne);
+        $bankDebtMemberTwo =   $this->calculateTotalMemberDebt($this->serviceRepository->getTotalMemberTwo(), $creditMemberTwo);
 
         return [
             'income' => $income,
