@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\SingleCreditPaymentRepository;
+use App\Repository\CashPaymentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SingleCreditPaymentRepository::class)]
-#[ORM\Table(name: 'single_credit_payment')]
-class SingleCreditPayment
+#[ORM\Entity(repositoryClass: CashPaymentRepository::class)]
+#[ORM\Table(name: 'cash_payment')]
+class CashPayment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

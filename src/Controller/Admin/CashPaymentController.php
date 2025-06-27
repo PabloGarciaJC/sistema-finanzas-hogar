@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\SingleCreditPayment;
+use App\Entity\CashPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,7 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class SingleCreditPaymentController extends AbstractCrudController
+class CashPaymentController extends AbstractCrudController
 {
     private EntityManagerInterface $em;
 
@@ -27,7 +27,7 @@ class SingleCreditPaymentController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return SingleCreditPayment::class;
+        return CashPayment::class;
     }
 
     public function configureFields(string $pageName): iterable
@@ -62,7 +62,7 @@ class SingleCreditPaymentController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn)
     {
-        $payment = new SingleCreditPayment();
+        $payment = new CashPayment();
         $payment->setStatus('Activo');
         $payment->setUser($this->getUser());
         return $payment;
@@ -71,9 +71,9 @@ class SingleCreditPaymentController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Crédito al Contado')
-            ->setEntityLabelInPlural('Créditos al Contado')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Pago al contado')
+            ->setEntityLabelInSingular('Pago al Contado')
+            ->setEntityLabelInPlural('Pagos al Contado')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Pago al Contado')
             ->setSearchFields(['description', 'member.name']);
     }
 
