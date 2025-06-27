@@ -37,5 +37,6 @@ class UserFixture extends Fixture
         $manager->persist($user2);
 
         $manager->flush();
+        
     }
 }

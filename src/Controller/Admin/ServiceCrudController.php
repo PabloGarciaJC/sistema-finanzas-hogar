@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Service;
+use App\Repository\MonthRepository;
+use App\Repository\YearRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -13,16 +15,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 
 class ServiceCrudController extends AbstractCrudController
 {
-    private EntityManagerInterface $em;
+    private MonthRepository $monthRepository;
+    private YearRepository $yearRepository;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository)
     {
-        $this->em = $em;
+        $this->monthRepository = $monthRepository;
+        $this->yearRepository = $yearRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -34,27 +38,26 @@ class ServiceCrudController extends AbstractCrudController
     {
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
 
-        $descriptionField = $pageName === Crud::PAGE_INDEX
-            ? TextField::new('description', 'Descripción')
-                ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'))
-            : TextField::new('description', 'Descripción')
+        if ($pageName === Crud::PAGE_INDEX) {
+            $descriptionField = TextField::new('description', 'Descripción')
+                ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'));
+        } elseif ($pageName === Crud::PAGE_DETAIL) {
+            $descriptionField = TextField::new('description', 'Descripción')
+                ->renderAsHtml();
+        } else {
+            $descriptionField = TextEditorField::new('description', 'Descripción')
                 ->setFormTypeOption('row_attr', $rowClass);
+        }
 
         return [
-            AssociationField::new('user', 'Familia')->hideOnForm(),
-
             AssociationField::new('member', 'Miembro')
                 ->setFormTypeOption('row_attr', $rowClass),
-
-            MoneyField::new('amount', 'Monto')
-                ->setCurrency('EUR')
-                ->setFormTypeOption('row_attr', $rowClass),
-
             $descriptionField,
-
+            $this->createPaymentDayField($rowClass),
+            $this->createMonthChoiceField($pageName, $rowClass),
+            $this->createYearChoiceField($pageName, $rowClass),
             ChoiceField::new('status', 'Estado')
                 ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
-                ->setFormTypeOption('placeholder', false)
                 ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
@@ -77,16 +80,108 @@ class ServiceCrudController extends AbstractCrudController
             ->setSearchFields(['description', 'member.name']);
     }
 
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-
         $user = $this->getUser();
         if ($user) {
             $qb->andWhere('entity.user = :currentUser')
-               ->setParameter('currentUser', $user);
+                ->setParameter('currentUser', $user);
+        }
+        return $qb;
+    }
+
+    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $monthsEntities = $this->monthRepository->findAll();
+        $months = [];
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
         }
 
-        return $qb;
+        $monthField = ChoiceField::new('month', 'Mes')
+            ->setChoices($months)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW) {
+            $monthField->setFormTypeOption('data', 1);
+        }
+
+        return $monthField;
+    }
+
+    private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
+    {
+        $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
+
+        $years = [];
+        foreach ($activeYearsEntities as $yearEntity) {
+            $years[$yearEntity->getYear()] = $yearEntity->getId();
+        }
+
+        $yearField = ChoiceField::new('year', 'Año')
+            ->setChoices($years)
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
+            $defaultYearId = reset($years);
+            $yearField->setFormTypeOption('data', $defaultYearId);
+        }
+
+        return $yearField;
+    }
+
+    private function createPaymentDayField(array $rowClass): ChoiceField
+    {
+        $days = [];
+        for ($i = 1; $i <= 31; $i++) {
+            $days[$i] = $i;
+        }
+
+        return ChoiceField::new('paymentDay', 'Día de Pago')
+            ->setHelp('Día del mes en que se paga (1–31)')
+            ->setChoices($days)
+            ->setFormTypeOption('row_attr', $rowClass);
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Service) {
+            return;
+        }
+
+        $monthId = $entityInstance->getMonth();
+        $monthEntity = $this->monthRepository->find($monthId);
+        if (!$monthEntity) {
+            throw new \RuntimeException('Mes inválido');
+        }
+
+        $yearId = $entityInstance->getYear();
+        $yearEntity = $this->yearRepository->find($yearId);
+        if (!$yearEntity) {
+            throw new \RuntimeException('Año inválido');
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Service) {
+            return;
+        }
+
+        $monthId = $entityInstance->getMonth();
+        $monthEntity = $this->monthRepository->find($monthId);
+        if (!$monthEntity) {
+            throw new \RuntimeException('Mes inválido');
+        }
+
+        $yearId = $entityInstance->getYear();
+        $yearEntity = $this->yearRepository->find($yearId);
+        if (!$yearEntity) {
+            throw new \RuntimeException('Año inválido');
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

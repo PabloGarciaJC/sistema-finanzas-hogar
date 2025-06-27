@@ -22,6 +22,9 @@ final class Version20250518105633 extends AbstractMigration
             member_id INT UNSIGNED NOT NULL,
             amount NUMERIC(12, 2) NOT NULL,
             description TEXT NOT NULL,
+            month INT NOT NULL,
+            year INT NOT NULL, 
+            payment_day INT DEFAULT NULL,
             status VARCHAR(20) NOT NULL DEFAULT \'Active\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
