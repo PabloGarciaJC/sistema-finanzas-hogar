@@ -11,7 +11,7 @@ final class Version20250529163610 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create table Cash Payment';
+        return 'Create table cash_payment';
     }
 
     public function up(Schema $schema): void
@@ -22,6 +22,9 @@ final class Version20250529163610 extends AbstractMigration
             member_id INT UNSIGNED NOT NULL,
             amount NUMERIC(12, 2) NOT NULL,
             description TEXT NOT NULL,
+            month INT NOT NULL,
+            year INT NOT NULL,
+            payment_day INT DEFAULT NULL,
             status VARCHAR(20) NOT NULL DEFAULT \'Active\',
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
