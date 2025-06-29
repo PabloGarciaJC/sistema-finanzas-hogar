@@ -21,11 +21,11 @@ class CashPaymentFixtures extends Fixture implements DependentFixtureInterface
 
         $conn->executeStatement("
             INSERT INTO cash_payment (user_id, member_id, amount, description, month, year, payment_day, status) VALUES
-            (1, 1, 150.00, 'Pago en efectivo por servicios varios', 6, 2025, 5, 'Activo'),
-            (1, 2, 75.00, 'Pago en efectivo por materiales', 6, 2025, 10, 'Activo'),
-            (2, 1, 200.00, 'Pago en efectivo soporte técnico', 6, 2025, 15, 'Activo'),
-            (2, 2, 100.00, 'Pago en efectivo consultoría', 6, 2025, 20, 'Activo'),
-            (1, 1, 50.00, 'Pago en efectivo extras', 6, 2025, 25, 'Activo')
+            (1, 1, 150.00, 'Pago en efectivo por servicios varios', 6, 11, 5, 'Activo'),
+            (1, 2, 75.00, 'Pago en efectivo por materiales', 6, 11, 10, 'Activo'),
+            (2, 1, 200.00, 'Pago en efectivo soporte técnico', 6, 11, 15, 'Activo'),
+            (2, 2, 100.00, 'Pago en efectivo consultoría', 6, 11, 20, 'Activo'),
+            (1, 1, 50.00, 'Pago en efectivo extras', 6, 11, 25, 'Activo')
         ");
     }
 
