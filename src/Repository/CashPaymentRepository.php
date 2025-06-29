@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\SingleCreditPayment;
+use App\Entity\CashPayment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<SingleCreditPayment>
+ * @extends ServiceEntityRepository<CashPayment>
  */
-class SingleCreditPaymentRepository extends ServiceEntityRepository
+class CashPaymentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, SingleCreditPayment::class);
+        parent::__construct($registry, CashPayment::class);
     }
 
-    public function getTotalSingleCreditPayment(): array
+    public function getTotalCashPayment(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebt FROM single_credit_payment WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS totalAmount FROM cash_payment WHERE status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebt'] ?? 0);
+        $amount = (float) ($row['totalAmount'] ?? 0);
         return [$amount => $amount];
     }
 
     public function getTotalByMemberId(int $memberId): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebt FROM single_credit_payment WHERE member_id = :memberId AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS totalAmount FROM cash_payment WHERE member_id = :memberId AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery(['memberId' => $memberId]);
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebt'] ?? 0);
+        $amount = (float) ($row['totalAmount'] ?? 0);
         return [$amount => $amount];
     }
 

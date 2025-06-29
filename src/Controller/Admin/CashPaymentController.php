@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Service;
+use App\Entity\CashPayment;
 use App\Repository\MonthRepository;
 use App\Repository\YearRepository;
 use App\Repository\CurrencyRepository;
@@ -20,14 +20,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 
-class ServiceCrudController extends AbstractCrudController
+class CashPaymentController extends AbstractCrudController
 {
     private MonthRepository $monthRepository;
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
 
     public function __construct(
-        MonthRepository $monthRepository, 
+        MonthRepository $monthRepository,
         YearRepository $yearRepository,
         CurrencyRepository $currencyRepository
     ) {
@@ -38,7 +38,7 @@ class ServiceCrudController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return Service::class;
+        return CashPayment::class;
     }
 
     public function configureFields(string $pageName): iterable
@@ -46,7 +46,7 @@ class ServiceCrudController extends AbstractCrudController
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
 
-        // Campo description según página
+        // Campo descripción
         if ($pageName === Crud::PAGE_INDEX) {
             $descriptionField = TextField::new('description', 'Descripción')
                 ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'));
@@ -107,79 +107,6 @@ class ServiceCrudController extends AbstractCrudController
         return $field;
     }
 
-    private function createNumberField(
-        string $name,
-        string $label,
-        string $pageName,
-        ?float $default = null,
-        bool $mapped = true,
-        bool $readonly = false,
-        array $rowClass = []
-    ): NumberField {
-        $inputAttributes = ['class' => 'form-control'];
-        if ($readonly) {
-            $inputAttributes['readonly'] = true;
-        }
-
-        $field = NumberField::new($name, $label)
-            ->setNumDecimals(2)
-            ->setFormTypeOption('mapped', $mapped)
-            ->setFormTypeOption('grouping', true)
-            ->setFormTypeOption('attr', $inputAttributes)
-            ->setFormTypeOption('label_attr', ['class' => 'form-control-label'])
-            ->setFormTypeOption('row_attr', $rowClass);
-
-        if ($pageName === Crud::PAGE_NEW && $default !== null) {
-            $field->setFormTypeOption('data', $default);
-        }
-
-        return $field;
-    }
-
-    public function createEntity(string $entityFqcn)
-    {
-        $service = new Service();
-        $service->setStatus('Activo');
-        $service->setUser($this->getUser());
-
-        // Seleccionar mes por defecto
-        $service->setMonth(1); // Enero
-
-        // Seleccionar año activo por defecto
-        $activeYears = $this->yearRepository->findBy(['status' => 1]);
-        if ($activeYears) {
-            $service->setYear($activeYears[0]->getId());
-        }
-
-        // Establecer día de pago por defecto a 1
-        $service->setPaymentDay(1);
-
-        // Valor por defecto para amount
-        $service->setAmount(0.00);
-
-        return $service;
-    }
-
-    public function configureCrud(Crud $crud): Crud
-    {
-        return $crud
-            ->setEntityLabelInSingular('Servicio')
-            ->setEntityLabelInPlural('Servicios')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Servicios')
-            ->setSearchFields(['description', 'member.name', 'amount']);
-    }
-
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
-        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $user = $this->getUser();
-        if ($user) {
-            $qb->andWhere('entity.user = :currentUser')
-                ->setParameter('currentUser', $user);
-        }
-        return $qb;
-    }
-
     private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
         $monthsEntities = $this->monthRepository->findAll();
@@ -233,9 +160,45 @@ class ServiceCrudController extends AbstractCrudController
             ->setFormTypeOption('row_attr', $rowClass);
     }
 
+    public function createEntity(string $entityFqcn)
+    {
+        $cashPayment = new CashPayment();
+        $cashPayment->setStatus('Activo');
+        $cashPayment->setUser($this->getUser());
+        $cashPayment->setMonth(1);
+        $activeYears = $this->yearRepository->findBy(['status' => 1]);
+        if ($activeYears) {
+            $cashPayment->setYear($activeYears[0]->getId());
+        }
+        $cashPayment->setPaymentDay(1);
+        $cashPayment->setAmount(0.00);
+
+        return $cashPayment;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Pago al Contado')
+            ->setEntityLabelInPlural('Pagos al Contado')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Pagos al Contado')
+            ->setSearchFields(['description', 'member.name', 'amount']);
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $user = $this->getUser();
+        if ($user) {
+            $qb->andWhere('entity.user = :currentUser')
+               ->setParameter('currentUser', $user);
+        }
+        return $qb;
+    }
+
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if (!$entityInstance instanceof Service) {
+        if (!$entityInstance instanceof CashPayment) {
             return;
         }
 
@@ -256,7 +219,7 @@ class ServiceCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if (!$entityInstance instanceof Service) {
+        if (!$entityInstance instanceof CashPayment) {
             return;
         }
 
@@ -275,9 +238,6 @@ class ServiceCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $entityInstance);
     }
 
-    /**
-     * Obtiene el símbolo de la moneda activa en la configuración.
-     */
     private function getActiveCurrencySymbol(): string
     {
         $currency = $this->currencyRepository->findOneBy(['status' => 1]);

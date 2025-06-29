@@ -10,7 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
-class SavingCrudController extends AbstractCrudController
+class SavingController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {

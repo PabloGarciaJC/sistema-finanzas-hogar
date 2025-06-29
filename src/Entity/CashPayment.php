@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\SingleCreditPaymentRepository;
+use App\Repository\CashPaymentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SingleCreditPaymentRepository::class)]
-#[ORM\Table(name: 'single_credit_payment')]
-class SingleCreditPayment
+#[ORM\Entity(repositoryClass: CashPaymentRepository::class)]
+#[ORM\Table(name: 'cash_payment')]
+class CashPayment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,6 +31,15 @@ class SingleCreditPayment
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
+
+    #[ORM\Column(type: 'integer')]
+    private ?int $month = null;
+
+    #[ORM\Column(type: 'integer')]
+    private ?int $year = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $paymentDay = null;
 
     public function getId(): ?int
     {
@@ -93,6 +102,39 @@ class SingleCreditPayment
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getMonth(): ?int
+    {
+        return $this->month;
+    }
+
+    public function setMonth(int $month): self
+    {
+        $this->month = $month;
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(int $year): self
+    {
+        $this->year = $year;
+        return $this;
+    }
+
+    public function getPaymentDay(): ?int
+    {
+        return $this->paymentDay;
+    }
+
+    public function setPaymentDay(?int $paymentDay): self
+    {
+        $this->paymentDay = $paymentDay;
         return $this;
     }
 }

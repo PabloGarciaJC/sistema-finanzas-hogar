@@ -18,7 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 
-class IncomeCrudController extends AbstractCrudController
+class IncomeController extends AbstractCrudController
 {
     private IncomeRepository $incomeRepository;
     private MonthRepository $monthRepository;
@@ -53,12 +53,10 @@ class IncomeCrudController extends AbstractCrudController
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
 
         $fields[] = ChoiceField::new('status', 'Estado')
-            ->setChoices([
-                'Activo' => 'Activo',
-                'Cancelado' => 'Cancelado',
-            ])
-            ->setFormTypeOption('row_attr', $rowClass)
-            ->setFormTypeOption('data', 'Activo');
+                  ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+                  ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+                  ->setFormTypeOption('row_attr', $rowClass)
+                  ->setFormTypeOption('data', 'Activo');
 
         return $fields;
     }

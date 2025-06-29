@@ -11,7 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 
 
-class UserCrudController extends AbstractCrudController
+class UserController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {

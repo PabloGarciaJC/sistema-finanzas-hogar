@@ -21,7 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use App\Repository\YearRepository;
 
-class MonthlySummaryCrudController extends AbstractCrudController
+class MonthlySummaryController extends AbstractCrudController
 {
     private IncomeRepository $incomeRepository;
     private ServiceRepository $serviceRepository;

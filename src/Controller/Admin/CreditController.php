@@ -21,7 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 
-class CreditCrudController extends AbstractCrudController
+class CreditController extends AbstractCrudController
 {
     private MonthRepository $monthRepository;
     private YearRepository $yearRepository;
