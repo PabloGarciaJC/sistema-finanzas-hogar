@@ -13,7 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class MemberCrudController extends AbstractCrudController
+class MemberController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {

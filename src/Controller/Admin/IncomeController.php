@@ -18,7 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 
-class IncomeCrudController extends AbstractCrudController
+class IncomeController extends AbstractCrudController
 {
     private IncomeRepository $incomeRepository;
     private MonthRepository $monthRepository;

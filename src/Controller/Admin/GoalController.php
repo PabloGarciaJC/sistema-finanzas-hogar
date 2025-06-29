@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Service;
+use App\Entity\Goal;
 use App\Repository\MonthRepository;
 use App\Repository\YearRepository;
 use App\Repository\CurrencyRepository;
@@ -17,17 +17,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class ServiceCrudController extends AbstractCrudController
+class GoalController extends AbstractCrudController
 {
     private MonthRepository $monthRepository;
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
 
     public function __construct(
-        MonthRepository $monthRepository, 
+        MonthRepository $monthRepository,
         YearRepository $yearRepository,
         CurrencyRepository $currencyRepository
     ) {
@@ -38,7 +38,7 @@ class ServiceCrudController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return Service::class;
+        return Goal::class;
     }
 
     public function configureFields(string $pageName): iterable
@@ -55,7 +55,7 @@ class ServiceCrudController extends AbstractCrudController
                 ->renderAsHtml();
         } else {
             $descriptionField = TextEditorField::new('description', 'Descripción')
-                ->setRequired(true)
+                ->setRequired(false)
                 ->setFormTypeOption('row_attr', $rowClass);
         }
 
@@ -109,34 +109,34 @@ class ServiceCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn)
     {
-        $service = new Service();
-        $service->setStatus('Activo');
-        $service->setUser($this->getUser());
+        $goal = new Goal();
+        $goal->setStatus('Activo');
+        $goal->setUser($this->getUser());
 
         // Seleccionar mes por defecto
-        $service->setMonth(1); // Enero
+        $goal->setMonth(1); // Enero
 
         // Seleccionar año activo por defecto
         $activeYears = $this->yearRepository->findBy(['status' => 1]);
         if ($activeYears) {
-            $service->setYear($activeYears[0]->getId());
+            $goal->setYear($activeYears[0]->getId());
         }
 
         // Establecer día de pago por defecto a 1
-        $service->setPaymentDay(1);
+        $goal->setPaymentDay(1);
 
         // Valor por defecto para amount
-        $service->setAmount(0.00);
+        $goal->setAmount('0.00');
 
-        return $service;
+        return $goal;
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Servicio')
-            ->setEntityLabelInPlural('Servicios')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Servicios')
+            ->setEntityLabelInSingular('Meta')
+            ->setEntityLabelInPlural('Metas')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Metas')
             ->setSearchFields(['description', 'member.name', 'amount']);
     }
 
@@ -206,7 +206,7 @@ class ServiceCrudController extends AbstractCrudController
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if (!$entityInstance instanceof Service) {
+        if (!$entityInstance instanceof Goal) {
             return;
         }
 
@@ -227,7 +227,7 @@ class ServiceCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if (!$entityInstance instanceof Service) {
+        if (!$entityInstance instanceof Goal) {
             return;
         }
 

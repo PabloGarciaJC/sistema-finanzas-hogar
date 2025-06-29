@@ -9,7 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
-class PeriodCrudController extends AbstractCrudController
+class PeriodController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {

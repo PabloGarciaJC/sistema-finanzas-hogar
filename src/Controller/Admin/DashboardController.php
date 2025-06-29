@@ -14,12 +14,12 @@ use App\Entity\Service;
 
 use App\Entity\User;
 
-use App\Controller\Admin\CreditCrudController;
-use App\Controller\Admin\GoalCrudController;
-use App\Controller\Admin\IncomeCrudController;
-use App\Controller\Admin\MemberCrudController;
-use App\Controller\Admin\MonthlySummaryCrudController;
-use App\Controller\Admin\ServiceCrudController;
+use App\Controller\Admin\CreditController;
+use App\Controller\Admin\GoalController;
+use App\Controller\Admin\IncomeController;
+use App\Controller\Admin\MemberController;
+use App\Controller\Admin\MonthlySummaryController;
+use App\Controller\Admin\ServiceController;
 use App\Controller\Admin\CashPaymentController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -90,13 +90,13 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryCrudController::class);
-        yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)->setController(IncomeCrudController::class);
-        yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)->setController(ServiceCrudController::class);
+        yield MenuItem::linkToCrud('Resumen Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryController::class);
+        yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)->setController(IncomeController::class);
+        yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)->setController(ServiceController::class);
         yield MenuItem::linkToCrud('Pago al contado', 'fas fa-credit-card', CashPayment::class)->setController(CashPaymentController::class);
-        yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)->setController(CreditCrudController::class);
-        yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)->setController(GoalCrudController::class);
-        yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberCrudController::class);
+        yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)->setController(CreditController::class);
+        yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)->setController(GoalController::class);
+        yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberController::class);
         yield MenuItem::linkToRoute('Documentación', 'fas fa-book', 'app_admin_documentation');
     }
 
