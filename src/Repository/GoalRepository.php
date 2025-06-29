@@ -19,7 +19,7 @@ class GoalRepository extends ServiceEntityRepository
     public function getGoalTotal(): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(target_amount) AS target_amount FROM goal WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();

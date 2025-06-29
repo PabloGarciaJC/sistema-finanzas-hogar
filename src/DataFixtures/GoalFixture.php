@@ -20,11 +20,11 @@ class GoalFixture extends Fixture implements DependentFixtureInterface
         $conn = $em->getConnection();
 
         $conn->executeStatement("
-            INSERT INTO goal (user_id, member_id, description, target_amount, frequency, start_date, status) VALUES
-            (1, 1, 'Meta de ahorro para vacaciones', 5000.00, 'Mensual', '2024-01-01', 'In progress'),
-            (1, 2, 'Meta de inversión en negocio', 20000.00, 'Mensual', '2024-02-01', 'In progress'),
-            (1, 3, 'Meta de compra de auto', 15000.00, 'Mensual', '2024-03-01', 'In progress'),
-            (1, 4, 'Meta de educación hijos', 10000.00, 'Mensual', '2024-04-01', 'In progress')
+            INSERT INTO goal (user_id, member_id, amount, description, month, year, payment_day, status) VALUES
+            (1, 1, 10000.00, '<div>Meta de ahorro anual</div>', 1, 11, 5, 'Activo'),
+            (1, 1, 5000.00, '<div>Fondo de emergencia</div>', 2, 11, 10, 'Activo'),
+            (2, 2, 3000.00, '<div>Ahorro vacaciones</div>', 3, 11, 15, 'Activo'),
+            (2, 2, 8000.00, '<div>Compra de equipo</div>', 4, 11, 20, 'Activo')
         ");
     }
 
