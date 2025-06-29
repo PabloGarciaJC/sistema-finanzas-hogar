@@ -25,7 +25,12 @@ class CashPaymentFixtures extends Fixture implements DependentFixtureInterface
             (1, 2, 75.00, 'Pago en efectivo por materiales', 6, 11, 10, 'Activo'),
             (1, 1, 200.00, 'Pago en efectivo soporte técnico', 6, 11, 15, 'Activo'),
             (1, 2, 100.00, 'Pago en efectivo consultoría', 6, 11, 20, 'Activo'),
-            (1, 1, 50.00, 'Pago en efectivo extras', 6, 11, 25, 'Activo')
+            (1, 1, 50.00, 'Pago en efectivo extras', 6, 11, 25, 'Activo'),
+            (2, 1, 150.00, 'Pago en efectivo por servicios varios', 6, 11, 5, 'Activo'),
+            (2, 2, 75.00, 'Pago en efectivo por materiales', 6, 11, 10, 'Activo'),
+            (2, 1, 200.00, 'Pago en efectivo soporte técnico', 6, 11, 15, 'Activo'),
+            (2, 2, 100.00, 'Pago en efectivo consultoría', 6, 11, 20, 'Activo'),
+            (2, 1, 50.00, 'Pago en efectivo extras', 6, 11, 25, 'Activo')
         ");
     }
 

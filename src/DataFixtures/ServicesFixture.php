@@ -34,18 +34,18 @@ class ServicesFixture extends Fixture implements DependentFixtureInterface
             (1, 2, 125.00, '<div>Servicio de soporte</div>', 11, 11, 25, 'Activo'),
             (1, 1, 140.00, '<div>Pago de alquiler</div>', 12, 11, 30, 'Activo'),
             (1, 2, 95.00, '<div>Compra de insumos</div>', 1, 11, 15, 'Activo'),
-            (1, 1, 85.00, '<div>Gasto de publicidad</div>', 2, 11, 28, 'Activo'),
-            (1, 1, 150.50, '<div>Soporte técnico mensual</div>', 1, 11, 8, 'Activo'),
-            (1, 2, 300.00, '<div>Consultoría empresarial</div>', 2, 11, 12, 'Activo'),
-            (1, 2, 50.00, '<div>Gasto administrativo</div>', 3, 11, 20, 'Activo'),
-            (1, 1, 100.00, '<div>Asesoría contable</div>', 4, 11, 10, 'Activo'),
-            (1, 2, 90.00, '<div>Pago de hosting</div>', 5, 11, 5, 'Activo'),
-            (1, 1, 120.00, '<div>Dominio web</div>', 6, 11, 18, 'Activo'),
-            (1, 2, 60.00, '<div>Suscripción de software</div>', 7, 11, 9, 'Activo'),
-            (1, 1, 80.00, '<div>Licencia de antivirus</div>', 8, 11, 14, 'Activo'),
-            (1, 2, 70.00, '<div>Pago de mantenimiento</div>', 9, 11, 22, 'Activo'),
-            (1, 1, 130.00, '<div>Soporte remoto</div>', 10, 11, 5, 'Activo'),
-            (1, 2, 140.00, '<div>Servicio de capacitación</div>', 11, 11, 11, 'Activo')
+            (2, 1, 85.00, '<div>Gasto de publicidad</div>', 2, 11, 28, 'Activo'),
+            (2, 1, 150.50, '<div>Soporte técnico mensual</div>', 1, 11, 8, 'Activo'),
+            (2, 2, 300.00, '<div>Consultoría empresarial</div>', 2, 11, 12, 'Activo'),
+            (2, 2, 50.00, '<div>Gasto administrativo</div>', 3, 11, 20, 'Activo'),
+            (2, 1, 100.00, '<div>Asesoría contable</div>', 4, 11, 10, 'Activo'),
+            (2, 2, 90.00, '<div>Pago de hosting</div>', 5, 11, 5, 'Activo'),
+            (2, 1, 120.00, '<div>Dominio web</div>', 6, 11, 18, 'Activo'),
+            (2, 2, 60.00, '<div>Suscripción de software</div>', 7, 11, 9, 'Activo'),
+            (2, 1, 80.00, '<div>Licencia de antivirus</div>', 8, 11, 14, 'Activo'),
+            (2, 2, 70.00, '<div>Pago de mantenimiento</div>', 9, 11, 22, 'Activo'),
+            (2, 1, 130.00, '<div>Soporte remoto</div>', 10, 11, 5, 'Activo'),
+            (2, 2, 140.00, '<div>Servicio de capacitación</div>', 11, 11, 11, 'Activo')
         ");
     }
 

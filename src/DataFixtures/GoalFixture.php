@@ -24,7 +24,11 @@ class GoalFixture extends Fixture implements DependentFixtureInterface
             (1, 1, 10000.00, '<div>Meta de ahorro anual</div>', 1, 11, 5, 'Activo'),
             (1, 1, 5000.00, '<div>Fondo de emergencia</div>', 2, 11, 10, 'Activo'),
             (1, 2, 3000.00, '<div>Ahorro vacaciones</div>', 3, 11, 15, 'Activo'),
-            (1, 2, 8000.00, '<div>Compra de equipo</div>', 4, 11, 20, 'Activo')
+            (1, 2, 8000.00, '<div>Compra de equipo</div>', 4, 11, 20, 'Activo'),
+            (2, 1, 10000.00, '<div>Meta de ahorro anual</div>', 1, 11, 5, 'Activo'),
+            (2, 1, 5000.00, '<div>Fondo de emergencia</div>', 2, 11, 10, 'Activo'),
+            (2, 2, 3000.00, '<div>Ahorro vacaciones</div>', 3, 11, 15, 'Activo'),
+            (2, 2, 8000.00, '<div>Compra de equipo</div>', 4, 11, 20, 'Activo')
         ");
     }
 

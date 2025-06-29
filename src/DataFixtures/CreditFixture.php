@@ -25,7 +25,11 @@ class CreditFixture extends Fixture implements DependentFixtureInterface
                 (1, 1, 'Banco Uno', 5000.00, 500.00, 10, 'Mensual', '2025-01-01', 5000.00, 'Activo'),
                 (2, 1, 'Banco Dos', 3000.00, 300.00, 10, 'Mensual', '2025-02-01', 3000.00, 'Activo'),
                 (3, 1, 'Banco Tres', 2000.00, 200.00, 10, 'Mensual', '2025-03-01', 2000.00, 'Activo'),
-                (4, 1, 'Banco Cuatro', 1000.00, 100.00, 10, 'Mensual', '2025-04-01', 1000.00, 'Activo')
+                (4, 1, 'Banco Cuatro', 1000.00, 100.00, 10, 'Mensual', '2025-04-01', 1000.00, 'Activo'),
+                (1, 2, 'Banco Uno', 5000.00, 500.00, 10, 'Mensual', '2025-01-01', 5000.00, 'Activo'),
+                (2, 2, 'Banco Dos', 3000.00, 300.00, 10, 'Mensual', '2025-02-01', 3000.00, 'Activo'),
+                (3, 2, 'Banco Tres', 2000.00, 200.00, 10, 'Mensual', '2025-03-01', 2000.00, 'Activo'),
+                (4, 2, 'Banco Cuatro', 1000.00, 100.00, 10, 'Mensual', '2025-04-01', 1000.00, 'Activo')
         ");
     }
 

@@ -26,11 +26,7 @@ class ServiceController extends AbstractCrudController
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(
-        MonthRepository $monthRepository, 
-        YearRepository $yearRepository,
-        CurrencyRepository $currencyRepository
-    ) {
+    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository) {
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
         $this->currencyRepository = $currencyRepository;
@@ -62,9 +58,7 @@ class ServiceController extends AbstractCrudController
         return [
             AssociationField::new('member', 'Miembro')
                 ->setFormTypeOption('row_attr', $rowClass),
-
             $this->createFormattedNumberField('amount', 'Importe', $pageName, 0.00, true, false, $rowClass, $currencySymbol),
-
             $descriptionField,
             $this->createPaymentDayField($rowClass),
             $this->createMonthChoiceField($pageName, $rowClass),
@@ -76,16 +70,8 @@ class ServiceController extends AbstractCrudController
         ];
     }
 
-    private function createFormattedNumberField(
-        string $name,
-        string $label,
-        string $pageName,
-        ?float $default = null,
-        bool $mapped = true,
-        bool $readonly = false,
-        array $rowClass = [],
-        string $currencySymbol = ''
-    ): NumberField {
+    private function createFormattedNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = [], string $currencySymbol = ''): NumberField {
+        
         $inputAttributes = ['class' => 'form-control'];
         if ($readonly) {
             $inputAttributes['readonly'] = true;

@@ -23,8 +23,8 @@ class MemberFixture extends Fixture implements DependentFixtureInterface
             INSERT INTO member (user_id, name, company) VALUES
             (1, 'Juan Pérez', 'Empresa ABC'),
             (1, 'María Gómez', 'Inversiones XYZ'),
-            (1, 'Ana Martínez', 'Consultora LMN'),
-            (1, 'Luis Rodríguez', 'Servicios OPQ')
+            (2, 'Ana Martínez', 'Consultora LMN'),
+            (2, 'Luis Rodríguez', 'Servicios OPQ')
         ");
     }
 
