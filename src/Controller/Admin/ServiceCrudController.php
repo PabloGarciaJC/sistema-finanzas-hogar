@@ -107,35 +107,6 @@ class ServiceCrudController extends AbstractCrudController
         return $field;
     }
 
-    private function createNumberField(
-        string $name,
-        string $label,
-        string $pageName,
-        ?float $default = null,
-        bool $mapped = true,
-        bool $readonly = false,
-        array $rowClass = []
-    ): NumberField {
-        $inputAttributes = ['class' => 'form-control'];
-        if ($readonly) {
-            $inputAttributes['readonly'] = true;
-        }
-
-        $field = NumberField::new($name, $label)
-            ->setNumDecimals(2)
-            ->setFormTypeOption('mapped', $mapped)
-            ->setFormTypeOption('grouping', true)
-            ->setFormTypeOption('attr', $inputAttributes)
-            ->setFormTypeOption('label_attr', ['class' => 'form-control-label'])
-            ->setFormTypeOption('row_attr', $rowClass);
-
-        if ($pageName === Crud::PAGE_NEW && $default !== null) {
-            $field->setFormTypeOption('data', $default);
-        }
-
-        return $field;
-    }
-
     public function createEntity(string $entityFqcn)
     {
         $service = new Service();
