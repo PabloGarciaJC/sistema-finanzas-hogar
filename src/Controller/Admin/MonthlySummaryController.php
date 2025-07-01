@@ -100,6 +100,7 @@ class MonthlySummaryController extends AbstractCrudController
 
     private function calculateDefaultValues(): array
     {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $income = $this->incomeRepository->getIncomeOptions($user->getId());
         $service = $this->serviceRepository->getTotalServiceSql($user->getId());
@@ -107,7 +108,8 @@ class MonthlySummaryController extends AbstractCrudController
         $credit = $this->creditRepository->getTotalCredit($user->getId());
         $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
         $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
-        $remainingBalance = $income - $bankDebtTotal;
+        
+        $remainingBalance = (float) $income - $bankDebtTotal;
 
         return [
             'income' => $income,
@@ -251,6 +253,7 @@ class MonthlySummaryController extends AbstractCrudController
      */
     public function viewDetails(MonthlySummary $monthlySummary): Response
     {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $members = $this->memberRepository->findBy(['user' => $user->getId()]);
 
@@ -274,7 +277,7 @@ class MonthlySummaryController extends AbstractCrudController
         $credit = $this->creditRepository->getTotalCredit($user->getId());
         $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
         $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
-        $remainingBalance = $income - $bankDebtTotal;
+        $remainingBalance = (float) $income - $bankDebtTotal;
 
         $servicesByMember['totals'] = [
             'income' => $income,
