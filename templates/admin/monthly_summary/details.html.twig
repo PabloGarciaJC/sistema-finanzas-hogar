@@ -1,0 +1,45 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+	<div class="content-wrapper">
+		<article class="content">
+			<section class="content-header">
+				<div class="content-header-title">
+					<h1 class="title">Detalles</h1>
+				</div>
+				<div class="page-actions">
+					<div class="global-actions">
+						<a class="action-new btn btn-primary" href="{{ path('admin', {crudControllerFqcn: 'App\\Controller\\Admin\\incomeController'}) }}" data-action-name="new">
+							<span class="action-label">Volver al listado</span>
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<section id="main" class="content-body">
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Fondos necesarios en cuentas bancarias</h2>
+
+					</div>
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							{% for member in members %}
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<span>{{ member.name }}</span>
+									<span>{{ servicesByMember[member.id]|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+								</li>
+							{% else %}
+								<li class="list-group-item">
+									No hay miembros asociados.
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</section>
+		</article>
+
+		<div id="content-resizer-handler" class="resizer-handler resizer-handler-right"></div>
+	</div>
+{% endblock %}

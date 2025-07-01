@@ -28,12 +28,6 @@ class MonthlySummary
     #[ORM\Column(type: "float")]
     private float $debtTotal;
 
-    #[ORM\Column(type: "float", nullable: true)]
-    private ?float $bankDebtMemberOne = null;
-
-    #[ORM\Column(type: "float", nullable: true)]
-    private ?float $bankDebtMemberTwo = null;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
@@ -95,28 +89,6 @@ class MonthlySummary
     public function setDebtTotal(float $debtTotal): self
     {
         $this->debtTotal = $debtTotal;
-        return $this;
-    }
-
-    public function getBankDebtMemberOne(): ?float
-    {
-        return $this->bankDebtMemberOne;
-    }
-
-    public function setBankDebtMemberOne(?float $bankDebtMemberOne): self
-    {
-        $this->bankDebtMemberOne = $bankDebtMemberOne;
-        return $this;
-    }
-
-    public function getBankDebtMemberTwo(): ?float
-    {
-        return $this->bankDebtMemberTwo;
-    }
-
-    public function setBankDebtMemberTwo(?float $bankDebtMemberTwo): self
-    {
-        $this->bankDebtMemberTwo = $bankDebtMemberTwo;
         return $this;
     }
 

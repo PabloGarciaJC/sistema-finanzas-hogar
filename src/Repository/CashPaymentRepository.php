@@ -16,15 +16,15 @@ class CashPaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, CashPayment::class);
     }
 
-    public function getTotalCashPayment(): array
+    public function getTotalCashPayment($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalAmount FROM cash_payment WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM cash_payment WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalAmount'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 
     public function getTotalByMemberId(int $memberId): array
@@ -36,16 +36,5 @@ class CashPaymentRepository extends ServiceEntityRepository
         $row = $resultSet->fetchAssociative();
         $amount = (float) ($row['totalAmount'] ?? 0);
         return [$amount => $amount];
-    }
-
-    // Opcionales si los usás individualmente como en tu código original:
-    public function getTotalMemberOne(): array
-    {
-        return $this->getTotalByMemberId(1);
-    }
-
-    public function getTotalMemberTwo(): array
-    {
-        return $this->getTotalByMemberId(2);
     }
 }

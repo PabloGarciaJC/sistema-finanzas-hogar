@@ -16,36 +16,24 @@ class ServiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Service::class);
     }
 
-    public function getTotalServiceSql(): array
+     public function getTotalServiceSql($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebt FROM services WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_debt FROM services WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebt'] ?? 0);
-        return [$amount => $amount];
+        $totalDebt = $row['total_debt'] ?? 0;
+        return (float) $totalDebt;
     }
 
-    public function getTotalMemberOne(): array
+    public function getTotalServicesByMember(int $memberId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebtMemberOne FROM services WHERE member_id = 1 AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS totalAmount FROM services WHERE status = "Activo" AND member_id = :memberId';
         $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery();
+        $resultSet = $stmt->executeQuery(['memberId' => $memberId]);
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebtMemberOne'] ?? 0);
-        return [$amount => $amount];
-    }
-
-    public function getTotalMemberTwo(): array
-    {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2 AND status = "Activo"';
-        $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery();
-        $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebtMemberTwo'] ?? 0);
-        return [$amount => $amount];
+        return (float) ($row['totalAmount'] ?? 0);
     }
 }

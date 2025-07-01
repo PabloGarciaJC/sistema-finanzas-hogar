@@ -16,14 +16,14 @@ class GoalRepository extends ServiceEntityRepository
         parent::__construct($registry, Goal::class);
     }
 
-    public function getGoalTotal(): array
+    public function getGoalTotal($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['target_amount'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 }
