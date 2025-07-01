@@ -9,9 +9,10 @@
 				</div>
 				<div class="page-actions">
 					<div class="global-actions">
-						<a class="action-new btn btn-primary" href="{{ path('admin', {crudControllerFqcn: 'App\\Controller\\Admin\\incomeController'}) }}" data-action-name="new">
+						<a class="action-new btn btn-primary" href="{{ path('admin_monthly_summary_index') }}" data-action-name="new">
 							<span class="action-label">Volver al listado</span>
 						</a>
+
 					</div>
 				</div>
 			</section>
@@ -26,15 +27,18 @@
 						<ul class="list-group list-group-flush">
 							<li class="list-group-item d-flex justify-content-between align-items-center">
 								<span>Ingresos Totales</span>
-								<span>{{ servicesByMember.totals.income|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+								<span>{{ servicesByMember.totals.income|number_format(2, ',', '.') }}
+									{{ currencySymbol }}</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between align-items-center">
 								<span>Deuda Total Bancaria</span>
-								<span>{{ servicesByMember.totals.bankDebtTotal|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+								<span>{{ servicesByMember.totals.bankDebtTotal|number_format(2, ',', '.') }}
+									{{ currencySymbol }}</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between align-items-center">
 								<span>Saldo Restante</span>
-								<span>{{ servicesByMember.totals.remainingBalance|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+								<span>{{ servicesByMember.totals.remainingBalance|number_format(2, ',', '.') }}
+									{{ currencySymbol }}</span>
 							</li>
 						</ul>
 					</div>
@@ -49,7 +53,8 @@
 							{% for member in members %}
 								<li class="list-group-item d-flex justify-content-between align-items-center">
 									<span>{{ member.name }}</span>
-									<span>{{ servicesByMember[member.id].totalCombined|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+									<span>{{ servicesByMember[member.id].totalCombined|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</span>
 								</li>
 							{% else %}
 								<li class="list-group-item">
