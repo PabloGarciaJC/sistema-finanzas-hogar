@@ -17,17 +17,39 @@
 			</section>
 
 			<section id="main" class="content-body">
+
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Totales Generales</h2>
+					</div>
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Ingresos Totales</span>
+								<span>{{ servicesByMember.totals.income|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+							</li>
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Deuda Total Bancaria</span>
+								<span>{{ servicesByMember.totals.bankDebtTotal|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+							</li>
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Saldo Restante</span>
+								<span>{{ servicesByMember.totals.remainingBalance|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+
 				<div class="card mb-4">
 					<div class="card-header">
 						<h2 class="h5 mb-0">Fondos necesarios en cuentas bancarias</h2>
-
 					</div>
 					<div class="card-body">
 						<ul class="list-group list-group-flush">
 							{% for member in members %}
 								<li class="list-group-item d-flex justify-content-between align-items-center">
 									<span>{{ member.name }}</span>
-									<span>{{ servicesByMember[member.id]|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
+									<span>{{ servicesByMember[member.id].totalCombined|number_format(2, ',', '.') }} {{ currencySymbol }}</span>
 								</li>
 							{% else %}
 								<li class="list-group-item">
@@ -37,6 +59,7 @@
 						</ul>
 					</div>
 				</div>
+
 			</section>
 		</article>
 

@@ -101,7 +101,6 @@ class MonthlySummaryController extends AbstractCrudController
     private function calculateDefaultValues(): array
     {
         $user = $this->getUser();
-
         $income = $this->incomeRepository->getIncomeOptions($user->getId());
         $service = $this->serviceRepository->getTotalServiceSql($user->getId());
         $cashPayment = $this->cashPaymentRepository->getTotalCashPayment($user->getId());
@@ -253,17 +252,35 @@ class MonthlySummaryController extends AbstractCrudController
     public function viewDetails(MonthlySummary $monthlySummary): Response
     {
         $user = $this->getUser();
+        $members = $this->memberRepository->findBy(['user' => $user->getId()]);
 
-        $members = $this->memberRepository->findBy([
-            'user' => $user->getId(),
-        ]);
-
-        // Crear un array con el total servicios por miembro
         $servicesByMember = [];
-        
+
         foreach ($members as $member) {
-            $servicesByMember[$member->getId()] = $this->serviceRepository->getTotalServicesByMember($member->getId());
+            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
+            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId());
+            $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
+            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
+            $totalCombined = $services + $cashPayment + $credit + $goal;
+            $servicesByMember[$member->getId()] = [
+                'totalCombined' => $totalCombined,
+            ];
         }
+
+        // Totales generales
+        $income = $this->incomeRepository->getIncomeOptions($user->getId());
+        $service = $this->serviceRepository->getTotalServiceSql($user->getId());
+        $cashPayment = $this->cashPaymentRepository->getTotalCashPayment($user->getId());
+        $credit = $this->creditRepository->getTotalCredit($user->getId());
+        $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
+        $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
+        $remainingBalance = $income - $bankDebtTotal;
+
+        $servicesByMember['totals'] = [
+            'income' => $income,
+            'bankDebtTotal' => $bankDebtTotal,
+            'remainingBalance' => $remainingBalance,
+        ];
 
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,
