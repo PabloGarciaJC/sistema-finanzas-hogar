@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use Doctrine\ORM\QueryBuilder;
@@ -28,12 +27,8 @@ class CreditController extends AbstractCrudController
     private CurrencyRepository $currencyRepository;
     private EntityManagerInterface $em;
 
-    public function __construct(
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        CurrencyRepository $currencyRepository,
-        EntityManagerInterface $em
-    ) {
+    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository, EntityManagerInterface $em)
+    {
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
         $this->currencyRepository = $currencyRepository;
@@ -170,7 +165,7 @@ class CreditController extends AbstractCrudController
     {
         $currency = $this->currencyRepository->findOneBy(['status' => 1]);
         if ($currency) {
-            $this->em->refresh($currency); // Forzar actualización
+            $this->em->refresh($currency);
             return $currency->getSymbol();
         }
 

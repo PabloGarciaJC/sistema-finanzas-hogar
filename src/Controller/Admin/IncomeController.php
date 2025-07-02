@@ -25,12 +25,7 @@ class IncomeController extends AbstractCrudController
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(
-        IncomeRepository $incomeRepository,
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        CurrencyRepository $currencyRepository
-    ) {
+    public function __construct(IncomeRepository $incomeRepository, MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository) {
         $this->incomeRepository = $incomeRepository;
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
@@ -136,15 +131,8 @@ class IncomeController extends AbstractCrudController
         return $qb;
     }
 
-    private function createNumberField(
-        string $name,
-        string $label,
-        string $pageName,
-        ?float $default = null,
-        bool $mapped = true,
-        bool $readonly = false,
-        array $rowClass = []
-    ): NumberField {
+    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = []): NumberField {
+        
         $inputAttributes = ['class' => 'form-control'];
         if ($readonly) {
             $inputAttributes['readonly'] = true;

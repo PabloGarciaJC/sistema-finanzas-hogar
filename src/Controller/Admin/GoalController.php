@@ -26,11 +26,7 @@ class GoalController extends AbstractCrudController
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        CurrencyRepository $currencyRepository
-    ) {
+    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository) {
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
         $this->currencyRepository = $currencyRepository;

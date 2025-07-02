@@ -8,14 +8,6 @@ use App\Entity\Goal;
 use App\Entity\Income;
 use App\Entity\Member;
 use App\Entity\MonthlySummary;
-use App\Entity\Period;
-use App\Entity\Saving;
-use App\Entity\Service;
-
-
-
-use App\Entity\User;
-
 use App\Controller\Admin\CreditController;
 use App\Controller\Admin\GoalController;
 use App\Controller\Admin\IncomeController;
@@ -23,7 +15,6 @@ use App\Controller\Admin\MemberController;
 use App\Controller\Admin\MonthlySummaryController;
 use App\Controller\Admin\ServiceController;
 use App\Controller\Admin\CashPaymentController;
-
 use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\CashPaymentRepository;
@@ -36,9 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-
 use Symfony\Component\HttpFoundation\Response;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
@@ -53,16 +42,8 @@ class DashboardController extends AbstractDashboardController
     private MemberRepository $memberRepository;
     private MonthlySummaryRepository $monthlySummaryRepository;
 
-    public function __construct(
-        IncomeRepository $incomeRepository,
-        ServiceRepository $serviceRepository,
-        CashPaymentRepository $cashPaymentRepository,
-        CreditRepository $creditRepository,
-        GoalRepository $goalRepository,
-        MonthRepository $monthRepository,
-        MemberRepository $memberRepository,
-        MonthlySummaryRepository $monthlySummaryRepository,
-    ) {
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CashPaymentRepository $cashPaymentRepository, CreditRepository $creditRepository, GoalRepository $goalRepository, MonthRepository $monthRepository, MemberRepository $memberRepository, MonthlySummaryRepository $monthlySummaryRepository,)
+    {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->cashPaymentRepository = $cashPaymentRepository;
