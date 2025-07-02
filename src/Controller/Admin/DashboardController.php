@@ -89,10 +89,9 @@ class DashboardController extends AbstractDashboardController
         $bankDebtTotal = $totalServicios + $totalPagosAlContado + $totalCreditos + $totalMetas;
         $totalAhorros = (float) $totalIngresos - $bankDebtTotal;
 
-        // Crear array de meses dinámicamente desde la BDD
+        // Crear array de meses dinámicamente
         $months = [];
         $gastosPorMes = [];
-
         foreach ($monthsEntities as $monthEntity) {
             $months[$monthEntity->getName()] = $monthEntity->getId();
             $gastosPorMes[] = $this->monthlySummaryRepository->getDebtsByMonth(
@@ -100,16 +99,9 @@ class DashboardController extends AbstractDashboardController
                 $monthEntity->getId()
             );
         }
+
         // Construir array de nombres de mes
         $meses = array_keys($months);
-
-        setlocale(LC_TIME, 'es_ES.UTF-8');
-        $mesActualNombre = strftime('%B'); // Ej: "julio"
-        $mesActualNombre = ucfirst($mesActualNombre);
-
-        $indiceMesActual = array_search($mesActualNombre, $meses);
-        $gastoTotalMesActual = $gastosPorMes[$indiceMesActual] ?? 0;
-
         return $this->render('admin/dashboard/index.html.twig', [
             'totalMiembros' => $totalMiembros,
             'totalIngresos' => $totalIngresos,
@@ -118,11 +110,8 @@ class DashboardController extends AbstractDashboardController
             'totalMetas' => $totalMetas,
             'totalAhorros' => $totalAhorros,
             'totalPagosAlContado' => $totalPagosAlContado,
-
             'meses' => $meses,
             'gastosPorMes' => $gastosPorMes,
-            'mesActualNombre' => $mesActualNombre,
-            'gastoTotalMesActual' => $gastoTotalMesActual,
             'totalPagosAnuales' => '1001',
         ]);
     }
