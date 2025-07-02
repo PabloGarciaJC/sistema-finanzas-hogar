@@ -31,7 +31,7 @@ use App\Repository\CreditRepository;
 use App\Repository\GoalRepository;
 use App\Repository\MonthRepository;
 use App\Repository\MemberRepository;
-
+use App\Repository\MonthlySummaryRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -51,6 +51,7 @@ class DashboardController extends AbstractDashboardController
     private GoalRepository $goalRepository;
     private MonthRepository $monthRepository;
     private MemberRepository $memberRepository;
+    private MonthlySummaryRepository $monthlySummaryRepository;
 
     public function __construct(
         IncomeRepository $incomeRepository,
@@ -60,6 +61,7 @@ class DashboardController extends AbstractDashboardController
         GoalRepository $goalRepository,
         MonthRepository $monthRepository,
         MemberRepository $memberRepository,
+        MonthlySummaryRepository $monthlySummaryRepository,
     ) {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
@@ -68,6 +70,7 @@ class DashboardController extends AbstractDashboardController
         $this->goalRepository = $goalRepository;
         $this->monthRepository = $monthRepository;
         $this->memberRepository = $memberRepository;
+        $this->monthlySummaryRepository = $monthlySummaryRepository;
     }
 
     public function index(): Response
@@ -88,14 +91,17 @@ class DashboardController extends AbstractDashboardController
 
         // Crear array de meses dinámicamente desde la BDD
         $months = [];
+        $gastosPorMes = [];
+
         foreach ($monthsEntities as $monthEntity) {
             $months[$monthEntity->getName()] = $monthEntity->getId();
+            $gastosPorMes[] = $this->monthlySummaryRepository->getDebtsByMonth(
+                $user->getId(),
+                $monthEntity->getId()
+            );
         }
-
         // Construir array de nombres de mes
         $meses = array_keys($months);
-
-        $gastosPorMes = [1200, 1500, 1000, 1300, 1250, 1400, 1100, 1600, 1350, 1450, 1550, 1700];
 
         setlocale(LC_TIME, 'es_ES.UTF-8');
         $mesActualNombre = strftime('%B'); // Ej: "julio"
@@ -113,14 +119,13 @@ class DashboardController extends AbstractDashboardController
             'totalAhorros' => $totalAhorros,
             'totalPagosAlContado' => $totalPagosAlContado,
 
-            'meses' => $meses, 
+            'meses' => $meses,
             'gastosPorMes' => $gastosPorMes,
             'mesActualNombre' => $mesActualNombre,
             'gastoTotalMesActual' => $gastoTotalMesActual,
             'totalPagosAnuales' => '1001',
         ]);
     }
-
 
     public function configureDashboard(): Dashboard
     {
