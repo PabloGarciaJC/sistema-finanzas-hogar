@@ -74,11 +74,6 @@ class DashboardController extends AbstractDashboardController
     {
         $monthsEntities = $this->monthRepository->findAll();
 
-        $months = [];
-        foreach ($monthsEntities as $monthEntity) {
-            $months[$monthEntity->getName()] = $monthEntity->getId();
-        }
-
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
@@ -90,16 +85,21 @@ class DashboardController extends AbstractDashboardController
         $totalMetas = $this->goalRepository->getGoalTotal($user->getId());
         $bankDebtTotal = $totalServicios + $totalPagosAlContado + $totalCreditos + $totalMetas;
         $totalAhorros = (float) $totalIngresos - $bankDebtTotal;
-  
-        $meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        // Crear array de meses dinámicamente desde la BDD
+        $months = [];
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
+        }
+
+        // Construir array de nombres de mes
+        $meses = array_keys($months);
+
         $gastosPorMes = [1200, 1500, 1000, 1300, 1250, 1400, 1100, 1600, 1350, 1450, 1550, 1700];
 
-        // Establecer el locale para español (en Linux suele funcionar)
         setlocale(LC_TIME, 'es_ES.UTF-8');
-
-        // Obtener nombre del mes actual en español
         $mesActualNombre = strftime('%B'); // Ej: "julio"
-        $mesActualNombre = ucfirst($mesActualNombre); // Primera letra mayúscula
+        $mesActualNombre = ucfirst($mesActualNombre);
 
         $indiceMesActual = array_search($mesActualNombre, $meses);
         $gastoTotalMesActual = $gastosPorMes[$indiceMesActual] ?? 0;
@@ -113,7 +113,7 @@ class DashboardController extends AbstractDashboardController
             'totalAhorros' => $totalAhorros,
             'totalPagosAlContado' => $totalPagosAlContado,
 
-            'meses' => $meses,
+            'meses' => $meses, 
             'gastosPorMes' => $gastosPorMes,
             'mesActualNombre' => $mesActualNombre,
             'gastoTotalMesActual' => $gastoTotalMesActual,
