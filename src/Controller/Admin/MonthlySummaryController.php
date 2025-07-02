@@ -10,14 +10,8 @@ use App\Repository\GoalRepository;
 use App\Repository\CurrencyRepository;
 use App\Repository\MonthRepository;
 use App\Repository\YearRepository;
-use App\Repository\MonthlySummaryRepository;
 use App\Repository\CashPaymentRepository;
-
-
-
-
-
-
+use App\Repository\MemberRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -32,11 +26,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\MemberRepository;
 
 class MonthlySummaryController extends AbstractCrudController
 {
-    private MonthlySummaryRepository $monthlySummaryRepository;
     private IncomeRepository $incomeRepository;
     private ServiceRepository $serviceRepository;
     private CreditRepository $creditRepository;
@@ -47,19 +39,8 @@ class MonthlySummaryController extends AbstractCrudController
     private MemberRepository $memberRepository;
     private CashPaymentRepository $cashPaymentRepository;
 
-    public function __construct(
-        MonthlySummaryRepository $monthlySummaryRepository,
-        IncomeRepository $incomeRepository,
-        ServiceRepository $serviceRepository,
-        CreditRepository $creditRepository,
-        GoalRepository $goalRepository,
-        CurrencyRepository $currencyRepository,
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        MemberRepository $memberRepository,
-        CashPaymentRepository $cashPaymentRepository
-    ) {
-        $this->monthlySummaryRepository = $monthlySummaryRepository;
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository, CurrencyRepository $currencyRepository, MonthRepository $monthRepository, YearRepository $yearRepository, MemberRepository $memberRepository, CashPaymentRepository $cashPaymentRepository)
+    {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
@@ -81,20 +62,13 @@ class MonthlySummaryController extends AbstractCrudController
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
         $defaults = $this->calculateDefaultValues();
-
         $fields = [];
-
         $fields[] = AssociationField::new('user', 'Familia')->hideOnForm();
-
         $fields[] = $this->createFormattedNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaults['income'], $currencySymbol, $rowClass);
         $fields[] = $this->createFormattedNumberField('debt_total', 'Deuda Total', $pageName, $defaults['bankDebtTotal'], $currencySymbol, $rowClass);
-
-        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaults['remainingBalance'], false, true, $rowClass)
-            ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
-
+        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaults['remainingBalance'], false, true, $rowClass)->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
         $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
-
         return $fields;
     }
 
@@ -108,7 +82,6 @@ class MonthlySummaryController extends AbstractCrudController
         $credit = $this->creditRepository->getTotalCredit($user->getId());
         $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
         $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
-        
         $remainingBalance = (float) $income - $bankDebtTotal;
 
         return [
@@ -190,27 +163,13 @@ class MonthlySummaryController extends AbstractCrudController
         $user = $this->getUser();
 
         if ($user) {
-            $qb->andWhere('entity.user = :currentUser')
-                ->setParameter('currentUser', $user);
+            $qb->andWhere('entity.user = :currentUser')->setParameter('currentUser', $user);
         }
 
         return $qb;
     }
 
-    private function getDefaultValue($data): ?float
-    {
-        return $data ? reset($data) / 100 : null;
-    }
-
-    private function createNumberField(
-        string $name,
-        string $label,
-        string $pageName,
-        ?float $default = null,
-        bool $mapped = true,
-        bool $readonly = false,
-        array $rowClass = []
-    ): NumberField {
+    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = []): NumberField {
         $inputAttributes = ['class' => 'form-control'];
         if ($readonly) {
             $inputAttributes['readonly'] = true;
@@ -265,9 +224,7 @@ class MonthlySummaryController extends AbstractCrudController
             $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
             $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
             $totalCombined = $services + $cashPayment + $credit + $goal;
-            $servicesByMember[$member->getId()] = [
-                'totalCombined' => $totalCombined,
-            ];
+            $servicesByMember[$member->getId()] = ['totalCombined' => $totalCombined];
         }
 
         // Totales generales

@@ -16,7 +16,7 @@
                 {'label': 'Metas', 'value': totalMetas, 'icon': 'fas fa-bullseye', 'color': '#6f42c1'},
                 {'label': 'Ahorros', 'value': totalAhorros, 'icon': 'fas fa-piggy-bank', 'color': '#fd7e14'},
                 {'label': 'Pagos al Contado', 'value': totalPagosAlContado, 'icon': 'fas fa-credit-card', 'color': '#00bcd4'},
-                {'label': 'Gastos Anuales', 'value': 100, 'icon': 'fas fa-chart-pie', 'color': '#e74a3b'}
+                {'label': 'Gastos Anuales', 'value': totalPagosAnuales, 'icon': 'fas fa-chart-pie', 'color': '#e74a3b'}
             ] %}
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-5">
@@ -24,17 +24,7 @@
                     <div class="col">
                         <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: {{ item.color }}; color: #fff; min-height: 115px;">
                             <div class="card-body d-flex align-items-center gap-3 p-4">
-                                <div style="
-                                    background-color: rgba(255,255,255,0.2);
-                                    color: white;
-                                    border-radius: 50%;
-                                    width: 56px;
-                                    height: 56px;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    font-size: 1.9rem;
-                                ">
+                                <div style="background-color: rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 1.9rem;">
                                     <i class="{{ item.icon }}"></i>
                                 </div>
                                 <div>
