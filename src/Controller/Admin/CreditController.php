@@ -42,6 +42,9 @@ class CreditController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
 
@@ -49,6 +52,10 @@ class CreditController extends AbstractCrudController
             AssociationField::new('user', 'Familia')->hideOnForm(),
 
             AssociationField::new('member', 'Miembro')
+                ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
+                    return $qb->andWhere('entity.user = :user')
+                        ->setParameter('user', $user);
+                })
                 ->setFormTypeOption('row_attr', $rowClass),
 
             TextField::new('bankEntity', 'Banco')

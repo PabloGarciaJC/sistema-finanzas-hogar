@@ -40,6 +40,9 @@ class CashPaymentController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
 
@@ -57,7 +60,12 @@ class CashPaymentController extends AbstractCrudController
         }
 
         return [
-            AssociationField::new('member', 'Miembro')->setFormTypeOption('row_attr', $rowClass),
+            AssociationField::new('member', 'Miembro')
+                ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
+                    return $qb->andWhere('entity.user = :user')
+                        ->setParameter('user', $user);
+                })
+                ->setFormTypeOption('row_attr', $rowClass),
             $this->createFormattedNumberField('amount', 'Importe', $pageName, 0.00, true, false, $rowClass, $currencySymbol),
             $descriptionField,
             $this->createPaymentDayField($rowClass),
