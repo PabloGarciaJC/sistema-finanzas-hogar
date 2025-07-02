@@ -94,14 +94,15 @@ class DashboardController extends AbstractDashboardController
         $gastosPorMes = [];
         foreach ($monthsEntities as $monthEntity) {
             $months[$monthEntity->getName()] = $monthEntity->getId();
-            $gastosPorMes[] = $this->monthlySummaryRepository->getDebtsByMonth(
-                $user->getId(),
-                $monthEntity->getId()
-            );
+            $gastosPorMes[] = $this->monthlySummaryRepository->getDebtsByMonth($user->getId(), $monthEntity->getId());
         }
 
         // Construir array de nombres de mes
         $meses = array_keys($months);
+
+        // Sumar todos los gastos mensuales para obtener el total anual
+        $gastosAnuales = array_sum($gastosPorMes);
+
         return $this->render('admin/dashboard/index.html.twig', [
             'totalMiembros' => $totalMiembros,
             'totalIngresos' => $totalIngresos,
@@ -112,7 +113,7 @@ class DashboardController extends AbstractDashboardController
             'totalPagosAlContado' => $totalPagosAlContado,
             'meses' => $meses,
             'gastosPorMes' => $gastosPorMes,
-            'totalPagosAnuales' => '1001',
+            'totalPagosAnuales' => $gastosAnuales,
         ]);
     }
 
