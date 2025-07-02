@@ -25,7 +25,8 @@ final class Version20250518094728 extends AbstractMigration
             total_amount NUMERIC(12, 2) NOT NULL,
             installment_amount NUMERIC(12, 2) NOT NULL,
             frequency VARCHAR(20) NOT NULL,
-            start_date DATE NOT NULL,
+            month INT NOT NULL,
+            year INT NOT NULL,
             remaining_amount NUMERIC(12, 2) DEFAULT NULL,
             status VARCHAR(20) NOT NULL DEFAULT \'Active\',
             PRIMARY KEY(id)
