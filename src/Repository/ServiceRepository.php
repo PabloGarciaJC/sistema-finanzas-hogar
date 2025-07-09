@@ -27,6 +27,16 @@ class ServiceRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
+    public function getAllServiceSql($userId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT * FROM services WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $rows = $resultSet->fetchAllAssociative();
+        return $rows;
+    }
+
     public function getTotalServicesByMember($memberId, $userId): float
     {
         $conn = $this->getEntityManager()->getConnection();

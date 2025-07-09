@@ -26,6 +26,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class MonthlySummaryController extends AbstractCrudController
 {
@@ -39,8 +41,17 @@ class MonthlySummaryController extends AbstractCrudController
     private MemberRepository $memberRepository;
     private CashPaymentRepository $cashPaymentRepository;
 
-    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository, CurrencyRepository $currencyRepository, MonthRepository $monthRepository, YearRepository $yearRepository, MemberRepository $memberRepository, CashPaymentRepository $cashPaymentRepository)
-    {
+    public function __construct(
+        IncomeRepository $incomeRepository,
+        ServiceRepository $serviceRepository,
+        CreditRepository $creditRepository,
+        GoalRepository $goalRepository,
+        CurrencyRepository $currencyRepository,
+        MonthRepository $monthRepository,
+        YearRepository $yearRepository,
+        MemberRepository $memberRepository,
+        CashPaymentRepository $cashPaymentRepository
+    ) {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
@@ -66,7 +77,7 @@ class MonthlySummaryController extends AbstractCrudController
         $fields[] = AssociationField::new('user', 'Familia')->hideOnForm();
         $fields[] = $this->createFormattedNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaults['income'], $currencySymbol, $rowClass);
         $fields[] = $this->createFormattedNumberField('debt_total', 'Deuda Total', $pageName, $defaults['bankDebtTotal'], $currencySymbol, $rowClass);
-        $fields[] = $this->createNumberField('remainingBalance', 'Saldo Restante', $pageName, $defaults['remainingBalance'], false, true, $rowClass)->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
+        $fields[] = $this->createFormattedNumberField('savings', 'Ahorros', $pageName, $defaults['savings'], $currencySymbol, $rowClass);
         $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
         return $fields;
@@ -82,12 +93,29 @@ class MonthlySummaryController extends AbstractCrudController
         $credit = $this->creditRepository->getTotalCredit($user->getId());
         $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
         $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
-        $remainingBalance = (float) $income - $bankDebtTotal;
+        $saving = (float) $income - $bankDebtTotal;
+
+        $members = $this->memberRepository->findBy(['user' => $user->getId()]);
+        $memberBalances = [];
+
+        foreach ($members as $member) {
+            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
+            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId());
+            $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
+            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
+            $totalCombined = $services + $cashPayment + $credit + $goal;
+
+            $memberBalances[] = [
+                'memberName' => $member->getName(),
+                'bankBalance' => $totalCombined,
+            ];
+        }
 
         return [
             'income' => $income,
             'bankDebtTotal' => $bankDebtTotal,
-            'remainingBalance' => $remainingBalance,
+            'savings' => $saving,
+            'bank_balance' => $memberBalances
         ];
     }
 
@@ -153,7 +181,7 @@ class MonthlySummaryController extends AbstractCrudController
                 'month',
                 'year',
                 'totalIncome',
-                'remainingBalance',
+                'saving',
             ]);
     }
 
@@ -169,7 +197,8 @@ class MonthlySummaryController extends AbstractCrudController
         return $qb;
     }
 
-    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = []): NumberField {
+    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = []): NumberField
+    {
         $inputAttributes = ['class' => 'form-control'];
         if ($readonly) {
             $inputAttributes['readonly'] = true;
@@ -196,7 +225,6 @@ class MonthlySummaryController extends AbstractCrudController
         return $currency ? $currency->getSymbol() : '';
     }
 
-    // --- Acción personalizada "Ver detalles" ---
     public function configureActions(Actions $actions): Actions
     {
         $viewDetails = Action::new('viewDetails', 'Ver detalles', '')
@@ -208,15 +236,23 @@ class MonthlySummaryController extends AbstractCrudController
     }
 
     /**
-     * @Route("/admin/monthly-summary/{id}/view-details", name="admin_monthly_summary_view_details")
+     * GUARDA EL JSON ANTES DE PERSISTIR
      */
-    public function viewDetails(MonthlySummary $monthlySummary): Response
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
+        if (!$entityInstance instanceof MonthlySummary) {
+            return;
+        }
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $members = $this->memberRepository->findBy(['user' => $user->getId()]);
 
-        $servicesByMember = [];
+        $balances = [];
+        $servicesAll = [];
+        $cashPaymentAll = [];
+        $creditAll = [];
+        $goalAll = [];
 
         foreach ($members as $member) {
             $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
@@ -224,28 +260,37 @@ class MonthlySummaryController extends AbstractCrudController
             $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
             $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
             $totalCombined = $services + $cashPayment + $credit + $goal;
-            $servicesByMember[$member->getId()] = ['totalCombined' => $totalCombined];
+
+            $balances[] = [
+                'memberName' => $member->getName(),
+                'bankBalance' => $totalCombined,
+            ];
         }
 
-        // Totales generales
-        $income = $this->incomeRepository->getIncomeOptions($user->getId());
-        $service = $this->serviceRepository->getTotalServiceSql($user->getId());
-        $cashPayment = $this->cashPaymentRepository->getTotalCashPayment($user->getId());
-        $credit = $this->creditRepository->getTotalCredit($user->getId());
-        $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
-        $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
-        $remainingBalance = (float) $income - $bankDebtTotal;
+        // TODOS LOS SERVICIOS DE ESTE MIEMBRO
+        $servicesAll[] = ['services' => $this->serviceRepository->getAllServiceSql($user->getId())];
+        $cashPaymentAll[] = ['cashPayment' => $this->cashPaymentRepository->getAllCashPaymentSql($user->getId())];
+        $creditAll[] = ['credit' => $this->creditRepository->getAllCreditSql($user->getId())];
+        $goalAll[] = ['goal' => $this->goalRepository->getAllGoalSql($user->getId())];
 
-        $servicesByMember['totals'] = [
-            'income' => $income,
-            'bankDebtTotal' => $bankDebtTotal,
-            'remainingBalance' => $remainingBalance,
-        ];
+        $entityInstance->setBankBalance($balances);
+        $entityInstance->setServices($servicesAll);
+        $entityInstance->setCashPayment($cashPaymentAll);
+        $entityInstance->setCredit($creditAll);
+        $entityInstance->setGoal($goalAll);
 
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    /**
+     * @Route("/admin/monthly-summary/view-details", name="admin_monthly_summary_view_details")
+     */
+    public function viewDetails(Request $request, EntityManagerInterface $em): Response
+    {
+        $id = $request->query->get('entityId');
+        $monthlySummary = $em->getRepository(MonthlySummary::class)->find($id);
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,
-            'members' => $members,
-            'servicesByMember' => $servicesByMember,
             'currencySymbol' => $this->getActiveCurrencySymbol(),
         ]);
     }

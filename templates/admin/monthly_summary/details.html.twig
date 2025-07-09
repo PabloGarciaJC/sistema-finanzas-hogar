@@ -9,65 +9,185 @@
 				</div>
 				<div class="page-actions">
 					<div class="global-actions">
-						<a class="action-new btn btn-primary" href="{{ path('admin_monthly_summary_index') }}" data-action-name="new">
+						<a class="action-new btn btn-primary" href="{{ path('admin_monthly_summary_index') }}">
 							<span class="action-label">Volver al listado</span>
 						</a>
-
 					</div>
 				</div>
 			</section>
-
 			<section id="main" class="content-body">
-
 				<div class="card mb-4">
 					<div class="card-header">
 						<h2 class="h5 mb-0">Totales Generales</h2>
 					</div>
 					<div class="card-body">
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item d-flex justify-content-between align-items-center">
+							<li class="d-flex justify-content-between align-items-center fw-bold text-primary">
 								<span>Ingresos Totales</span>
-								<span>{{ servicesByMember.totals.income|number_format(2, ',', '.') }}
+								<span>{{ monthlySummary.totalIncome|number_format(2, ',', '.') }}
 									{{ currencySymbol }}</span>
 							</li>
-							<li class="list-group-item d-flex justify-content-between align-items-center">
-								<span>Deuda Total Bancaria</span>
-								<span>{{ servicesByMember.totals.bankDebtTotal|number_format(2, ',', '.') }}
+							<li class="d-flex justify-content-between align-items-center fw-bold text-danger">
+								<span>Deuda Total</span>
+								<span>{{ monthlySummary.debtTotal|number_format(2, ',', '.') }}
 									{{ currencySymbol }}</span>
 							</li>
-							<li class="list-group-item d-flex justify-content-between align-items-center">
-								<span>Saldo Restante</span>
-								<span>{{ servicesByMember.totals.remainingBalance|number_format(2, ',', '.') }}
+							<li class="d-flex justify-content-between align-items-center fw-bold text-success">
+								<span>Ahorros</span>
+								<span>{{ monthlySummary.savings|number_format(2, ',', '.') }}
 									{{ currencySymbol }}</span>
 							</li>
 						</ul>
 					</div>
 				</div>
-
 				<div class="card mb-4">
 					<div class="card-header">
-						<h2 class="h5 mb-0">Fondos necesarios en cuentas bancarias</h2>
+						<h2 class="h5 mb-0">Saldo en Banco por Miembro</h2>
 					</div>
 					<div class="card-body">
 						<ul class="list-group list-group-flush">
-							{% for member in members %}
-								<li class="list-group-item d-flex justify-content-between align-items-center">
-									<span>{{ member.name }}</span>
-									<span>{{ servicesByMember[member.id].totalCombined|number_format(2, ',', '.') }}
+							{% for item in monthlySummary.bankBalance %}
+								<li class="d-flex justify-content-between align-items-center">
+									<span>{{ item.memberName }}</span>
+									<span>{{ item.bankBalance|number_format(2, ',', '.') }}
 										{{ currencySymbol }}</span>
 								</li>
 							{% else %}
-								<li class="list-group-item">
-									No hay miembros asociados.
-								</li>
+								<li>No hay datos</li>
 							{% endfor %}
 						</ul>
 					</div>
 				</div>
-
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Servicios</h2>
+					</div>
+					<div class="card-body">
+						{% for block in monthlySummary.services %}
+							{% set totalServices = 0 %}
+							<ul class="list-group list-group-flush">
+								{% for service in block.services %}
+									{% set totalServices = totalServices + service.amount %}
+									<li class="d-flex justify-content-between align-items-center">
+										<span>{{ service.description|raw }}</span>
+										<span>{{ service.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</span>
+									</li>
+								{% else %}
+									<li>No hay servicios</li>
+								{% endfor %}
+								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
+									<span>
+										<strong>Total Servicios</strong>
+									</span>
+									<span>{{ totalServices|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</span>
+								</li>
+							</ul>
+						{% else %}
+							<p>No hay datos</p>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Pagos al Contado</h2>
+					</div>
+					<div class="card-body">
+						{% for block in monthlySummary.cashPayment %}
+							{% set totalCash = 0 %}
+							<ul class="list-group list-group-flush">
+								{% for cashPayment in block.cashPayment %}
+									{% set totalCash = totalCash + cashPayment.amount %}
+									<li class="d-flex justify-content-between align-items-center">
+										<span>{{ cashPayment.description|raw }}</span>
+										<span>{{ cashPayment.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</span>
+									</li>
+								{% else %}
+									<li>No hay Pagos al Contado</li>
+								{% endfor %}
+								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
+									<span>
+										<strong>Total Pagos al Contado</strong>
+									</span>
+									<span>{{ totalCash|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</span>
+								</li>
+							</ul>
+						{% else %}
+							<p>No hay datos</p>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Créditos</h2>
+					</div>
+					<div class="card-body">
+						{% for block in monthlySummary.credit %}
+							{% set totalCredit = 0 %}
+							<ul class="list-group list-group-flush">
+								{% for credit in block.credit %}
+									{% set totalCredit = totalCredit + credit.installment_amount %}
+									<li class="d-flex justify-content-between align-items-center">
+										<span>
+											<strong>{{ credit.bank_entity }}</strong><br>
+											<small>Frecuencia:
+												{{ credit.frequency }}</small>
+										</span>
+										<span>{{ credit.installment_amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</span>
+									</li>
+								{% else %}
+									<li>No hay Créditos</li>
+								{% endfor %}
+								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
+									<span>
+										<strong>Total Créditos (Cuotas)</strong>
+									</span>
+									<span>{{ totalCredit|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</span>
+								</li>
+							</ul>
+						{% else %}
+							<p>No hay datos</p>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Metas</h2>
+					</div>
+					<div class="card-body">
+						{% for block in monthlySummary.goal %}
+							{% set totalGoals = 0 %}
+							<ul class="list-group list-group-flush">
+								{% for goal in block.goal %}
+									{% set totalGoals = totalGoals + goal.amount %}
+									<li class="d-flex justify-content-between align-items-center">
+										<span>{{ goal.description|raw }}</span>
+										<span>{{ goal.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</span>
+									</li>
+								{% else %}
+									<li>No hay Metas</li>
+								{% endfor %}
+								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
+									<span>
+										<strong>Total Metas</strong>
+									</span>
+									<span>{{ totalGoals|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</span>
+								</li>
+							</ul>
+						{% else %}
+							<p>No hay datos</p>
+						{% endfor %}
+					</div>
+				</div>
 			</section>
 		</article>
-
 		<div id="content-resizer-handler" class="resizer-handler resizer-handler-right"></div>
 	</div>
 {% endblock %}

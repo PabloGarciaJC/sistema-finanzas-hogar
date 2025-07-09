@@ -27,6 +27,16 @@ class CashPaymentRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
+    public function getAllCashPaymentSql($userId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT * FROM cash_payment WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $rows = $resultSet->fetchAllAssociative();
+        return $rows;
+    }
+
     public function getTotalByMemberId ($memberId, $userId): float
     {
         $conn = $this->getEntityManager()->getConnection();

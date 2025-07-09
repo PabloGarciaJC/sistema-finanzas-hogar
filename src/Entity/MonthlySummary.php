@@ -23,10 +23,25 @@ class MonthlySummary
     private float $totalIncome;
 
     #[ORM\Column(type: "float")]
-    private float $savings = 0.0;
+    private float $savings;
 
     #[ORM\Column(type: "float")]
     private float $debtTotal;
+
+    #[ORM\Column(type: "json")]
+    private array $bankBalance = [];
+
+    #[ORM\Column(type: "json")]
+    private array $services = [];
+
+    #[ORM\Column(type: "json")]
+    private array $cashPayment = [];
+
+    #[ORM\Column(type: "json")]
+    private array $credit = [];
+
+    #[ORM\Column(type: "json")]
+    private array $goal = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -92,9 +107,59 @@ class MonthlySummary
         return $this;
     }
 
-    public function getRemainingBalance(): float
+    public function getBankBalance(): array
     {
-        return ($this->totalIncome ?? 0) - ($this->debtTotal ?? 0) - ($this->savings ?? 0);
+        return $this->bankBalance;
+    }
+
+    public function setBankBalance(array $bankBalance): self
+    {
+        $this->bankBalance = $bankBalance;
+        return $this;
+    }
+
+    public function getServices(): array
+    {
+        return $this->services;
+    }
+
+    public function setServices(array $services): self
+    {
+        $this->services = $services;
+        return $this;
+    }
+
+    public function getCashPayment(): array
+    {
+        return $this->cashPayment;
+    }
+
+    public function setCashPayment(array $cashPayment): self
+    {
+        $this->cashPayment = $cashPayment;
+        return $this;
+    }
+
+    public function getCredit(): array
+    {
+        return $this->credit;
+    }
+
+    public function setCredit(array $credit): self
+    {
+        $this->credit = $credit;
+        return $this;
+    }
+
+    public function getGoal(): array
+    {
+        return $this->goal;
+    }
+
+    public function setGoal(array $goal): self
+    {
+        $this->goal = $goal;
+        return $this;
     }
 
     public function getUser(): ?User
