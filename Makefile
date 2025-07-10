@@ -136,8 +136,3 @@ push-build:
 	git add -f public/build
 	git commit -m "Agrego assets compilados para producción"
 	git push origin master
-
-
-
-# php bin/console make:fixture CurrencyFixture
-# php bin/console doctrine:fixtures:load
