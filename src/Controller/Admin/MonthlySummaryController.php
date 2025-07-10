@@ -288,7 +288,7 @@ class MonthlySummaryController extends AbstractCrudController
                 'totalIncome',
                 'saving',
             ])
-            ->setDefaultSort(['id' => 'DESC']); 
+            ->setDefaultSort(['id' => 'DESC']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
