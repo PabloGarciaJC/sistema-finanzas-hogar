@@ -19,16 +19,25 @@ class IncomeRepository extends ServiceEntityRepository
      * Devuelve un array con opciones para el select: [ 'Etiqueta' => valor, ... ]
      * @return array<string, float>
      */
-    public function getIncomeOptions(): array
+    public function getIncomeOptions($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM income WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM income WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['total_amount'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 
-    
+    public function getCountMember($userId): float
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT COUNT(*) AS member_count FROM member WHERE user_id = ' . $userId;
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $row = $resultSet->fetchAssociative();
+        $count = $row['member_count'] ?? 0;
+        return (float) $count;
+    }
 }

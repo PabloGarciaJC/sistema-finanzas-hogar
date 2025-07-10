@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use Doctrine\ORM\QueryBuilder;
@@ -26,18 +25,12 @@ class CreditController extends AbstractCrudController
     private MonthRepository $monthRepository;
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
-    private EntityManagerInterface $em;
 
-    public function __construct(
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        CurrencyRepository $currencyRepository,
-        EntityManagerInterface $em
-    ) {
+    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository)
+    {
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
         $this->currencyRepository = $currencyRepository;
-        $this->em = $em;
     }
 
     public static function getEntityFqcn(): string
@@ -47,6 +40,9 @@ class CreditController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
 
@@ -54,6 +50,10 @@ class CreditController extends AbstractCrudController
             AssociationField::new('user', 'Familia')->hideOnForm(),
 
             AssociationField::new('member', 'Miembro')
+                ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
+                    return $qb->andWhere('entity.user = :user')
+                        ->setParameter('user', $user);
+                })
                 ->setFormTypeOption('row_attr', $rowClass),
 
             TextField::new('bankEntity', 'Banco')
@@ -91,7 +91,6 @@ class CreditController extends AbstractCrudController
         ];
     }
 
-
     private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
         $monthsEntities = $this->monthRepository->findAll();
@@ -100,17 +99,23 @@ class CreditController extends AbstractCrudController
             $months[$monthEntity->getName()] = $monthEntity->getId();
         }
 
-        return ChoiceField::new('month', 'Mes')
+        $monthField = ChoiceField::new('month', 'Mes')
             ->setChoices($months)
             ->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW) {
+            $monthField->setFormTypeOption('data', 1); // Enero por defecto
+        }
+
+        return $monthField;
     }
 
     private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        $yearsEntities = $this->yearRepository->findBy(['status' => 1]);
+        $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
         $years = [];
-        foreach ($yearsEntities as $yearEntity) {
-            $years[$yearEntity->getYear()] = $yearEntity->getYear();
+        foreach ($activeYearsEntities as $yearEntity) {
+            $years[$yearEntity->getYear()] = $yearEntity->getId();
         }
 
         $yearField = ChoiceField::new('year', 'Año')
@@ -118,7 +123,8 @@ class CreditController extends AbstractCrudController
             ->setFormTypeOption('row_attr', $rowClass);
 
         if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
-            $yearField->setFormTypeOption('data', reset($years));
+            $defaultYearId = reset($years);
+            $yearField->setFormTypeOption('data', $defaultYearId);
         }
 
         return $yearField;
@@ -134,15 +140,14 @@ class CreditController extends AbstractCrudController
         // Seleccionar mes por defecto (Enero)
         $credit->setMonth(1);
 
-        // Seleccionar año activo por defecto (similar a como haces en configureYearField)
+        // Seleccionar año activo por defecto
         $activeYears = $this->yearRepository->findBy(['status' => 1]);
         if ($activeYears) {
-            $credit->setYear($activeYears[0]->getYear());
+            $credit->setYear($activeYears[0]->getId());
         }
 
         return $credit;
     }
-
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -166,14 +171,51 @@ class CreditController extends AbstractCrudController
         return $qb;
     }
 
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Credit) {
+            return;
+        }
+
+        $monthId = $entityInstance->getMonth();
+        $monthEntity = $this->monthRepository->find($monthId);
+        if (!$monthEntity) {
+            throw new \RuntimeException('Mes inválido');
+        }
+
+        $yearId = $entityInstance->getYear();
+        $yearEntity = $this->yearRepository->find($yearId);
+        if (!$yearEntity) {
+            throw new \RuntimeException('Año inválido');
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Credit) {
+            return;
+        }
+
+        $monthId = $entityInstance->getMonth();
+        $monthEntity = $this->monthRepository->find($monthId);
+        if (!$monthEntity) {
+            throw new \RuntimeException('Mes inválido');
+        }
+
+        $yearId = $entityInstance->getYear();
+        $yearEntity = $this->yearRepository->find($yearId);
+        if (!$yearEntity) {
+            throw new \RuntimeException('Año inválido');
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
     private function getActiveCurrencySymbol(): string
     {
         $currency = $this->currencyRepository->findOneBy(['status' => 1]);
-        if ($currency) {
-            $this->em->refresh($currency); // Forzar actualización
-            return $currency->getSymbol();
-        }
-
-        return '';
+        return $currency ? $currency->getSymbol() : '';
     }
 }

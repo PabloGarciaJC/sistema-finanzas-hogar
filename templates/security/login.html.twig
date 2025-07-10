@@ -14,10 +14,9 @@
 					</div>
 					<div class="d-flex justify-content-center align-items-center flex-wrap mt-4">
 						<h2 class="text-center form__title w-100 mb-3">Selecciona un usuario</h2>
-						<div class="row row-cols-1 row-cols-md-2 g-4 text-center w-100">
+						<div class="row row-cols-1 row-cols-md-1 g-4 text-center w-100">
 							{% set users = [
-                                    {'name': 'Usuario Prueba 1', 'email': 'user1@user.com', 'password': 'password'},
-                                    {'name': 'Usuario Prueba 2', 'email': 'user2@user.com', 'password': 'password'},
+                                    {'name': 'Usuario Prueba 1', 'email': 'user1@user.com', 'password': 'password'}
                                 ] %}
 							{% for user in users %}
 								<div class="col">
@@ -54,9 +53,7 @@
 						</div>
 					{% endif %}
 					<form method="post" id="login-form" style="width: 100%;">
-						<label for="inputAlias">Alias</label>
-						<input type="text" name="alias" id="inputAlias" class="form-control mb-3" placeholder="Tu alias" disabled>
-
+					
 						<label for="inputEmail">Email</label>
 						<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control mb-3" autocomplete="email" required autofocus>
 

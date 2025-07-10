@@ -16,36 +16,35 @@ class ServiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Service::class);
     }
 
-    public function getTotalServiceSql(): array
+    public function getTotalServiceSql($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebt FROM services WHERE status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM services WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebt'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 
-    public function getTotalMemberOne(): array
+    public function getAllServiceSql($userId): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebtMemberOne FROM services WHERE member_id = 1 AND status = "Activo"';
+        $sql = 'SELECT * FROM services WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
-        $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebtMemberOne'] ?? 0);
-        return [$amount => $amount];
+        $rows = $resultSet->fetchAllAssociative();
+        return $rows;
     }
 
-    public function getTotalMemberTwo(): array
+    public function getTotalServicesByMember($memberId, $userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS totalDebtMemberTwo FROM services WHERE member_id = 2 AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM services WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['totalDebtMemberTwo'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 }

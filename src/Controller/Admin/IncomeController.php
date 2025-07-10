@@ -25,12 +25,8 @@ class IncomeController extends AbstractCrudController
     private YearRepository $yearRepository;
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(
-        IncomeRepository $incomeRepository,
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        CurrencyRepository $currencyRepository
-    ) {
+    public function __construct(IncomeRepository $incomeRepository, MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository)
+    {
         $this->incomeRepository = $incomeRepository;
         $this->monthRepository = $monthRepository;
         $this->yearRepository = $yearRepository;
@@ -44,19 +40,29 @@ class IncomeController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
         $fields = [];
-        $fields[] = AssociationField::new('member', 'Miembro');
-        $fields[] = $this->createFormattedNumberField('amount', 'Monto', $pageName, null, $currencySymbol, $rowClass);
+
+        $fields[] = AssociationField::new('member', 'Miembro')
+            ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
+                return $qb->andWhere('entity.user = :user')
+                    ->setParameter('user', $user);
+            })
+            ->setFormTypeOption('row_attr', $rowClass);
+
+        // el resto de campos
+        $fields[] = $this->createFormattedNumberField('amount', 'Monto', $pageName, 0.00, $currencySymbol, $rowClass);
         $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
 
         $fields[] = ChoiceField::new('status', 'Estado')
-                  ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
-                  ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
-                  ->setFormTypeOption('row_attr', $rowClass)
-                  ->setFormTypeOption('data', 'Activo');
+            ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
+            ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+            ->setFormTypeOption('row_attr', $rowClass)
+            ->setFormTypeOption('data', 'Activo');
 
         return $fields;
     }
@@ -89,7 +95,7 @@ class IncomeController extends AbstractCrudController
     private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
     {
         $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
-        
+
         $years = [];
         foreach ($activeYearsEntities as $yearEntity) {
             $years[$yearEntity->getYear()] = $yearEntity->getId();
@@ -136,15 +142,9 @@ class IncomeController extends AbstractCrudController
         return $qb;
     }
 
-    private function createNumberField(
-        string $name,
-        string $label,
-        string $pageName,
-        ?float $default = null,
-        bool $mapped = true,
-        bool $readonly = false,
-        array $rowClass = []
-    ): NumberField {
+    private function createNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = []): NumberField
+    {
+
         $inputAttributes = ['class' => 'form-control'];
         if ($readonly) {
             $inputAttributes['readonly'] = true;

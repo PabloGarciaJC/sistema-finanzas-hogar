@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\CreditRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CreditRepository::class)]
@@ -37,8 +36,11 @@ class Credit
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $frequency = 'Mensual';
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $startDate = null;
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
+    private int $month;
+
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
+    private int $year;
 
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
     private ?string $remainingAmount = null;
@@ -46,7 +48,7 @@ class Credit
     #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
     private ?string $status = 'Activo';
 
-    // --- GETTERS Y SETTERS ---
+    // GETTERS Y SETTERS
 
     public function getId(): ?int
     {
@@ -134,14 +136,28 @@ class Credit
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getMonth(): int
     {
-        return $this->startDate;
+        return $this->month;
     }
 
-    public function setStartDate(\DateTimeInterface $startDate): self
+    public function setMonth(int $month): self
     {
-        $this->startDate = $startDate;
+        if ($month < 1 || $month > 12) {
+            throw new \InvalidArgumentException("Mes inválido: $month");
+        }
+        $this->month = $month;
+        return $this;
+    }
+
+    public function getYear(): int
+    {
+        return $this->year;
+    }
+
+    public function setYear(int $year): self
+    {
+        $this->year = $year;
         return $this;
     }
 
@@ -168,38 +184,6 @@ class Credit
             throw new \InvalidArgumentException("Estado inválido: $status");
         }
         $this->status = $status;
-        return $this;
-    }
-
-    // --- Métodos auxiliares para formulario (Mes/Año) ---
-
-    public function getMonth(): ?int
-    {
-        return $this->startDate ? (int) $this->startDate->format('m') : null;
-    }
-
-    public function setMonth(?int $month): self
-    {
-        if ($month === null) {
-            return $this;
-        }
-        $year = $this->startDate ? (int) $this->startDate->format('Y') : (int) date('Y');
-        $this->startDate = new \DateTimeImmutable("$year-$month-01");
-        return $this;
-    }
-
-    public function getYear(): ?int
-    {
-        return $this->startDate ? (int) $this->startDate->format('Y') : null;
-    }
-
-    public function setYear(?int $year): self
-    {
-        if ($year === null) {
-            return $this;
-        }
-        $month = $this->startDate ? (int) $this->startDate->format('m') : 1;
-        $this->startDate = new \DateTimeImmutable("$year-$month-01");
         return $this;
     }
 }

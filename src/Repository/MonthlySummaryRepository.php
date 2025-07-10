@@ -16,28 +16,13 @@ class MonthlySummaryRepository extends ServiceEntityRepository
         parent::__construct($registry, MonthlySummary::class);
     }
 
-    //    /**
-    //     * @return MonthlySummary[] Returns an array of MonthlySummary objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?MonthlySummary
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getDebtsByMonth($userId, $month): float
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT debt_total FROM monthly_summary WHERE user_id = :userId AND month = :month';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId, 'month' => $month]);
+        $row = $resultSet->fetchAssociative();
+        return (float) ($row['debt_total'] ?? 0);
+    }
 }

@@ -16,25 +16,35 @@ class CreditRepository extends ServiceEntityRepository
         parent::__construct($registry, Credit::class);
     }
 
-    public function getCreditTotalMemberOne(): array
+    public function getTotalCredit($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(installment_amount) AS creditMemberOne FROM credit WHERE member_id = 1 AND status = "Activo"';
+        $sql = 'SELECT SUM(installment_amount) AS total_amount FROM credit WHERE user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['creditMemberOne'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 
-     public function getCreditTotalMemberTwo(): array
+    public function getAllCreditSql($userId): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(installment_amount) AS creditMemberTwo FROM credit WHERE member_id = 2 AND status = "Activo"';
+        $sql = 'SELECT * FROM credit WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $rows = $resultSet->fetchAllAssociative();
+        return $rows;
+    }
+
+    public function getTotalCreditByMemberId($memberId, $userId): float
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT SUM(installment_amount) AS total_amount FROM credit WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = "Activo"';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
-        $amount = (float) ($row['creditMemberTwo'] ?? 0);
-        return [$amount => $amount];
+        $amount = $row['total_amount'] ?? 0;
+        return (float) $amount;
     }
 }

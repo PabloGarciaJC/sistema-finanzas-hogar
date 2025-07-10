@@ -23,16 +23,25 @@ class MonthlySummary
     private float $totalIncome;
 
     #[ORM\Column(type: "float")]
-    private float $savings = 0.0;
+    private float $savings;
 
     #[ORM\Column(type: "float")]
     private float $debtTotal;
 
-    #[ORM\Column(type: "float", nullable: true)]
-    private ?float $bankDebtMemberOne = null;
+    #[ORM\Column(type: "json")]
+    private array $bankBalance = [];
 
-    #[ORM\Column(type: "float", nullable: true)]
-    private ?float $bankDebtMemberTwo = null;
+    #[ORM\Column(type: "json")]
+    private array $services = [];
+
+    #[ORM\Column(type: "json")]
+    private array $cashPayment = [];
+
+    #[ORM\Column(type: "json")]
+    private array $credit = [];
+
+    #[ORM\Column(type: "json")]
+    private array $goal = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -98,31 +107,59 @@ class MonthlySummary
         return $this;
     }
 
-    public function getBankDebtMemberOne(): ?float
+    public function getBankBalance(): array
     {
-        return $this->bankDebtMemberOne;
+        return $this->bankBalance;
     }
 
-    public function setBankDebtMemberOne(?float $bankDebtMemberOne): self
+    public function setBankBalance(array $bankBalance): self
     {
-        $this->bankDebtMemberOne = $bankDebtMemberOne;
+        $this->bankBalance = $bankBalance;
         return $this;
     }
 
-    public function getBankDebtMemberTwo(): ?float
+    public function getServices(): array
     {
-        return $this->bankDebtMemberTwo;
+        return $this->services;
     }
 
-    public function setBankDebtMemberTwo(?float $bankDebtMemberTwo): self
+    public function setServices(array $services): self
     {
-        $this->bankDebtMemberTwo = $bankDebtMemberTwo;
+        $this->services = $services;
         return $this;
     }
 
-    public function getRemainingBalance(): float
+    public function getCashPayment(): array
     {
-        return ($this->totalIncome ?? 0) - ($this->debtTotal ?? 0) - ($this->savings ?? 0);
+        return $this->cashPayment;
+    }
+
+    public function setCashPayment(array $cashPayment): self
+    {
+        $this->cashPayment = $cashPayment;
+        return $this;
+    }
+
+    public function getCredit(): array
+    {
+        return $this->credit;
+    }
+
+    public function setCredit(array $credit): self
+    {
+        $this->credit = $credit;
+        return $this;
+    }
+
+    public function getGoal(): array
+    {
+        return $this->goal;
+    }
+
+    public function setGoal(array $goal): self
+    {
+        $this->goal = $goal;
+        return $this;
     }
 
     public function getUser(): ?User
