@@ -28,12 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
-
 
 class MonthlySummaryController extends AbstractCrudController
 {
@@ -292,7 +287,8 @@ class MonthlySummaryController extends AbstractCrudController
                 'year',
                 'totalIncome',
                 'saving',
-            ]);
+            ])
+            ->setDefaultSort(['id' => 'DESC']); 
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
