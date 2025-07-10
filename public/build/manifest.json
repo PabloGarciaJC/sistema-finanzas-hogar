@@ -1,10 +1,10 @@
 {
-  "build/app.css": "/build/app.ed5f20b0.css",
-  "build/app.js": "/build/app.f0acf01a.js",
-  "build/admin/monthly-summary.js": "/build/admin/monthly-summary.c6eecac8.js",
-  "build/runtime.js": "/build/runtime.01d89035.js",
-  "build/11.107f51e7.js": "/build/11.107f51e7.js",
-  "build/512.d7ab1e96.css": "/build/512.d7ab1e96.css",
+  "build/app.css": "/build/app.css",
+  "build/app.js": "/build/app.js",
+  "build/admin/monthly-summary.js": "/build/admin/monthly-summary.js",
+  "build/runtime.js": "/build/runtime.js",
+  "build/vendors-node_modules_core-js_modules_es_array_for-each_js-node_modules_core-js_modules_es_obj-24d1ca.js": "/build/vendors-node_modules_core-js_modules_es_array_for-each_js-node_modules_core-js_modules_es_obj-24d1ca.js",
+  "build/vendors-node_modules_bootstrap-icons_font_bootstrap-icons_css-node_modules_bootstrap_dist_css-b08609.css": "/build/vendors-node_modules_bootstrap-icons_font_bootstrap-icons_css-node_modules_bootstrap_dist_css-b08609.css",
   "build/fonts/bootstrap-icons.woff?": "/build/fonts/bootstrap-icons.1295669c.woff",
   "build/fonts/bootstrap-icons.woff2?": "/build/fonts/bootstrap-icons.92ea18a8.woff2"
 }
