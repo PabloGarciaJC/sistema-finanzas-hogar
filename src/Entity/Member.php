@@ -27,9 +27,6 @@ class Member
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Credit::class, orphanRemoval: true)]
     private Collection $credits;
 
-    #[ORM\OneToMany(mappedBy: 'member', targetEntity: Saving::class, orphanRemoval: true)]
-    private Collection $savings;
-
     #[ORM\OneToMany(mappedBy: 'member', targetEntity: Goal::class, orphanRemoval: true)]
     private Collection $goals;
 
@@ -41,7 +38,6 @@ class Member
     {
         $this->incomes = new ArrayCollection();
         $this->credits = new ArrayCollection();
-        $this->savings = new ArrayCollection();
         $this->goals = new ArrayCollection();
     }
 
@@ -122,31 +118,6 @@ class Member
         return $this;
     }
 
-    /** @return Collection<int, Saving> */
-    public function getSavings(): Collection
-    {
-        return $this->savings;
-    }
-
-    public function addSaving(Saving $saving): self
-    {
-        if (!$this->savings->contains($saving)) {
-            $this->savings[] = $saving;
-            $saving->setMember($this);
-        }
-        return $this;
-    }
-
-    public function removeSaving(Saving $saving): self
-    {
-        if ($this->savings->removeElement($saving)) {
-            if ($saving->getMember() === $this) {
-                $saving->setMember(null);
-            }
-        }
-        return $this;
-    }
-
     /** @return Collection<int, Goal> */
     public function getGoals(): Collection
     {
@@ -184,8 +155,7 @@ class Member
     }
 
     public function __toString(): string
-    {   
+    {
         return $this->name ?? 'Miembro sin nombre';
     }
-    
 }
