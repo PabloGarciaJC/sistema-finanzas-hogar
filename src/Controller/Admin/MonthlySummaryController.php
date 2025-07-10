@@ -42,17 +42,8 @@ class MonthlySummaryController extends AbstractCrudController
     private MemberRepository $memberRepository;
     private CashPaymentRepository $cashPaymentRepository;
 
-    public function __construct(
-        IncomeRepository $incomeRepository,
-        ServiceRepository $serviceRepository,
-        CreditRepository $creditRepository,
-        GoalRepository $goalRepository,
-        CurrencyRepository $currencyRepository,
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        MemberRepository $memberRepository,
-        CashPaymentRepository $cashPaymentRepository
-    ) {
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository, CurrencyRepository $currencyRepository, MonthRepository $monthRepository, YearRepository $yearRepository, MemberRepository $memberRepository, CashPaymentRepository $cashPaymentRepository)
+    {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
@@ -282,12 +273,7 @@ class MonthlySummaryController extends AbstractCrudController
             ->setEntityLabelInSingular('Resumen Mensual')
             ->setEntityLabelInPlural('Resumen Mensuales')
             ->setPageTitle(Crud::PAGE_INDEX, 'Resumen Mensual')
-            ->setSearchFields([
-                'month',
-                'year',
-                'totalIncome',
-                'saving',
-            ])
+            ->setSearchFields(['month', 'year', 'totalIncome', 'saving'])
             ->setDefaultSort(['id' => 'DESC']);
     }
 

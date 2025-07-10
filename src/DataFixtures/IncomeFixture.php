@@ -30,7 +30,7 @@ class IncomeFixture extends Fixture implements DependentFixtureInterface
     {
         return [
             UserFixture::class,
-            MemberFixture::class, // si tienes esta entidad
+            MemberFixture::class,
             MonthFixture::class,
             YearFixture::class,
         ];
