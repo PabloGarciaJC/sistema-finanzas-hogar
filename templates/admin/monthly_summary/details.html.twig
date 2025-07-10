@@ -24,18 +24,24 @@
 						<ul class="list-group list-group-flush">
 							<li class="d-flex justify-content-between align-items-center fw-bold text-primary">
 								<span>Ingresos Totales</span>
-								<span>{{ monthlySummary.totalIncome|number_format(2, ',', '.') }}
-									{{ currencySymbol }}</span>
+								<span>
+									{{ monthlySummary.totalIncome|number_format(2, ',', '.') }}
+									{{ currencySymbol }}
+								</span>
 							</li>
 							<li class="d-flex justify-content-between align-items-center fw-bold text-danger">
 								<span>Deuda Total</span>
-								<span>{{ monthlySummary.debtTotal|number_format(2, ',', '.') }}
-									{{ currencySymbol }}</span>
+								<span>
+									{{ monthlySummary.debtTotal|number_format(2, ',', '.') }}
+									{{ currencySymbol }}
+								</span>
 							</li>
 							<li class="d-flex justify-content-between align-items-center fw-bold text-success">
 								<span>Ahorros</span>
-								<span>{{ monthlySummary.savings|number_format(2, ',', '.') }}
-									{{ currencySymbol }}</span>
+								<span>
+									{{ monthlySummary.savings|number_format(2, ',', '.') }}
+									{{ currencySymbol }}
+								</span>
 							</li>
 						</ul>
 					</div>
@@ -49,8 +55,10 @@
 							{% for item in monthlySummary.bankBalance %}
 								<li class="d-flex justify-content-between align-items-center">
 									<span>{{ item.memberName }}</span>
-									<span>{{ item.bankBalance|number_format(2, ',', '.') }}
-										{{ currencySymbol }}</span>
+									<span>
+										{{ item.bankBalance|number_format(2, ',', '.') }}
+										{{ currencySymbol }}
+									</span>
 								</li>
 							{% else %}
 								<li>No hay datos</li>
@@ -70,8 +78,10 @@
 									{% set totalServices = totalServices + service.amount %}
 									<li class="d-flex justify-content-between align-items-center">
 										<span>{{ service.description|raw }}</span>
-										<span>{{ service.amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}</span>
+										<span>
+											{{ service.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}
+										</span>
 									</li>
 								{% else %}
 									<span>No hay servicios</span>
@@ -80,8 +90,10 @@
 									<span>
 										<strong>Total Servicios</strong>
 									</span>
-									<span>{{ totalServices|number_format(2, ',', '.') }}
-										{{ currencySymbol }}</span>
+									<span>
+										{{ totalServices|number_format(2, ',', '.') }}
+										{{ currencySymbol }}
+									</span>
 								</li>
 							</ul>
 						{% else %}
@@ -101,19 +113,22 @@
 									{% set totalCash = totalCash + cashPayment.amount %}
 									<li class="d-flex justify-content-between align-items-center">
 										<span>{{ cashPayment.description|raw }}</span>
-										<span>{{ cashPayment.amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}</span>
+										<span>
+											{{ cashPayment.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}
+										</span>
 									</li>
 								{% else %}
-									<span>No hay Pagos al Contado
-									</span>
+									<span>No hay Pagos al Contado</span>
 								{% endfor %}
 								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
 									<span>
 										<strong>Total Pagos al Contado</strong>
 									</span>
-									<span>{{ totalCash|number_format(2, ',', '.') }}
-										{{ currencySymbol }}</span>
+									<span>
+										{{ totalCash|number_format(2, ',', '.') }}
+										{{ currencySymbol }}
+									</span>
 								</li>
 							</ul>
 						{% else %}
@@ -133,12 +148,17 @@
 									{% set totalCredit = totalCredit + credit.installment_amount %}
 									<li class="d-flex justify-content-between align-items-center">
 										<span>
-											<strong>{{ credit.bank_entity }}</strong><br>
-											<small>Frecuencia:
-												{{ credit.frequency }}</small>
+											<strong>{{ credit.bank_entity }}</strong>
+											-
+											<small>
+												Frecuencia:
+												{{ credit.frequency }}
+											</small>
 										</span>
-										<span>{{ credit.installment_amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}</span>
+										<span>
+											{{ credit.installment_amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}
+										</span>
 									</li>
 								{% else %}
 									<span>No hay Créditos</span>
@@ -147,8 +167,10 @@
 									<span>
 										<strong>Total Créditos (Cuotas)</strong>
 									</span>
-									<span>{{ totalCredit|number_format(2, ',', '.') }}
-										{{ currencySymbol }}</span>
+									<span>
+										{{ totalCredit|number_format(2, ',', '.') }}
+										{{ currencySymbol }}
+									</span>
 								</li>
 							</ul>
 						{% else %}
@@ -168,8 +190,10 @@
 									{% set totalGoals = totalGoals + goal.amount %}
 									<li class="d-flex justify-content-between align-items-center">
 										<span>{{ goal.description|raw }}</span>
-										<span>{{ goal.amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}</span>
+										<span>
+											{{ goal.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}
+										</span>
 									</li>
 								{% else %}
 									<span>No hay Metas</span>
@@ -178,8 +202,10 @@
 									<span>
 										<strong>Total Metas</strong>
 									</span>
-									<span>{{ totalGoals|number_format(2, ',', '.') }}
-										{{ currencySymbol }}</span>
+									<span>
+										{{ totalGoals|number_format(2, ',', '.') }}
+										{{ currencySymbol }}
+									</span>
 								</li>
 							</ul>
 						{% else %}
