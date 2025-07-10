@@ -29,6 +29,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+
+
 class MonthlySummaryController extends AbstractCrudController
 {
     private IncomeRepository $incomeRepository;
@@ -70,6 +76,9 @@ class MonthlySummaryController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
         $defaults = $this->calculateDefaultValues();
@@ -80,6 +89,107 @@ class MonthlySummaryController extends AbstractCrudController
         $fields[] = $this->createFormattedNumberField('savings', 'Ahorros', $pageName, $defaults['savings'], $currencySymbol, $rowClass);
         $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
+
+        // Servicios
+        $services = $this->serviceRepository->getAllServiceSql($user->getId());
+        if (count($services) > 0) {
+            $lines = [];
+            $total = 0;
+            foreach ($services as $service) {
+                $description = strip_tags($service['description']);
+                $amountNumber = $service['amount'];
+                $amount = number_format($amountNumber, 2, ',', '.');
+                $lines[] = "{$description} ({$amount} {$currencySymbol})";
+                $total += $amountNumber;
+            }
+            $formattedTotal = number_format($total, 2, ',', '.');
+            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
+        } else {
+            $text = "No hay Servicios";
+        }
+
+        $fields[] = TextareaField::new('services_list', 'Servicios')
+            ->setFormTypeOption('mapped', false)
+            ->setFormTypeOption('disabled', true)
+            ->setFormTypeOption('data', trim($text))
+            ->onlyOnForms();
+
+        // Pagos al contado
+        $cashPayments = $this->cashPaymentRepository->getAllCashPaymentSql($user->getId());
+        if (count($cashPayments) > 0) {
+            $lines = [];
+            $total = 0;
+            foreach ($cashPayments as $payment) {
+                $description = strip_tags($payment['description']);
+                $amountNumber = $payment['amount'];
+                $amount = number_format($amountNumber, 2, ',', '.');
+                $lines[] = "{$description} ({$amount} {$currencySymbol})";
+                $total += $amountNumber;
+            }
+            $formattedTotal = number_format($total, 2, ',', '.');
+            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
+        } else {
+            $text = "No hay Pagos al Contado";
+        }
+
+        $fields[] = TextareaField::new('cash_payments_list', 'Pagos al Contado')
+            ->setFormTypeOption('mapped', false)
+            ->setFormTypeOption('disabled', true)
+            ->setFormTypeOption('data', trim($text))
+            ->onlyOnForms();
+
+        // Créditos
+        $credits = $this->creditRepository->getAllCreditSql($user->getId());
+
+        if (count($credits) > 0) {
+            $lines = [];
+            $total = 0;
+
+            foreach ($credits as $credit) {
+                $bank = strip_tags($credit['bank_entity']);
+                $installmentAmount = number_format($credit['installment_amount'], 2, ',', '.');
+                $lines[] = "{$bank} ({$installmentAmount} {$currencySymbol})";
+                $total += $credit['installment_amount'];
+            }
+
+            $formattedTotal = number_format($total, 2, ',', '.');
+            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
+        } else {
+            $text = "No hay Créditos";
+        }
+
+        $fields[] = TextareaField::new('credits_list', 'Créditos')
+            ->setFormTypeOption('mapped', false)
+            ->setFormTypeOption('disabled', true)
+            ->setFormTypeOption('data', trim($text))
+            ->onlyOnForms();
+
+        // Metas
+        $goals = $this->goalRepository->getAllGoalSql($user->getId());
+        if (count($goals) > 0) {
+            $lines = [];
+            $total = 0;
+
+            foreach ($goals as $goal) {
+                $description = strip_tags($goal['description']);
+                $amountNumber = $goal['amount'];
+                $amount = number_format($amountNumber, 2, ',', '.');
+                $lines[] = "{$description} ({$amount} {$currencySymbol})";
+                $total += $amountNumber;
+            }
+
+            $formattedTotal = number_format($total, 2, ',', '.');
+            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
+        } else {
+            $text = "No hay Metas";
+        }
+
+        $fields[] = TextareaField::new('goals_list', 'Metas')
+            ->setFormTypeOption('mapped', false)
+            ->setFormTypeOption('disabled', true)
+            ->setFormTypeOption('data', trim($text))
+            ->onlyOnForms();
+
         return $fields;
     }
 
