@@ -22,9 +22,7 @@ class MemberFixture extends Fixture implements DependentFixtureInterface
         $conn->executeStatement("
             INSERT INTO member (user_id, name, company) VALUES
             (1, 'Juan Pérez', 'Empresa ABC'),
-            (1, 'María Gómez', 'Inversiones XYZ'),
-            (2, 'Ana Martínez', 'Consultora LMN'),
-            (2, 'Luis Rodríguez', 'Servicios OPQ')
+            (1, 'María Gómez', 'Inversiones XYZ');
         ");
     }
 
