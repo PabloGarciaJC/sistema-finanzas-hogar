@@ -19,7 +19,7 @@ class ServiceRepository extends ServiceEntityRepository
     public function getTotalServiceSql($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM services WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM services WHERE user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
@@ -30,7 +30,7 @@ class ServiceRepository extends ServiceEntityRepository
     public function getAllServiceSql($userId): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT * FROM services WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT * FROM services WHERE user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $rows = $resultSet->fetchAllAssociative();
@@ -40,7 +40,7 @@ class ServiceRepository extends ServiceEntityRepository
     public function getTotalServicesByMember($memberId, $userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM services WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM services WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();

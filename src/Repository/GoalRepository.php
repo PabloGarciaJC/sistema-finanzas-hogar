@@ -19,7 +19,7 @@ class GoalRepository extends ServiceEntityRepository
     public function getGoalTotal($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
@@ -30,7 +30,7 @@ class GoalRepository extends ServiceEntityRepository
     public function getAllGoalSql($userId): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT * FROM goal WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT * FROM goal WHERE user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $rows = $resultSet->fetchAllAssociative();
@@ -40,7 +40,7 @@ class GoalRepository extends ServiceEntityRepository
     public function getTotalGoalByMemberId($memberId, $userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();

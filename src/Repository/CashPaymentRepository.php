@@ -19,7 +19,7 @@ class CashPaymentRepository extends ServiceEntityRepository
     public function getTotalCashPayment($userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM cash_payment WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM cash_payment WHERE user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
@@ -30,7 +30,7 @@ class CashPaymentRepository extends ServiceEntityRepository
     public function getAllCashPaymentSql($userId): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT * FROM cash_payment WHERE user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT * FROM cash_payment WHERE user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $rows = $resultSet->fetchAllAssociative();
@@ -40,7 +40,7 @@ class CashPaymentRepository extends ServiceEntityRepository
     public function getTotalByMemberId ($memberId, $userId): float
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT SUM(amount) AS total_amount FROM cash_payment WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = "Activo"';
+        $sql = 'SELECT SUM(amount) AS total_amount FROM cash_payment WHERE member_id = ' . $memberId . ' AND user_id = ' . $userId . ' AND status = 1';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
         $row = $resultSet->fetchAssociative();
