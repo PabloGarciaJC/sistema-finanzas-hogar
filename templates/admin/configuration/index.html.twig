@@ -3,7 +3,8 @@
 {% block content %}
 	<div class="card-body">
 		<h2 class="mb-4 mt-4">Configuración</h2>
-		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+		<div
+			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
 
 			<!-- Configuración Mes -->
 			<div class="col">
@@ -18,7 +19,7 @@
 						<p class="fs-6">Gestiona los meses disponibles para organizar ingresos y gastos.</p>
 					</div>
 					<div class="card-footer bg-transparent border-0">
-						<a href="#" class="btn btn-white-grey w-100">Gestionar</a>
+						<a href="{{ path('admin_month_index') }}" class="btn btn-white-grey w-100">Gestionar</a>
 					</div>
 				</div>
 			</div>
