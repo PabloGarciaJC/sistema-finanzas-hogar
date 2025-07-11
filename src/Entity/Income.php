@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\IncomeRepository;
@@ -26,8 +27,8 @@ class Income
     #[ORM\Column(type: "integer")]
     private int $year;
 
-    #[ORM\Column(type: "string", length: 20, options: ["default" => "Activo"])]
-    private string $status = "Activo";
+    #[ORM\Column(type: "boolean", options: ["default" => true])]
+    private bool $status = true;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
@@ -84,17 +85,13 @@ class Income
         return $this;
     }
 
-    public function getStatus(): string
+    public function isStatus(): bool
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(bool $status): self
     {
-        $allowed = ["Activo", "Cancelado"];
-        if (!in_array($status, $allowed, true)) {
-            throw new \InvalidArgumentException("Invalid status value");
-        }
         $this->status = $status;
         return $this;
     }

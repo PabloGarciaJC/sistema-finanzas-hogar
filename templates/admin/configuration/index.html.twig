@@ -1,0 +1,65 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block content %}
+	<div class="card-body">
+		<h2 class="mb-4 mt-4">Configuración</h2>
+		<div
+			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+
+			<!-- Configuración Mes -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-calendar-alt"></i>
+							Meses
+						</h3>
+					</div>
+					<div class="card-body-info p-2 flex-grow-1">
+						<p class="fs-6">Gestiona los meses disponibles para organizar ingresos y gastos.</p>
+					</div>
+					<div class="card-footer bg-transparent border-0">
+						<a href="{{ path('admin_month_index') }}" class="btn btn-white-grey w-100">Gestionar</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Configuración Año -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-calendar"></i>
+							Años
+						</h3>
+					</div>
+					<div class="card-body-info p-2 flex-grow-1">
+						<p class="fs-6">Administra los años fiscales o períodos contables.</p>
+					</div>
+					<div class="card-footer bg-transparent border-0">
+						<a href="{{ path('admin_year_index') }}" class="btn btn-white-grey w-100">Gestionar</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Configuración Monedas -->
+			<div class="col">
+				<div class="card info-card feature-card h-100 d-flex flex-column">
+					<div class="card-header">
+						<h3>
+							<i class="fas fa-coins"></i>
+							Monedas
+						</h3>
+					</div>
+					<div class="card-body-info p-2 flex-grow-1">
+						<p class="fs-6">Define y administra las divisas utilizadas en tus registros financieros.</p>
+					</div>
+					<div class="card-footer bg-transparent border-0">
+						<a href="{{ path('admin_currency_index') }}" class="btn btn-white-grey w-100">Gestionar</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+{% endblock %}

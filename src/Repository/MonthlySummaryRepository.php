@@ -21,7 +21,10 @@ class MonthlySummaryRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $sql = 'SELECT debt_total FROM monthly_summary WHERE user_id = :userId AND month = :month';
         $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery(['userId' => $userId, 'month' => $month]);
+        $resultSet = $stmt->executeQuery([
+            'userId' => $userId,
+            'month' => $month
+        ]);
         $row = $resultSet->fetchAssociative();
         return (float) ($row['debt_total'] ?? 0);
     }
