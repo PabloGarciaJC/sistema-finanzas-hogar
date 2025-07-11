@@ -12,12 +12,11 @@ class YearFixture extends Fixture
     {
         $currentYear = (int) date('Y');
 
-        for ($year = 2015; $year <= 2035; $year++) {
-            $yearEntity = new Year();
-            $yearEntity->setYear($year);
-            $yearEntity->setStatus($year === $currentYear ? 1 : 0);
-            $manager->persist($yearEntity);
-        }
+        $yearEntity = new Year();
+        $yearEntity->setYear($currentYear);
+        $yearEntity->setStatus(1); // Activo
+
+        $manager->persist($yearEntity);
 
         $manager->flush();
     }
