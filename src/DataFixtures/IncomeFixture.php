@@ -21,8 +21,8 @@ class IncomeFixture extends Fixture implements DependentFixtureInterface
 
         $conn->executeStatement("
             INSERT INTO income (user_id, member_id, amount, month, year, status) VALUES
-            (1, 1, 2000.00, 1, 11, 1),
-            (1, 2, 2000.00, 1, 11, 1);
+            (1, 1, 2000.00, 1, 1, 1),
+            (1, 2, 2000.00, 1, 1, 1);
         ");
     }
 
