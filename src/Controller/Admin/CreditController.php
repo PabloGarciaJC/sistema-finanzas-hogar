@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class CreditController extends AbstractCrudController
 {
@@ -84,9 +85,8 @@ class CreditController extends AbstractCrudController
                 ->setFormTypeOption('row_attr', $rowClass)
                 ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
 
-            ChoiceField::new('status', 'Estado')
-                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
-                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+            BooleanField::new('status', 'Activo')
+                ->renderAsSwitch(true)
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
     }

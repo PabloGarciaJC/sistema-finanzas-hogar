@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class GoalController extends AbstractCrudController
 {
@@ -74,9 +75,8 @@ class GoalController extends AbstractCrudController
             $this->createPaymentDayField($rowClass),
             $this->createMonthChoiceField($pageName, $rowClass),
             $this->createYearChoiceField($pageName, $rowClass),
-            ChoiceField::new('status', 'Estado')
-                ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
-                ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
+            BooleanField::new('status', 'Activo')
+               ->renderAsSwitch(true)
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
     }

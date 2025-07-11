@@ -45,8 +45,8 @@ class Credit
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
     private ?string $remainingAmount = null;
 
-    #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
-    private ?string $status = 'Activo';
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $status = true; // Activo = true
 
     // GETTERS Y SETTERS
 
@@ -172,17 +172,13 @@ class Credit
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function isStatus(): bool
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(bool $status): self
     {
-        $allowed = ['Activo', 'Cancelado'];
-        if (!in_array($status, $allowed)) {
-            throw new \InvalidArgumentException("Estado inválido: $status");
-        }
         $this->status = $status;
         return $this;
     }

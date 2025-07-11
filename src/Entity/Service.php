@@ -25,8 +25,8 @@ class Service
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'string', length: 20, options: ['default' => 'Activo'])]
-    private ?string $status = 'Activo';
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $status = true; // true = Activo
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -79,17 +79,13 @@ class Service
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function isStatus(): bool
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(bool $status): self
     {
-        $allowed = ['Activo', 'Cancelado'];
-        if (!in_array($status, $allowed)) {
-            throw new \InvalidArgumentException("Invalid status value");
-        }
         $this->status = $status;
         return $this;
     }

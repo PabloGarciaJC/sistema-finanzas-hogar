@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class IncomeController extends AbstractCrudController
 {
@@ -57,13 +58,10 @@ class IncomeController extends AbstractCrudController
         $fields[] = $this->createFormattedNumberField('amount', 'Monto', $pageName, 0.00, $currencySymbol, $rowClass);
         $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
-
-        $fields[] = ChoiceField::new('status', 'Estado')
-            ->setChoices(['Activo' => 'Activo', 'Cancelado' => 'Cancelado'])
-            ->renderAsBadges(['Activo' => 'success', 'Cancelado' => 'secondary'])
-            ->setFormTypeOption('row_attr', $rowClass)
-            ->setFormTypeOption('data', 'Activo');
-
+        $fields[] =  BooleanField::new('status', 'Activo')
+            ->renderAsSwitch(true)
+            ->setFormTypeOption('row_attr', $rowClass);
+            
         return $fields;
     }
 

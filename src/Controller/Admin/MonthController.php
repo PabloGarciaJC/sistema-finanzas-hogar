@@ -17,9 +17,9 @@ class MonthController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Mostrar el ID solo en el índice y detalle, no en crear/editar
         $idField = IdField::new('id', 'ID')
-            ->onlyOnIndex();
+            ->onlyOnIndex()
+            ->onlyOnDetail();
 
         $nameField = TextField::new('name', 'Nombre')
             ->setRequired(true);
