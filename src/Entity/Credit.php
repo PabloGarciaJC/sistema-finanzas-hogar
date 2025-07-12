@@ -30,20 +30,14 @@ class Credit
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
     private ?string $installmentAmount = '0.00';
 
-
-
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $frequency = 'Mensual';
-
-
 
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
     private ?string $remainingAmount = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $status = true; // Activo = true
-
-    // GETTERS Y SETTERS
+    private bool $status = true;
 
     public function getId(): ?int
     {
@@ -105,7 +99,6 @@ class Credit
         return $this;
     }
 
-
     public function getFrequency(): ?string
     {
         return $this->frequency;
@@ -120,8 +113,6 @@ class Credit
         $this->frequency = $frequency;
         return $this;
     }
-
-
 
     public function getRemainingAmount(): ?string
     {
