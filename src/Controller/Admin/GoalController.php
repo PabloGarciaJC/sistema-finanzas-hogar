@@ -3,10 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Goal;
-use App\Repository\MonthRepository;
-use App\Repository\YearRepository;
 use App\Repository\CurrencyRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -23,14 +20,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class GoalController extends AbstractCrudController
 {
-    private MonthRepository $monthRepository;
-    private YearRepository $yearRepository;
+
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository)
+    public function __construct(CurrencyRepository $currencyRepository)
     {
-        $this->monthRepository = $monthRepository;
-        $this->yearRepository = $yearRepository;
         $this->currencyRepository = $currencyRepository;
     }
 
@@ -72,11 +66,8 @@ class GoalController extends AbstractCrudController
             $this->createFormattedNumberField('amount', 'Importe', $pageName, 0.00, true, false, $rowClass, $currencySymbol),
 
             $descriptionField,
-            $this->createPaymentDayField($rowClass),
-            $this->createMonthChoiceField($pageName, $rowClass),
-            $this->createYearChoiceField($pageName, $rowClass),
             BooleanField::new('status', 'Activo')
-               ->renderAsSwitch(true)
+                ->renderAsSwitch(true)
                 ->setFormTypeOption('row_attr', $rowClass),
         ];
     }
@@ -110,18 +101,6 @@ class GoalController extends AbstractCrudController
         $goal->setStatus('Activo');
         $goal->setUser($this->getUser());
 
-        // Seleccionar mes por defecto
-        $goal->setMonth(1); // Enero
-
-        // Seleccionar año activo por defecto
-        $activeYears = $this->yearRepository->findBy(['status' => 1]);
-        if ($activeYears) {
-            $goal->setYear($activeYears[0]->getId());
-        }
-
-        // Establecer día de pago por defecto a 1
-        $goal->setPaymentDay(1);
-
         // Valor por defecto para amount
         $goal->setAmount('0.00');
 
@@ -146,101 +125,6 @@ class GoalController extends AbstractCrudController
                 ->setParameter('currentUser', $user);
         }
         return $qb;
-    }
-
-    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
-    {
-        $monthsEntities = $this->monthRepository->findAll();
-        $months = [];
-        foreach ($monthsEntities as $monthEntity) {
-            $months[$monthEntity->getName()] = $monthEntity->getId();
-        }
-
-        $monthField = ChoiceField::new('month', 'Mes')
-            ->setChoices($months)
-            ->setFormTypeOption('row_attr', $rowClass);
-
-        if ($pageName === Crud::PAGE_NEW) {
-            $monthField->setFormTypeOption('data', 1);
-        }
-
-        return $monthField;
-    }
-
-    private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
-    {
-        $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
-
-        $years = [];
-        foreach ($activeYearsEntities as $yearEntity) {
-            $years[$yearEntity->getYear()] = $yearEntity->getId();
-        }
-
-        $yearField = ChoiceField::new('year', 'Año')
-            ->setChoices($years)
-            ->setFormTypeOption('row_attr', $rowClass);
-
-        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
-            $defaultYearId = reset($years);
-            $yearField->setFormTypeOption('data', $defaultYearId);
-        }
-
-        return $yearField;
-    }
-
-    private function createPaymentDayField(array $rowClass): ChoiceField
-    {
-        $days = [];
-        for ($i = 1; $i <= 31; $i++) {
-            $days[$i] = $i;
-        }
-
-        return ChoiceField::new('paymentDay', 'Día de Pago')
-            ->setHelp('Día del mes en que se paga (1–31)')
-            ->setChoices($days)
-            ->setFormTypeOption('row_attr', $rowClass);
-    }
-
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof Goal) {
-            return;
-        }
-
-        $monthId = $entityInstance->getMonth();
-        $monthEntity = $this->monthRepository->find($monthId);
-        if (!$monthEntity) {
-            throw new \RuntimeException('Mes inválido');
-        }
-
-        $yearId = $entityInstance->getYear();
-        $yearEntity = $this->yearRepository->find($yearId);
-        if (!$yearEntity) {
-            throw new \RuntimeException('Año inválido');
-        }
-
-        parent::persistEntity($entityManager, $entityInstance);
-    }
-
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof Goal) {
-            return;
-        }
-
-        $monthId = $entityInstance->getMonth();
-        $monthEntity = $this->monthRepository->find($monthId);
-        if (!$monthEntity) {
-            throw new \RuntimeException('Mes inválido');
-        }
-
-        $yearId = $entityInstance->getYear();
-        $yearEntity = $this->yearRepository->find($yearId);
-        if (!$yearEntity) {
-            throw new \RuntimeException('Año inválido');
-        }
-
-        parent::updateEntity($entityManager, $entityInstance);
     }
 
     /**
