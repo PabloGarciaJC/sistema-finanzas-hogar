@@ -106,13 +106,13 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Informe Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryController::class);
         yield MenuItem::linkToCrud('Ingresos', 'fas fa-dollar-sign', Income::class)->setController(IncomeController::class);
         yield MenuItem::linkToCrud('Servicios', 'fas fa-briefcase', Goal::class)->setController(ServiceController::class);
         yield MenuItem::linkToCrud('Pago al contado', 'fas fa-credit-card', CashPayment::class)->setController(CashPaymentController::class);
         yield MenuItem::linkToCrud('Créditos', 'fas fa-money-bill', Credit::class)->setController(CreditController::class);
         yield MenuItem::linkToCrud('Metas', 'fas fa-bullseye', Goal::class)->setController(GoalController::class);
         yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberController::class);
+        yield MenuItem::linkToCrud('Informe Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryController::class);
         yield MenuItem::linkToRoute('Configuración', 'fas fa-cog', 'app_admin_configuration');
         yield MenuItem::linkToRoute('Documentación', 'fas fa-book', 'app_admin_documentation');
     }

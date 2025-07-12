@@ -22,9 +22,6 @@ class Income
     private ?string $amount = null;
 
     #[ORM\Column(type: "integer")]
-    private int $month;
-
-    #[ORM\Column(type: "integer")]
     private int $year;
 
     #[ORM\Column(type: "boolean", options: ["default" => true])]
@@ -33,8 +30,6 @@ class Income
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $user = null;
-
-    // Getters y Setters
 
     public function getId(): ?int
     {
@@ -60,17 +55,6 @@ class Income
     public function setAmount(string $amount): self
     {
         $this->amount = $amount;
-        return $this;
-    }
-
-    public function getMonth(): int
-    {
-        return $this->month;
-    }
-
-    public function setMonth(int $month): self
-    {
-        $this->month = $month;
         return $this;
     }
 

@@ -56,7 +56,6 @@ class IncomeController extends AbstractCrudController
 
         // el resto de campos
         $fields[] = $this->createFormattedNumberField('amount', 'Monto', $pageName, 0.00, $currencySymbol, $rowClass);
-        $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
         $fields[] =  BooleanField::new('status', 'Activo')
             ->renderAsSwitch(true)
@@ -69,25 +68,6 @@ class IncomeController extends AbstractCrudController
     {
         return $this->createNumberField($name, $label, $pageName, $default, true, false, $rowClass)
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
-    }
-
-    private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
-    {
-        $monthsEntities = $this->monthRepository->findAll();
-        $months = [];
-        foreach ($monthsEntities as $monthEntity) {
-            $months[$monthEntity->getName()] = $monthEntity->getId();
-        }
-
-        $monthField = ChoiceField::new('month', 'Mes')
-            ->setChoices($months)
-            ->setFormTypeOption('row_attr', $rowClass);
-
-        if ($pageName === Crud::PAGE_NEW) {
-            $monthField->setFormTypeOption('data', 1);
-        }
-
-        return $monthField;
     }
 
     private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
