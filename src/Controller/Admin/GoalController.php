@@ -112,7 +112,8 @@ class GoalController extends AbstractCrudController
             ->setEntityLabelInSingular('Meta')
             ->setEntityLabelInPlural('Metas')
             ->setPageTitle(Crud::PAGE_INDEX, 'Metas')
-            ->setSearchFields(['description', 'member.name', 'amount']);
+            ->setSearchFields(['description', 'member.name', 'amount'])
+            ->setDefaultSort(['id' => 'DESC']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder

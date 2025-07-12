@@ -93,7 +93,8 @@ class CreditController extends AbstractCrudController
             ->setEntityLabelInSingular('Crédito')
             ->setEntityLabelInPlural('Créditos')
             ->setPageTitle(Crud::PAGE_INDEX, 'Créditos')
-            ->setSearchFields(['member.name', 'bankEntity', 'status']);
+            ->setSearchFields(['member.name', 'bankEntity', 'status'])
+            ->setDefaultSort(['id' => 'DESC']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder

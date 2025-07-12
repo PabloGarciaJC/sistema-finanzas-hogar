@@ -108,7 +108,8 @@ class ServiceController extends AbstractCrudController
             ->setEntityLabelInSingular('Servicio')
             ->setEntityLabelInPlural('Servicios')
             ->setPageTitle(Crud::PAGE_INDEX, 'Servicios')
-            ->setSearchFields(['description', 'member.name', 'amount']);
+            ->setSearchFields(['description', 'member.name', 'amount'])
+            ->setDefaultSort(['id' => 'DESC']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder

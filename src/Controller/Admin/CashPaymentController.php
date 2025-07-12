@@ -106,7 +106,8 @@ class CashPaymentController extends AbstractCrudController
             ->setEntityLabelInSingular('Pago al Contado')
             ->setEntityLabelInPlural('Pagos al Contado')
             ->setPageTitle(Crud::PAGE_INDEX, 'Pagos al Contado')
-            ->setSearchFields(['description', 'member.name', 'amount']);
+            ->setSearchFields(['description', 'member.name', 'amount'])
+            ->setDefaultSort(['id' => 'DESC']);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
