@@ -30,17 +30,12 @@ class Credit
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2)]
     private ?string $installmentAmount = '0.00';
 
-    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
-    private ?int $installments = 1;
+
 
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $frequency = 'Mensual';
 
-    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
-    private int $month;
 
-    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
-    private int $year;
 
     #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
     private ?string $remainingAmount = null;
@@ -110,16 +105,6 @@ class Credit
         return $this;
     }
 
-    public function getInstallments(): ?int
-    {
-        return $this->installments;
-    }
-
-    public function setInstallments(int $installments): self
-    {
-        $this->installments = $installments;
-        return $this;
-    }
 
     public function getFrequency(): ?string
     {
@@ -136,30 +121,7 @@ class Credit
         return $this;
     }
 
-    public function getMonth(): int
-    {
-        return $this->month;
-    }
 
-    public function setMonth(int $month): self
-    {
-        if ($month < 1 || $month > 12) {
-            throw new \InvalidArgumentException("Mes inválido: $month");
-        }
-        $this->month = $month;
-        return $this;
-    }
-
-    public function getYear(): int
-    {
-        return $this->year;
-    }
-
-    public function setYear(int $year): self
-    {
-        $this->year = $year;
-        return $this;
-    }
 
     public function getRemainingAmount(): ?string
     {

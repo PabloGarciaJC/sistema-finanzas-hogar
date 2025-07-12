@@ -20,13 +20,10 @@ final class Version20250518094728 extends AbstractMigration
             id INT UNSIGNED AUTO_INCREMENT NOT NULL,
             user_id INT UNSIGNED NOT NULL,
             member_id INT UNSIGNED NOT NULL,
-            installments INT UNSIGNED NOT NULL,
             bank_entity VARCHAR(255) NOT NULL,
             total_amount NUMERIC(12, 2) NOT NULL,
             installment_amount NUMERIC(12, 2) NOT NULL,
             frequency VARCHAR(20) NOT NULL,
-            month INT NOT NULL,
-            year INT NOT NULL,
             remaining_amount NUMERIC(12, 2) DEFAULT NULL,
             status TINYINT(1) NOT NULL DEFAULT 1,
             PRIMARY KEY(id)
