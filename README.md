@@ -28,8 +28,8 @@ El proyecto está pensado como una solución práctica para aprender y aplicar c
 - **Metas Financieras**  
   Define objetivos como comprar un coche o pagar una deuda. Controla el progreso hacia tus metas económicas.
 
-- **Resumen Mensual**  
-  Consulta un resumen detallado de tus ingresos, gastos y ahorros mes a mes para evaluar tu salud financiera.
+- **Informe Mensual**  
+  Consulta un Informe detallado de tus ingresos, gastos y ahorros mes a mes para evaluar tu salud financiera.
 
 - **Servicios**  
   Registra y gestiona servicios contratados como agua, luz o internet para llevar control de tus gastos fijos.

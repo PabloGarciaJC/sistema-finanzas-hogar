@@ -28,7 +28,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
 class MonthlySummaryController extends AbstractCrudController
 {
@@ -42,8 +41,17 @@ class MonthlySummaryController extends AbstractCrudController
     private MemberRepository $memberRepository;
     private CashPaymentRepository $cashPaymentRepository;
 
-    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository, CurrencyRepository $currencyRepository, MonthRepository $monthRepository, YearRepository $yearRepository, MemberRepository $memberRepository, CashPaymentRepository $cashPaymentRepository)
-    {
+    public function __construct(
+        IncomeRepository $incomeRepository,
+        ServiceRepository $serviceRepository,
+        CreditRepository $creditRepository,
+        GoalRepository $goalRepository,
+        CurrencyRepository $currencyRepository,
+        MonthRepository $monthRepository,
+        YearRepository $yearRepository,
+        MemberRepository $memberRepository,
+        CashPaymentRepository $cashPaymentRepository
+    ) {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
@@ -75,106 +83,6 @@ class MonthlySummaryController extends AbstractCrudController
         $fields[] = $this->createFormattedNumberField('savings', 'Ahorros', $pageName, $defaults['savings'], $currencySymbol, $rowClass);
         $fields[] = $this->createMonthChoiceField($pageName, $rowClass);
         $fields[] = $this->createYearChoiceField($pageName, $rowClass);
-
-        // Servicios
-        $services = $this->serviceRepository->getAllServiceSql($user->getId());
-        if (count($services) > 0) {
-            $lines = [];
-            $total = 0;
-            foreach ($services as $service) {
-                $description = strip_tags($service['description']);
-                $amountNumber = $service['amount'];
-                $amount = number_format($amountNumber, 2, ',', '.');
-                $lines[] = "{$description} ({$amount} {$currencySymbol})";
-                $total += $amountNumber;
-            }
-            $formattedTotal = number_format($total, 2, ',', '.');
-            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
-        } else {
-            $text = "No hay Servicios";
-        }
-
-        $fields[] = TextareaField::new('services_list', 'Servicios')
-            ->setFormTypeOption('mapped', false)
-            ->setFormTypeOption('disabled', true)
-            ->setFormTypeOption('data', trim($text))
-            ->onlyOnForms();
-
-        // Pagos al contado
-        $cashPayments = $this->cashPaymentRepository->getAllCashPaymentSql($user->getId());
-        if (count($cashPayments) > 0) {
-            $lines = [];
-            $total = 0;
-            foreach ($cashPayments as $payment) {
-                $description = strip_tags($payment['description']);
-                $amountNumber = $payment['amount'];
-                $amount = number_format($amountNumber, 2, ',', '.');
-                $lines[] = "{$description} ({$amount} {$currencySymbol})";
-                $total += $amountNumber;
-            }
-            $formattedTotal = number_format($total, 2, ',', '.');
-            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
-        } else {
-            $text = "No hay Pagos al Contado";
-        }
-
-        $fields[] = TextareaField::new('cash_payments_list', 'Pagos al Contado')
-            ->setFormTypeOption('mapped', false)
-            ->setFormTypeOption('disabled', true)
-            ->setFormTypeOption('data', trim($text))
-            ->onlyOnForms();
-
-        // Créditos
-        $credits = $this->creditRepository->getAllCreditSql($user->getId());
-
-        if (count($credits) > 0) {
-            $lines = [];
-            $total = 0;
-
-            foreach ($credits as $credit) {
-                $bank = strip_tags($credit['bank_entity']);
-                $installmentAmount = number_format($credit['installment_amount'], 2, ',', '.');
-                $lines[] = "{$bank} ({$installmentAmount} {$currencySymbol})";
-                $total += $credit['installment_amount'];
-            }
-
-            $formattedTotal = number_format($total, 2, ',', '.');
-            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
-        } else {
-            $text = "No hay Créditos";
-        }
-
-        $fields[] = TextareaField::new('credits_list', 'Créditos')
-            ->setFormTypeOption('mapped', false)
-            ->setFormTypeOption('disabled', true)
-            ->setFormTypeOption('data', trim($text))
-            ->onlyOnForms();
-
-        // Metas
-        $goals = $this->goalRepository->getAllGoalSql($user->getId());
-        if (count($goals) > 0) {
-            $lines = [];
-            $total = 0;
-
-            foreach ($goals as $goal) {
-                $description = strip_tags($goal['description']);
-                $amountNumber = $goal['amount'];
-                $amount = number_format($amountNumber, 2, ',', '.');
-                $lines[] = "{$description} ({$amount} {$currencySymbol})";
-                $total += $amountNumber;
-            }
-
-            $formattedTotal = number_format($total, 2, ',', '.');
-            $text = implode("\n", $lines) . "\nTotal: {$formattedTotal} {$currencySymbol}";
-        } else {
-            $text = "No hay Metas";
-        }
-
-        $fields[] = TextareaField::new('goals_list', 'Metas')
-            ->setFormTypeOption('mapped', false)
-            ->setFormTypeOption('disabled', true)
-            ->setFormTypeOption('data', trim($text))
-            ->onlyOnForms();
 
         return $fields;
     }
@@ -223,41 +131,66 @@ class MonthlySummaryController extends AbstractCrudController
 
     private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        $monthsEntities = $this->monthRepository->findAll();
-        $months = [];
-        foreach ($monthsEntities as $monthEntity) {
-            $months[$monthEntity->getName()] = $monthEntity->getId();
+        if ($pageName === Crud::PAGE_NEW) {
+            // Obtener solo el primer mes desactivado (status = false)
+            $monthsEntities = $this->monthRepository->findBy(['status' => false], ['id' => 'ASC'], 1);
+        } else {
+            // Todos los meses para otras páginas
+            $monthsEntities = $this->monthRepository->findAll();
         }
 
-        $monthField = ChoiceField::new('month', 'Mes')
+        $months = [];
+        $defaultMonthId = null;
+
+        foreach ($monthsEntities as $monthEntity) {
+            $months[$monthEntity->getName()] = $monthEntity->getId();
+            if ($defaultMonthId === null) {
+                $defaultMonthId = $monthEntity->getId();
+            }
+        }
+
+        $field = ChoiceField::new('month', 'Mes')
             ->setChoices($months)
             ->setFormTypeOption('row_attr', $rowClass);
 
-        if ($pageName === Crud::PAGE_NEW) {
-            $monthField->setFormTypeOption('data', 1);
+        // En creación, setear el primer mes desactivado como valor por defecto
+        if ($pageName === Crud::PAGE_NEW && $defaultMonthId !== null) {
+            $field->setFormTypeOption('data', $defaultMonthId);
         }
 
-        return $monthField;
+        return $field;
     }
 
     private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
-        $years = [];
-        foreach ($activeYearsEntities as $yearEntity) {
-            $years[$yearEntity->getYear()] = $yearEntity->getId();
+        if ($pageName === Crud::PAGE_NEW) {
+            // Obtener solo el primer año activo (status = 1), orden ascendente, limitar a 1
+            $yearsEntities = $this->yearRepository->findBy(['status' => 1], ['year' => 'ASC'], 1);
+        } else {
+            // Para otras páginas, obtener todos los años activos
+            $yearsEntities = $this->yearRepository->findBy(['status' => 1], ['year' => 'ASC']);
         }
 
-        $yearField = ChoiceField::new('year', 'Año')
+        $years = [];
+        $defaultYearId = null;
+
+        foreach ($yearsEntities as $yearEntity) {
+            $years[$yearEntity->getYear()] = $yearEntity->getId();
+            if ($defaultYearId === null) {
+                $defaultYearId = $yearEntity->getId();
+            }
+        }
+
+        $field = ChoiceField::new('year', 'Año')
             ->setChoices($years)
             ->setFormTypeOption('row_attr', $rowClass);
 
-        if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
-            $defaultYearId = reset($years);
-            $yearField->setFormTypeOption('data', $defaultYearId);
+        // En creación, setear el primer año activo como valor por defecto
+        if ($pageName === Crud::PAGE_NEW && $defaultYearId !== null) {
+            $field->setFormTypeOption('data', $defaultYearId);
         }
 
-        return $yearField;
+        return $field;
     }
 
     public function createEntity(string $entityFqcn)
@@ -270,9 +203,9 @@ class MonthlySummaryController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Resumen Mensual')
-            ->setEntityLabelInPlural('Resumen Mensuales')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Resumen Mensual')
+            ->setEntityLabelInSingular('Informe Mensual')
+            ->setEntityLabelInPlural('Informe Mensuales')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Informe Mensual')
             ->setSearchFields(['month', 'year', 'totalIncome', 'saving'])
             ->setDefaultSort(['id' => 'DESC']);
     }
@@ -328,7 +261,7 @@ class MonthlySummaryController extends AbstractCrudController
     }
 
     /**
-     * GUARDA EL JSON ANTES DE PERSISTIR
+     * GUARDA EL JSON ANTES DE PERSISTIR Y ACTIVA EL MES SELECCIONADO
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
@@ -336,43 +269,42 @@ class MonthlySummaryController extends AbstractCrudController
             return;
         }
 
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-        $members = $this->memberRepository->findBy(['user' => $user->getId()]);
-
-        $balances = [];
-        $servicesAll = [];
-        $cashPaymentAll = [];
-        $creditAll = [];
-        $goalAll = [];
-
-        foreach ($members as $member) {
-            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
-            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId());
-            $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
-            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
-            $totalCombined = $services + $cashPayment + $credit + $goal;
-
-            $balances[] = [
-                'memberName' => $member->getName(),
-                'bankBalance' => $totalCombined,
-            ];
+        // Activa el mes relacionado
+        $monthId = $entityInstance->getMonth();
+        if ($monthId) {
+            $month = $this->monthRepository->find($monthId);
+            if ($month) {
+                $month->setStatus(true);
+                $entityManager->persist($month);
+            }
         }
-
-        // TODOS LOS SERVICIOS DE ESTE MIEMBRO
-        $servicesAll[] = ['services' => $this->serviceRepository->getAllServiceSql($user->getId())];
-        $cashPaymentAll[] = ['cashPayment' => $this->cashPaymentRepository->getAllCashPaymentSql($user->getId())];
-        $creditAll[] = ['credit' => $this->creditRepository->getAllCreditSql($user->getId())];
-        $goalAll[] = ['goal' => $this->goalRepository->getAllGoalSql($user->getId())];
-
-        $entityInstance->setBankBalance($balances);
-        $entityInstance->setServices($servicesAll);
-        $entityInstance->setCashPayment($cashPaymentAll);
-        $entityInstance->setCredit($creditAll);
-        $entityInstance->setGoal($goalAll);
 
         parent::persistEntity($entityManager, $entityInstance);
     }
+
+
+    /**
+     * ELIMINA EL REGISTRO Y DESACTIVA EL MES RELACIONADO
+     */
+    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof MonthlySummary) {
+            return;
+        }
+
+        // Desactiva el mes relacionado antes de eliminar el registro
+        $monthId = $entityInstance->getMonth();
+        if ($monthId) {
+            $month = $this->monthRepository->find($monthId);
+            if ($month) {
+                $month->setStatus(false);
+                $entityManager->persist($month);
+            }
+        }
+
+        parent::deleteEntity($entityManager, $entityInstance);
+    }
+    
 
     /**
      * @Route("/admin/monthly-summary/view-details", name="admin_monthly_summary_view_details")

@@ -26,7 +26,7 @@ class Service
     private ?string $description = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $status = true; // true = Activo
+    private bool $status = true;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
