@@ -3,8 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\CashPayment;
-use App\Repository\MonthRepository;
-use App\Repository\YearRepository;
 use App\Repository\CurrencyRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -23,7 +21,7 @@ class CashPaymentController extends AbstractCrudController
 {
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(MonthRepository $monthRepository, YearRepository $yearRepository, CurrencyRepository $currencyRepository)
+    public function __construct(CurrencyRepository $currencyRepository)
     {
         $this->currencyRepository = $currencyRepository;
     }
