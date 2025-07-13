@@ -138,10 +138,11 @@ class ServiceController extends AbstractCrudController
     /**
      * Crea un campo numérico con formato para el formulario.
      */
-    private function createFormattedNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = [], string $currencySymbol = ''): NumberField {
-       
+    private function createFormattedNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = [], string $currencySymbol = ''): NumberField
+    {
+
         $inputAttributes = ['class' => 'form-control'];
-        
+
         if ($readonly) {
             $inputAttributes['readonly'] = true;
         }
@@ -172,6 +173,10 @@ class ServiceController extends AbstractCrudController
         $service->setUser($this->getUser());
 
         $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
+
+        if (!$firstInactiveMonth) {
+            throw new \RuntimeException('Debes crear al menos un mes inactivo con status = 1 antes de crear un servicio.');
+        }
         $service->setMonth($firstInactiveMonth[0]->getId());
 
         $activeYears = $this->yearRepository->findBy(['status' => 1]);
@@ -260,7 +265,7 @@ class ServiceController extends AbstractCrudController
     }
 
     /**
-     * Crea el campo de selección del día de pago (1-31).
+     * Crea el campo de selección del Día (1-31).
      */
     private function createPaymentDayField(array $rowClass): ChoiceField
     {
@@ -269,7 +274,7 @@ class ServiceController extends AbstractCrudController
             $days[$i] = $i;
         }
 
-        return ChoiceField::new('paymentDay', 'Día de Pago')->setHelp('Día del mes en que se paga (1–31)')->setChoices($days)->setFormTypeOption('row_attr', $rowClass);
+        return ChoiceField::new('paymentDay', 'Día')->setHelp('Día del mes en que se paga (1–31)')->setChoices($days)->setFormTypeOption('row_attr', $rowClass);
     }
 
     /**

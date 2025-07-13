@@ -12,10 +12,14 @@ class Goal
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(options: ['unsigned' => true])]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: "goals")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'goals')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Member $member = null;
 
@@ -25,16 +29,35 @@ class Goal
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private ?bool $status = true;
+    #[ORM\Column(type: 'integer')]
+    private ?int $month = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private ?User $user = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $year = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $paymentDay = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $status = true;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isDefault = false;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
     }
 
     public function getMember(): ?Member
@@ -70,7 +93,40 @@ class Goal
         return $this;
     }
 
-    public function getStatus(): ?bool
+    public function getMonth(): ?int
+    {
+        return $this->month;
+    }
+
+    public function setMonth(int $month): self
+    {
+        $this->month = $month;
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(int $year): self
+    {
+        $this->year = $year;
+        return $this;
+    }
+
+    public function getPaymentDay(): ?int
+    {
+        return $this->paymentDay;
+    }
+
+    public function setPaymentDay(?int $paymentDay): self
+    {
+        $this->paymentDay = $paymentDay;
+        return $this;
+    }
+
+    public function isStatus(): bool
     {
         return $this->status;
     }
@@ -81,19 +137,14 @@ class Goal
         return $this;
     }
 
-    public function getUser(): ?User
+    public function isDefault(): bool
     {
-        return $this->user;
+        return $this->isDefault;
     }
 
-    public function setUser(?User $user): self
+    public function setIsDefault(bool $isDefault): self
     {
-        $this->user = $user;
+        $this->isDefault = $isDefault;
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->description ?? 'Sin descripción';
     }
 }

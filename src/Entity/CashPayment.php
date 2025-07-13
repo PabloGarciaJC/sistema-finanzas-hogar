@@ -28,18 +28,21 @@ class CashPayment
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $status = true; // true = activo
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isDefault = false; // true = predeterminado
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
 
-    // #[ORM\Column(type: 'integer')]
-    // private ?int $month = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $month = null;
 
-    // #[ORM\Column(type: 'integer')]
-    // private ?int $year = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $year = null;
 
-    // #[ORM\Column(type: 'integer', nullable: true)]
-    // private ?int $paymentDay = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $paymentDay = null;
 
     public function getId(): ?int
     {
@@ -90,6 +93,17 @@ class CashPayment
         return $this;
     }
 
+    public function getIsDefault(): bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(bool $isDefault): self
+    {
+        $this->isDefault = $isDefault;
+        return $this;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -100,5 +114,37 @@ class CashPayment
         $this->user = $user;
         return $this;
     }
-    
+
+    public function getMonth(): ?int
+    {
+        return $this->month;
+    }
+
+    public function setMonth(int $month): self
+    {
+        $this->month = $month;
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(int $year): self
+    {
+        $this->year = $year;
+        return $this;
+    }
+
+    public function getPaymentDay(): ?int
+    {
+        return $this->paymentDay;
+    }
+
+    public function setPaymentDay(?int $paymentDay): self
+    {
+        $this->paymentDay = $paymentDay;
+        return $this;
+    }
 }
