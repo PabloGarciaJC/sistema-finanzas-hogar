@@ -28,7 +28,7 @@ class MonthFixture extends Fixture
         foreach ($months as $name) {
             $month = new Month();
             $month->setName($name);
-            $month->setStatus(false);
+            $month->setStatus(true);
             $manager->persist($month);
         }
 
