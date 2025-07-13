@@ -133,7 +133,7 @@ class MonthlySummaryController extends AbstractCrudController
     {
         if ($pageName === Crud::PAGE_NEW) {
             // Obtener solo el primer mes desactivado (status = false)
-            $monthsEntities = $this->monthRepository->findBy(['status' => false], ['id' => 'ASC'], 1);
+            $monthsEntities = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
         } else {
             // Todos los meses para otras páginas
             $monthsEntities = $this->monthRepository->findAll();
