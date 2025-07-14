@@ -40,8 +40,6 @@ class CreditController extends AbstractCrudController
         $currencySymbol = $this->getActiveCurrencySymbol();
 
         return [
-            AssociationField::new('user', 'Familia')->hideOnForm(),
-
             AssociationField::new('member', 'Miembro')
                 ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
                     return $qb->andWhere('entity.user = :user')

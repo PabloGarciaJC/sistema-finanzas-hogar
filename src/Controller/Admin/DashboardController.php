@@ -57,6 +57,7 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         $monthsEntities = $this->monthRepository->findAll();
+        $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
 
         /** @var \App\Entity\User $user */
         $user = $this->getUser();

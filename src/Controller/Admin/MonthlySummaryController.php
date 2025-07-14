@@ -89,13 +89,16 @@ class MonthlySummaryController extends AbstractCrudController
 
     private function calculateDefaultValues(): array
     {
+
+        $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $income = $this->incomeRepository->getIncomeOptions($user->getId());
-        $service = $this->serviceRepository->getTotalServiceSql($user->getId());
-        $cashPayment = $this->cashPaymentRepository->getTotalCashPayment($user->getId());
-        $credit = $this->creditRepository->getTotalCredit($user->getId());
-        $goalTotal = $this->goalRepository->getGoalTotal($user->getId());
+        $income = $this->incomeRepository->getIncomeOptionsByMonth($user->getId(), $firstInactiveMonth[0]->getId());
+        $service = $this->serviceRepository->getTotalServiceSqlByMonth($user->getId(), $firstInactiveMonth[0]->getId());
+        $cashPayment = $this->cashPaymentRepository->getTotalCashPaymentByMonth($user->getId(), $firstInactiveMonth[0]->getId());
+        $credit = $this->creditRepository->getTotalCredit($user->getId(), $firstInactiveMonth[0]->getId());
+        $goalTotal = $this->goalRepository->getGoalTotalByMonth($user->getId(), $firstInactiveMonth[0]->getId());
         $bankDebtTotal = $service + $cashPayment + $credit + $goalTotal;
         $saving = (float) $income - $bankDebtTotal;
 
@@ -283,6 +286,8 @@ class MonthlySummaryController extends AbstractCrudController
     }
 
 
+
+
     /**
      * ELIMINA EL REGISTRO Y DESACTIVA EL MES RELACIONADO
      */
@@ -304,18 +309,39 @@ class MonthlySummaryController extends AbstractCrudController
 
         parent::deleteEntity($entityManager, $entityInstance);
     }
-    
 
     /**
      * @Route("/admin/monthly-summary/view-details", name="admin_monthly_summary_view_details")
      */
     public function viewDetails(Request $request, EntityManagerInterface $em): Response
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $members = $this->memberRepository->findBy(['user' => $user->getId()]);
+
+        $balances = [];
+
+        foreach ($members as $member) {
+            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
+            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId());
+            $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
+            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
+            $totalCombined = $services + $cashPayment + $credit + $goal;
+
+            $balances[] = [
+                'memberName' => $member->getName(),
+                'bankBalance' => $totalCombined,
+            ];
+        }
+
         $id = $request->query->get('entityId');
         $monthlySummary = $em->getRepository(MonthlySummary::class)->find($id);
+
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,
             'currencySymbol' => $this->getActiveCurrencySymbol(),
+            'balances' => $balances, // ✅ AHORA PASAS EL DATO CORRECTAMENTE
         ]);
     }
 }
