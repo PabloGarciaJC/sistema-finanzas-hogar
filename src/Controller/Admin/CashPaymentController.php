@@ -60,7 +60,7 @@ class CashPaymentController extends AbstractCrudController
     {
         $user = $this->getUser();
 
-        // Obtiene pagos en efectivo predeterminados del usuario actual
+        // Obtiene Pagos al contado predeterminados del usuario actual
         $payments = $entityManager->getRepository(CashPayment::class)->findBy([
             'user' => $user,
             'isDefault' => true,
@@ -84,7 +84,7 @@ class CashPaymentController extends AbstractCrudController
         ]);
 
         if (count($existingPayments) > 0) {
-            $this->addFlash('warning', 'Ya se generaron pagos en efectivo para este mes.');
+            $this->addFlash('warning', 'Ya se generaron Pagos al contado para este mes.');
             return $this->redirectToRoute('admin_cash_payment_index');
         }
 
@@ -99,7 +99,7 @@ class CashPaymentController extends AbstractCrudController
 
         $entityManager->flush();
 
-        $this->addFlash('success', 'Los pagos en efectivo se han duplicado correctamente con el primer mes inactivo.');
+        $this->addFlash('success', 'Los Pagos al contado se han duplicado correctamente con el primer mes inactivo.');
 
         return $this->redirectToRoute('admin_cash_payment_index');
     }
@@ -195,8 +195,8 @@ class CashPaymentController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Pago en efectivo')
-            ->setEntityLabelInPlural('Pagos en efectivo')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Pagos en efectivo')
+            ->setEntityLabelInPlural('Pagos al contado')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Pagos al contado')
             ->setSearchFields(['description', 'member.name', 'amount']);
     }
 
