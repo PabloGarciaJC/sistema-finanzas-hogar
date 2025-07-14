@@ -202,6 +202,35 @@ class MonthlySummaryController extends AbstractCrudController
         return $entity;
     }
 
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$entityInstance instanceof MonthlySummary) {
+            return;
+        }
+
+        // Obtener los valores FINALES del formulario
+        $month = $entityInstance->getMonth();
+        $year = $entityInstance->getYear();
+
+        // Revisar duplicado real
+        $existing = $entityManager->getRepository(MonthlySummary::class)->findOneBy([
+            'user' => $user,
+            'month' => $month,
+            'year' => $year,
+        ]);
+
+        if ($existing) {
+            $this->addFlash('warning', 'Ya existe un resumen mensual para este mes y año.');
+        } else {
+            $this->addFlash('success', 'Se ha generado un resumen mensual para este mes y año.');
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
