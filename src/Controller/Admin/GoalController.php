@@ -52,16 +52,21 @@ class GoalController extends AbstractCrudController
         return $actions->add(Crud::PAGE_INDEX, $duplicate);
     }
 
+    /**
+     * Ruta para duplicar los servicios predeterminados del usuario al siguiente mes disponible.
+     */
     #[Route("/admin/goals/duplicate", name: "admin_goals_duplicate")]
     public function duplicateGoals(EntityManagerInterface $entityManager): RedirectResponse
     {
         $user = $this->getUser();
 
+        // Obtiene objetivos predeterminados del usuario actual
         $goals = $entityManager->getRepository(Goal::class)->findBy([
             'user' => $user,
             'isDefault' => true,
         ]);
 
+        // Busca el primer mes inactivo
         $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
 
         if (!$firstInactiveMonth) {
@@ -69,10 +74,25 @@ class GoalController extends AbstractCrudController
             return $this->redirectToRoute('admin_goal_index');
         }
 
+        $targetMonthId = $firstInactiveMonth[0]->getId();
+
+        // Verifica si ya existen objetivos generados para ese mes y usuario
+        $existingGoals = $entityManager->getRepository(Goal::class)->findBy([
+            'user' => $user,
+            'month' => $targetMonthId,
+            'isDefault' => false,
+        ]);
+
+        if (count($existingGoals) > 0) {
+            $this->addFlash('warning', 'Ya se generaron objetivos para este mes.');
+            return $this->redirectToRoute('admin_goal_index');
+        }
+
+        // Clona y guarda los objetivos para el nuevo mes
         foreach ($goals as $goal) {
             $newGoal = clone $goal;
             $newGoal->setUser($user);
-            $newGoal->setMonth($firstInactiveMonth[0]->getId());
+            $newGoal->setMonth($targetMonthId);
             $newGoal->setIsDefault(false);
             $entityManager->persist($newGoal);
         }

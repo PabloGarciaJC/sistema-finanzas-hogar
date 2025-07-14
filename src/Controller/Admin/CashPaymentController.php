@@ -52,16 +52,21 @@ class CashPaymentController extends AbstractCrudController
         return $actions->add(Crud::PAGE_INDEX, $duplicate);
     }
 
+    /**
+     * Ruta para duplicar los servicios predeterminados del usuario al siguiente mes disponible.
+     */
     #[Route("/admin/cashpayments/duplicate", name: "admin_cashpayments_duplicate")]
     public function duplicateCashPayments(EntityManagerInterface $entityManager): RedirectResponse
     {
         $user = $this->getUser();
 
+        // Obtiene pagos en efectivo predeterminados del usuario actual
         $payments = $entityManager->getRepository(CashPayment::class)->findBy([
             'user' => $user,
             'isDefault' => true,
         ]);
 
+        // Busca el primer mes inactivo
         $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
 
         if (!$firstInactiveMonth) {
@@ -69,10 +74,25 @@ class CashPaymentController extends AbstractCrudController
             return $this->redirectToRoute('admin_cash_payment_index');
         }
 
+        $targetMonthId = $firstInactiveMonth[0]->getId();
+
+        // Verifica si ya existen pagos generados para ese mes y usuario
+        $existingPayments = $entityManager->getRepository(CashPayment::class)->findBy([
+            'user' => $user,
+            'month' => $targetMonthId,
+            'isDefault' => false,
+        ]);
+
+        if (count($existingPayments) > 0) {
+            $this->addFlash('warning', 'Ya se generaron pagos en efectivo para este mes.');
+            return $this->redirectToRoute('admin_cash_payment_index');
+        }
+
+        // Clona y guarda los pagos para el nuevo mes
         foreach ($payments as $payment) {
             $newPayment = clone $payment;
             $newPayment->setUser($user);
-            $newPayment->setMonth($firstInactiveMonth[0]->getId());
+            $newPayment->setMonth($targetMonthId);
             $newPayment->setIsDefault(false);
             $entityManager->persist($newPayment);
         }
@@ -83,6 +103,7 @@ class CashPaymentController extends AbstractCrudController
 
         return $this->redirectToRoute('admin_cash_payment_index');
     }
+
 
     public function configureFields(string $pageName): iterable
     {

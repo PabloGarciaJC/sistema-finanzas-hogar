@@ -50,16 +50,21 @@ class IncomeController extends AbstractCrudController
         return $actions->add(Crud::PAGE_INDEX, $duplicate);
     }
 
+    /**
+     * Ruta para duplicar los servicios predeterminados del usuario al siguiente mes disponible.
+     */
     #[Route("/admin/incomes/duplicate", name: "admin_income_duplicate")]
     public function duplicateIncomes(EntityManagerInterface $entityManager): RedirectResponse
     {
         $user = $this->getUser();
 
+        // Obtiene ingresos predeterminados del usuario actual
         $incomes = $entityManager->getRepository(Income::class)->findBy([
             'user' => $user,
             'isDefault' => true,
         ]);
 
+        // Busca el primer mes inactivo
         $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
 
         if (!$firstInactiveMonth) {
@@ -67,10 +72,25 @@ class IncomeController extends AbstractCrudController
             return $this->redirectToRoute('admin_income_index');
         }
 
+        $targetMonthId = $firstInactiveMonth[0]->getId();
+
+        // Verifica si ya existen ingresos generados para ese mes y usuario
+        $existingIncomes = $entityManager->getRepository(Income::class)->findBy([
+            'user' => $user,
+            'month' => $targetMonthId,
+            'isDefault' => false,
+        ]);
+
+        if (count($existingIncomes) > 0) {
+            $this->addFlash('warning', 'Ya se generaron ingresos para este mes.');
+            return $this->redirectToRoute('admin_income_index');
+        }
+
+        // Clona y guarda los ingresos para el nuevo mes
         foreach ($incomes as $income) {
             $newIncome = clone $income;
             $newIncome->setUser($user);
-            $newIncome->setMonth($firstInactiveMonth[0]->getId());
+            $newIncome->setMonth($targetMonthId);
             $newIncome->setIsDefault(false);
             $entityManager->persist($newIncome);
         }
@@ -81,6 +101,7 @@ class IncomeController extends AbstractCrudController
 
         return $this->redirectToRoute('admin_income_index');
     }
+
 
     public function configureFields(string $pageName): iterable
     {

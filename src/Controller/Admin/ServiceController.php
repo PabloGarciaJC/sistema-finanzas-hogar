@@ -79,11 +79,25 @@ class ServiceController extends AbstractCrudController
             return $this->redirectToRoute('admin_service_index');
         }
 
+        $targetMonthId = $firstInactiveMonth[0]->getId();
+
+        // Verifica si ya existen servicios generados para ese mes y usuario
+        $existingServices = $entityManager->getRepository(Service::class)->findBy([
+            'user' => $user,
+            'month' => $targetMonthId,
+            'isDefault' => false,
+        ]);
+
+        if (count($existingServices) > 0) {
+            $this->addFlash('warning', 'Ya se generaron servicios para este mes');
+            return $this->redirectToRoute('admin_service_index');
+        }
+
         // Clona y guarda los servicios para el nuevo mes
         foreach ($services as $service) {
             $newService = clone $service;
             $newService->setUser($user);
-            $newService->setMonth($firstInactiveMonth[0]->getId());
+            $newService->setMonth($targetMonthId);
             $newService->setIsDefault(false);
             $entityManager->persist($newService);
         }
