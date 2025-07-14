@@ -77,7 +77,6 @@ class MonthlySummaryController extends AbstractCrudController
         $currencySymbol = $this->getActiveCurrencySymbol();
         $defaults = $this->calculateDefaultValues();
         $fields = [];
-        $fields[] = AssociationField::new('user', 'Familia')->hideOnForm();
         $fields[] = $this->createFormattedNumberField('totalIncome', 'Ingresos Totales', $pageName, $defaults['income'], $currencySymbol, $rowClass);
         $fields[] = $this->createFormattedNumberField('debt_total', 'Deuda Total', $pageName, $defaults['bankDebtTotal'], $currencySymbol, $rowClass);
         $fields[] = $this->createFormattedNumberField('savings', 'Ahorros', $pageName, $defaults['savings'], $currencySymbol, $rowClass);
@@ -264,53 +263,6 @@ class MonthlySummaryController extends AbstractCrudController
     }
 
     /**
-     * GUARDA EL JSON ANTES DE PERSISTIR Y ACTIVA EL MES SELECCIONADO
-     */
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof MonthlySummary) {
-            return;
-        }
-
-        // Activa el mes relacionado
-        $monthId = $entityInstance->getMonth();
-        if ($monthId) {
-            $month = $this->monthRepository->find($monthId);
-            if ($month) {
-                $month->setStatus(true);
-                $entityManager->persist($month);
-            }
-        }
-
-        parent::persistEntity($entityManager, $entityInstance);
-    }
-
-
-
-
-    /**
-     * ELIMINA EL REGISTRO Y DESACTIVA EL MES RELACIONADO
-     */
-    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof MonthlySummary) {
-            return;
-        }
-
-        // Desactiva el mes relacionado antes de eliminar el registro
-        $monthId = $entityInstance->getMonth();
-        if ($monthId) {
-            $month = $this->monthRepository->find($monthId);
-            if ($month) {
-                $month->setStatus(false);
-                $entityManager->persist($month);
-            }
-        }
-
-        parent::deleteEntity($entityManager, $entityInstance);
-    }
-
-    /**
      * @Route("/admin/monthly-summary/view-details", name="admin_monthly_summary_view_details")
      */
     public function viewDetails(Request $request, EntityManagerInterface $em): Response
@@ -341,7 +293,7 @@ class MonthlySummaryController extends AbstractCrudController
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,
             'currencySymbol' => $this->getActiveCurrencySymbol(),
-            'balances' => $balances, // ✅ AHORA PASAS EL DATO CORRECTAMENTE
+            'balances' => $balances,
         ]);
     }
 }
