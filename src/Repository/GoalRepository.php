@@ -27,7 +27,7 @@ class GoalRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
-    public function getGoalTotalByMonth ($userId, $idMonth): float
+    public function getGoalTotalByMonth($userId, $idMonth): float
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = 'SELECT SUM(amount) AS total_amount FROM goal WHERE user_id = ' . $userId . ' AND month = ' . $idMonth . ' AND status = 1';
@@ -60,23 +60,17 @@ class GoalRepository extends ServiceEntityRepository
     }
 
 
-    public function getTotalGoalGroupedByMonth(int $userId): array
-{
-    $conn = $this->getEntityManager()->getConnection();
+    public function getGoalsGroupedByMonth($userId, $idMonth)
+    {
+        $conn = $this->getEntityManager()->getConnection();
 
-    $sql = '
-        SELECT month, year, SUM(amount) AS total_amount
-        FROM goal
-        WHERE user_id = :userId
-          AND status = 1
-        GROUP BY year, month
-        ORDER BY year, month
-    ';
+        $sql = 'SELECT id, user_id, member_id, amount, description, month, year, payment_day, status, is_default, (SELECT SUM(amount) FROM goal  WHERE user_id = :userId AND month = :idMonth AND status = 1) AS total_amount FROM goal WHERE user_id = :userId AND month = :idMonth AND status = 1';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery([
+            'userId' => (int)$userId,
+            'idMonth' => (int)$idMonth
+        ]);
 
-    $stmt = $conn->prepare($sql);
-    $resultSet = $stmt->executeQuery(['userId' => $userId]);
-
-    return $resultSet->fetchAllAssociative();
-}
-
+        return $resultSet->fetchAllAssociative();
+    }
 }

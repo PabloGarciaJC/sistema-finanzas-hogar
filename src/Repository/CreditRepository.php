@@ -27,7 +27,7 @@ class CreditRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
-    public function getTotalCreditByMonth ($userId, $idMonth): float
+    public function getTotalCreditByMonth($userId, $idMonth): float
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = 'SELECT SUM(installment_amount) AS total_amount FROM credit WHERE user_id = ' . $userId . ' AND month = ' . $idMonth . ' AND status = 1';
@@ -59,22 +59,12 @@ class CreditRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
-    public function getTotalCreditByUser(int $userId): float
-{
-    $conn = $this->getEntityManager()->getConnection();
-
-    $sql = '
-        SELECT SUM(installment_amount) AS total_credit
-        FROM credit
-        WHERE user_id = :userId
-          AND status = 1
-    ';
-
-    $stmt = $conn->prepare($sql);
-    $resultSet = $stmt->executeQuery(['userId' => $userId]);
-    $row = $resultSet->fetchAssociative();
-
-    return (float) ($row['total_credit'] ?? 0);
-}
-
+    public function getCreditsByUser(int $userId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT bank_entity, installment_amount FROM credit WHERE user_id = :userId AND status = 1';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId]);
+        return $resultSet->fetchAllAssociative();
+    }
 }

@@ -301,7 +301,7 @@ class MonthlySummaryController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $viewDetails = Action::new('viewDetails', 'Ver detalles', 'fas fa-eye')
+        $viewDetails = Action::new('viewDetails', 'Ver detalles')
             ->linkToCrudAction('viewDetails');
 
         return $actions
@@ -323,6 +323,9 @@ class MonthlySummaryController extends AbstractCrudController
         $monthlySummary = $em->getRepository(MonthlySummary::class)->find($id);
 
         $balances = [];
+        $services = [];
+        $credit = [];
+        $goal = [];
 
         foreach ($members as $member) {
             $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId(), $monthlySummary->getMonth());
@@ -337,10 +340,20 @@ class MonthlySummaryController extends AbstractCrudController
             ];
         }
 
+        $services = $this->serviceRepository->getTotalServicesGroupedByMonth($user->getId(), $monthlySummary->getMonth());
+        $cashPayment = $this->cashPaymentRepository->getCashPaymentsByMonth($user->getId(), $monthlySummary->getMonth());
+        $goal = $this->goalRepository->getGoalsGroupedByMonth($user->getId(), $monthlySummary->getMonth());
+        $credit = $this->creditRepository->getCreditsByUser($user->getId());
+
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,
             'currencySymbol' => $this->getActiveCurrencySymbol(),
             'balances' => $balances,
+            'services' => $services,
+            'cashPayments' => $cashPayment,
+            'goals' => $goal,
+            'credits' => $credit,
+
         ]);
     }
 }
