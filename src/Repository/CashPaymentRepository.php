@@ -59,10 +59,20 @@ class CashPaymentRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
-    public function getCashPaymentsByMonth(int $userId, int $month): array
+    public function getCashPaymentsByMonthAndMember(int $userId, int $month): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT id, member_id, amount, description, month, year, payment_day FROM cash_payment  WHERE user_id = :userId AND status = 1 AND month = :month ORDER BY year, month, payment_day';
+        $sql = '
+        SELECT 
+            cp.*, 
+            m.name AS member_name
+        FROM cash_payment cp
+        LEFT JOIN member m ON m.id = cp.member_id
+        WHERE cp.user_id = :userId 
+        AND cp.status = 1 
+        AND cp.month = :month
+        ORDER BY cp.member_id ASC, cp.description ASC
+    ';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery([
             'userId' => $userId,

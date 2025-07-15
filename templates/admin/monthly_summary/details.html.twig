@@ -67,27 +67,41 @@
 							<thead>
 								<tr>
 									<th class="text-start">Descripción</th>
+									<th class="text-start">Miembro</th>
 									<th>Monto</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% set totalServices = 0 %}
+								{% set memberTotals = {} %}
 								{% for service in services %}
 									<tr>
 										<td class="text-start">{{ service.description }}</td>
+										<td class="text-start">{{ service.member_name }}</td>
 										<td>{{ service.amount|number_format(2, ',', '.') }}
 											{{ currencySymbol }}</td>
 									</tr>
 									{% set totalServices = totalServices + service.amount %}
+									{% set memberTotals = memberTotals|merge({ 
+                                        (service.member_name): (memberTotals[service.member_name]|default(0) + service.amount) 
+                                    }) %}
 								{% else %}
 									<tr>
-										<td colspan="2" class="text-center">No hay servicios para este mes</td>
+										<td colspan="3" class="text-center">No hay servicios para este mes</td>
 									</tr>
 								{% endfor %}
 							</tbody>
 							<tfoot>
-								<tr class="fw-bold">
-									<td class="text-start">Total</td>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
 									<td>{{ totalServices|number_format(2, ',', '.') }}
 										{{ currencySymbol }}</td>
 								</tr>
@@ -104,27 +118,41 @@
 							<thead>
 								<tr>
 									<th class="text-start">Descripción</th>
+									<th class="text-start">Miembro</th>
 									<th>Monto</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% set totalCashPayments = 0 %}
+								{% set memberTotals = {} %}
 								{% for payment in cashPayments %}
 									<tr>
 										<td class="text-start">{{ payment.description }}</td>
+										<td class="text-start">{{ payment.member_name }}</td>
 										<td>{{ payment.amount|number_format(2, ',', '.') }}
 											{{ currencySymbol }}</td>
 									</tr>
 									{% set totalCashPayments = totalCashPayments + payment.amount %}
+									{% set memberTotals = memberTotals|merge({
+                                        (payment.member_name): (memberTotals[payment.member_name]|default(0) + payment.amount)
+                                    }) %}
 								{% else %}
 									<tr>
-										<td colspan="2" class="text-center">No hay pagos en efectivo para este mes</td>
+										<td colspan="3" class="text-center">No hay pagos en efectivo para este mes</td>
 									</tr>
 								{% endfor %}
 							</tbody>
 							<tfoot>
-								<tr class="fw-bold">
-									<td class="text-start">Total</td>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
 									<td>{{ totalCashPayments|number_format(2, ',', '.') }}
 										{{ currencySymbol }}</td>
 								</tr>
@@ -141,27 +169,41 @@
 							<thead>
 								<tr>
 									<th class="text-start">Descripción</th>
+									<th class="text-start">Miembro</th>
 									<th>Monto</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% set totalGoals = 0 %}
+								{% set memberTotals = {} %}
 								{% for goal in goals %}
 									<tr>
 										<td class="text-start">{{ goal.description }}</td>
+										<td class="text-start">{{ goal.member_name }}</td>
 										<td>{{ goal.amount|number_format(2, ',', '.') }}
 											{{ currencySymbol }}</td>
 									</tr>
 									{% set totalGoals = totalGoals + goal.amount %}
+									{% set memberTotals = memberTotals|merge({
+                                        (goal.member_name): (memberTotals[goal.member_name]|default(0) + goal.amount)
+                                    }) %}
 								{% else %}
 									<tr>
-										<td colspan="2" class="text-center">No hay metas para este mes</td>
+										<td colspan="3" class="text-center">No hay metas para este mes</td>
 									</tr>
 								{% endfor %}
 							</tbody>
 							<tfoot>
-								<tr class="fw-bold">
-									<td class="text-start">Total</td>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
 									<td>{{ totalGoals|number_format(2, ',', '.') }}
 										{{ currencySymbol }}</td>
 								</tr>
@@ -178,27 +220,39 @@
 							<thead>
 								<tr>
 									<th class="text-start">Entidad Bancaria</th>
-									<th>Cuota</th>
+									<th class="text-start">Miembro</th>
+									<th>Monto</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% set totalCredits = 0 %}
+								{% set memberTotals = {} %}
 								{% for credit in credits %}
 									<tr>
 										<td class="text-start">{{ credit.bank_entity }}</td>
+										<td class="text-start">{{ credit.member_name }}</td>
 										<td>{{ credit.installment_amount|number_format(2, ',', '.') }}
 											{{ currencySymbol }}</td>
 									</tr>
 									{% set totalCredits = totalCredits + credit.installment_amount %}
+									{% set memberTotals = memberTotals|merge({(credit.member_name): (memberTotals[credit.member_name]|default(0) + credit.installment_amount)}) %}
 								{% else %}
 									<tr>
-										<td colspan="2" class="text-center">No hay créditos activos</td>
+										<td colspan="3" class="text-center">No hay créditos activos</td>
 									</tr>
 								{% endfor %}
 							</tbody>
 							<tfoot>
-								<tr class="fw-bold">
-									<td class="text-start">Total</td>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
 									<td>{{ totalCredits|number_format(2, ',', '.') }}
 										{{ currencySymbol }}</td>
 								</tr>

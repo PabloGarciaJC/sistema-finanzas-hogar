@@ -340,10 +340,10 @@ class MonthlySummaryController extends AbstractCrudController
             ];
         }
 
-        $services = $this->serviceRepository->getTotalServicesGroupedByMonth($user->getId(), $monthlySummary->getMonth());
-        $cashPayment = $this->cashPaymentRepository->getCashPaymentsByMonth($user->getId(), $monthlySummary->getMonth());
-        $goal = $this->goalRepository->getGoalsGroupedByMonth($user->getId(), $monthlySummary->getMonth());
-        $credit = $this->creditRepository->getCreditsByUser($user->getId());
+        $services = $this->serviceRepository->getTotalServicesGroupedByMonthAndMember($user->getId(), $monthlySummary->getMonth());
+        $cashPayment = $this->cashPaymentRepository->getCashPaymentsByMonthAndMember($user->getId(), $monthlySummary->getMonth());
+        $goal = $this->goalRepository->getGoalsGroupedByMonthAndMember($user->getId(), $monthlySummary->getMonth());
+        $credit = $this->creditRepository->getCreditsByUserAndMember($user->getId());
 
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,

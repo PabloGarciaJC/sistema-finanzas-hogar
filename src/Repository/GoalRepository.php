@@ -60,17 +60,29 @@ class GoalRepository extends ServiceEntityRepository
     }
 
 
-    public function getGoalsGroupedByMonth($userId, $idMonth)
-    {
-        $conn = $this->getEntityManager()->getConnection();
+ public function getGoalsGroupedByMonthAndMember($userId, $idMonth)
+{
+    $conn = $this->getEntityManager()->getConnection();
 
-        $sql = 'SELECT id, user_id, member_id, amount, description, month, year, payment_day, status, is_default, (SELECT SUM(amount) FROM goal  WHERE user_id = :userId AND month = :idMonth AND status = 1) AS total_amount FROM goal WHERE user_id = :userId AND month = :idMonth AND status = 1';
-        $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery([
-            'userId' => (int)$userId,
-            'idMonth' => (int)$idMonth
-        ]);
+    $sql = '
+        SELECT 
+            g.*, 
+            m.name as member_name
+        FROM goal g
+        LEFT JOIN member m ON m.id = g.member_id
+        WHERE g.user_id = :userId 
+          AND g.month = :idMonth 
+          AND g.status = 1
+        ORDER BY g.member_id ASC, g.description ASC
+    ';
 
-        return $resultSet->fetchAllAssociative();
-    }
+    $stmt = $conn->prepare($sql);
+    $resultSet = $stmt->executeQuery([
+        'userId' => (int)$userId,
+        'idMonth' => (int)$idMonth
+    ]);
+
+    return $resultSet->fetchAllAssociative();
+}
+
 }

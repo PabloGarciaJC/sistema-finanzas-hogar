@@ -59,11 +59,21 @@ class ServiceRepository extends ServiceEntityRepository
         $amount = $row['total_amount'] ?? 0;
         return (float) $amount;
     }
-    
-    public function getTotalServicesGroupedByMonth($userId, $idMonth)
+
+public function getTotalServicesGroupedByMonthAndMember($userId, $idMonth)
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT * FROM services WHERE user_id = :userId AND month = :idMonth AND status = 1';
+        $sql = '
+            SELECT 
+                s.*, 
+                m.name as member_name
+            FROM services s
+            LEFT JOIN member m ON m.id = s.member_id
+            WHERE s.user_id = :userId 
+            AND s.month = :idMonth 
+            AND s.status = 1
+            ORDER BY s.member_id ASC, s.description ASC
+        ';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery([
             'userId' => (int)$userId,
@@ -71,4 +81,5 @@ class ServiceRepository extends ServiceEntityRepository
         ]);
         return $resultSet->fetchAllAssociative();
     }
+
 }

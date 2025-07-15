@@ -59,12 +59,22 @@ class CreditRepository extends ServiceEntityRepository
         return (float) $amount;
     }
 
-    public function getCreditsByUser(int $userId): array
-    {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT bank_entity, installment_amount FROM credit WHERE user_id = :userId AND status = 1';
-        $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery(['userId' => $userId]);
-        return $resultSet->fetchAllAssociative();
-    }
+    public function getCreditsByUserAndMember(int $userId): array
+{
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = '
+        SELECT 
+            c.*, 
+            m.name as member_name
+        FROM credit c
+        LEFT JOIN member m ON m.id = c.member_id
+        WHERE c.user_id = :userId 
+          AND c.status = 1
+        ORDER BY c.member_id ASC, c.bank_entity ASC
+    ';
+    $stmt = $conn->prepare($sql);
+    $resultSet = $stmt->executeQuery(['userId' => $userId]);
+    return $resultSet->fetchAllAssociative();
+}
+
 }
