@@ -29,6 +29,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class MonthlySummaryController extends AbstractCrudController
 {
     private IncomeRepository $incomeRepository;
@@ -40,6 +44,8 @@ class MonthlySummaryController extends AbstractCrudController
     private YearRepository $yearRepository;
     private MemberRepository $memberRepository;
     private CashPaymentRepository $cashPaymentRepository;
+    private RequestStack $requestStack;
+    private EntityManagerInterface $em;
 
     public function __construct(
         IncomeRepository $incomeRepository,
@@ -50,7 +56,9 @@ class MonthlySummaryController extends AbstractCrudController
         MonthRepository $monthRepository,
         YearRepository $yearRepository,
         MemberRepository $memberRepository,
-        CashPaymentRepository $cashPaymentRepository
+        CashPaymentRepository $cashPaymentRepository,
+        RequestStack $requestStack,
+        EntityManagerInterface $em
     ) {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
@@ -61,6 +69,8 @@ class MonthlySummaryController extends AbstractCrudController
         $this->yearRepository = $yearRepository;
         $this->memberRepository = $memberRepository;
         $this->cashPaymentRepository = $cashPaymentRepository;
+        $this->requestStack = $requestStack;
+        $this->em = $em;
     }
 
     public static function getEntityFqcn(): string
@@ -105,10 +115,10 @@ class MonthlySummaryController extends AbstractCrudController
         $memberBalances = [];
 
         foreach ($members as $member) {
-            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
-            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId());
+            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId(), $firstInactiveMonth[0]->getId());
+            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId(), $firstInactiveMonth[0]->getId());
             $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
-            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
+            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId(), $firstInactiveMonth[0]->getId());
             $totalCombined = $services + $cashPayment + $credit + $goal;
 
             $memberBalances[] = [
@@ -222,14 +232,13 @@ class MonthlySummaryController extends AbstractCrudController
 
         if ($existing) {
             $this->addFlash('warning', 'Ya existe un resumen mensual para este mes y año.');
-            return; // ⬅️ DETIENE la persistencia
+            return;
         }
 
         $this->addFlash('success', 'Se ha generado un resumen mensual para este mes y año.');
 
         parent::persistEntity($entityManager, $entityInstance);
     }
-
 
     public function configureCrud(Crud $crud): Crud
     {
@@ -281,9 +290,18 @@ class MonthlySummaryController extends AbstractCrudController
         return $currency ? $currency->getSymbol() : '';
     }
 
+    private function sumTotalAmounts(array $items): float
+    {
+        $sum = 0.0;
+        foreach ($items as $item) {
+            $sum += (float) ($item['total_amount'] ?? 0);
+        }
+        return $sum;
+    }
+
     public function configureActions(Actions $actions): Actions
     {
-        $viewDetails = Action::new('viewDetails', 'Ver detalles', '')
+        $viewDetails = Action::new('viewDetails', 'Ver detalles', 'fas fa-eye')
             ->linkToCrudAction('viewDetails');
 
         return $actions
@@ -301,13 +319,16 @@ class MonthlySummaryController extends AbstractCrudController
 
         $members = $this->memberRepository->findBy(['user' => $user->getId()]);
 
+        $id = $request->query->get('entityId');
+        $monthlySummary = $em->getRepository(MonthlySummary::class)->find($id);
+
         $balances = [];
 
         foreach ($members as $member) {
-            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId());
-            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId());
+            $services = $this->serviceRepository->getTotalServicesByMember($member->getId(), $user->getId(), $monthlySummary->getMonth());
+            $cashPayment = $this->cashPaymentRepository->getTotalByMemberId($member->getId(), $user->getId(), $monthlySummary->getMonth());
             $credit = $this->creditRepository->getTotalCreditByMemberId($member->getId(), $user->getId());
-            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId());
+            $goal = $this->goalRepository->getTotalGoalByMemberId($member->getId(), $user->getId(), $monthlySummary->getMonth());
             $totalCombined = $services + $cashPayment + $credit + $goal;
 
             $balances[] = [
@@ -315,9 +336,6 @@ class MonthlySummaryController extends AbstractCrudController
                 'bankBalance' => $totalCombined,
             ];
         }
-
-        $id = $request->query->get('entityId');
-        $monthlySummary = $em->getRepository(MonthlySummary::class)->find($id);
 
         return $this->render('admin/monthly_summary/details.html.twig', [
             'monthlySummary' => $monthlySummary,

@@ -51,4 +51,20 @@ class IncomeRepository extends ServiceEntityRepository
         $count = $row['member_count'] ?? 0;
         return (float) $count;
     }
+
+    public function getTotalIncomeGroupedByMonth($userId)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT month, year, SUM(amount) AS total_amount
+            FROM income
+            WHERE user_id = :userId
+            GROUP BY month, year
+            ORDER BY year, month';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId]);
+
+        return $resultSet->fetchAllAssociative();
+    }
 }

@@ -23,7 +23,7 @@ class MonthlySummary
     private float $totalIncome;
 
     #[ORM\Column(type: "float")]
-    private float $savings;
+    private float $savings = 0.0;
 
     #[ORM\Column(type: "float")]
     private float $debtTotal;

@@ -58,4 +58,23 @@ class CreditRepository extends ServiceEntityRepository
         $amount = $row['total_amount'] ?? 0;
         return (float) $amount;
     }
+
+    public function getTotalCreditByUser(int $userId): float
+{
+    $conn = $this->getEntityManager()->getConnection();
+
+    $sql = '
+        SELECT SUM(installment_amount) AS total_credit
+        FROM credit
+        WHERE user_id = :userId
+          AND status = 1
+    ';
+
+    $stmt = $conn->prepare($sql);
+    $resultSet = $stmt->executeQuery(['userId' => $userId]);
+    $row = $resultSet->fetchAssociative();
+
+    return (float) ($row['total_credit'] ?? 0);
+}
+
 }

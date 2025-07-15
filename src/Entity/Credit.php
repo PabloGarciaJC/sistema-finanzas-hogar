@@ -33,9 +33,6 @@ class Credit
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $frequency = 'Mensual';
 
-    #[ORM\Column(type: 'decimal', precision: 12, scale: 2, nullable: true)]
-    private ?string $remainingAmount = null;
-
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $status = true;
 
@@ -111,17 +108,6 @@ class Credit
             throw new \InvalidArgumentException("Frecuencia inválida: $frequency");
         }
         $this->frequency = $frequency;
-        return $this;
-    }
-
-    public function getRemainingAmount(): ?string
-    {
-        return $this->remainingAmount;
-    }
-
-    public function setRemainingAmount(?string $remainingAmount): self
-    {
-        $this->remainingAmount = $remainingAmount;
         return $this;
     }
 
