@@ -120,10 +120,13 @@ class GoalController extends AbstractCrudController
 
         $statusField = BooleanField::new('status', 'Activo')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
         $isDefaultField = BooleanField::new('isDefault', 'Predeterminado')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
+        $isPaidField = BooleanField::new('is_paid', 'Pagado')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
 
         if ($pageName === Crud::PAGE_NEW) {
             $isDefaultField->setFormTypeOption('data', false);
             $isDefaultField->setFormTypeOption('disabled', true);
+            $isPaidField->setFormTypeOption('data', false);
+            $isPaidField->setFormTypeOption('disabled', true);
         }
 
         return [
@@ -140,6 +143,7 @@ class GoalController extends AbstractCrudController
             $this->createMonthChoiceField($pageName, $rowClass),
             $this->createYearChoiceField($pageName, $rowClass),
             $isDefaultField,
+            $isPaidField,
             $statusField,
         ];
     }

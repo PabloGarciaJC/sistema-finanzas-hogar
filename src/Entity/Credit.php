@@ -33,6 +33,9 @@ class Credit
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $frequency = 'Mensual';
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isPaid = false;
+
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $status = true;
 
@@ -119,6 +122,17 @@ class Credit
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getIsPaid(): bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setIsPaid(bool $isPaid): self
+    {
+        $this->isPaid = $isPaid;
         return $this;
     }
 }
