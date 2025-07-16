@@ -25,6 +25,7 @@ final class Version20250518094728 extends AbstractMigration
             installment_amount NUMERIC(12, 2) NOT NULL,
             frequency VARCHAR(20) NOT NULL,
             status TINYINT(1) NOT NULL DEFAULT 1,
+            is_paid TINYINT(1) NOT NULL DEFAULT 0,
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
 

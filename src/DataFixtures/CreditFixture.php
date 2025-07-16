@@ -21,18 +21,18 @@ class CreditFixture extends Fixture implements DependentFixtureInterface
         $conn = $em->getConnection();
 
         $conn->executeStatement("
-            INSERT INTO `credit` (`id`, `user_id`, `member_id`, `bank_entity`, `total_amount`, `installment_amount`, `frequency`, `status`) VALUES
-            (1, 1, 1, 'BBVA', 8000.00, 50.00, 'Mensual', 1),
-            (2, 1, 1, 'Santander', 6000.00, 50.00, 'Mensual', 1),
-            (3, 1, 1, 'HSBC', 5000.00, 50.00, 'Mensual', 1),
-            (4, 1, 1, 'Banorte', 7000.00, 50.00, 'Mensual', 1),
-            (5, 1, 1, 'Scotiabank', 4500.00, 50.00, 'Mensual', 1),
-            (6, 1, 1, 'BBVA', 9000.00, 50.00, 'Mensual', 1),
-            (7, 1, 1, 'Santander', 5500.00, 50.00, 'Mensual', 1),
-            (8, 1, 1, 'HSBC', 4000.00, 50.00, 'Mensual', 1),
-            (9, 1, 1, 'Banorte', 6500.00, 50.00, 'Mensual', 1),
-            (10, 1, 1, 'Scotiabank', 5000.00, 50.00, 'Mensual', 1),
-            (11, 1, 2, 'Banco Uno', 5000.00, 60.00, 'Mensual', 1);
+            INSERT INTO `credit` (`id`, `user_id`, `member_id`, `bank_entity`, `total_amount`, `installment_amount`, `frequency`, `status`, `is_paid`) VALUES
+            (1, 1, 1, 'BBVA', 8000.00, 50.00, 'Mensual', 1, 0),
+            (2, 1, 1, 'Santander', 6000.00, 50.00, 'Mensual', 1, 0),
+            (3, 1, 1, 'HSBC', 5000.00, 50.00, 'Mensual', 1, 0),
+            (4, 1, 1, 'Banorte', 7000.00, 50.00, 'Mensual', 1, 0),
+            (5, 1, 1, 'Scotiabank', 4500.00, 50.00, 'Mensual', 1, 0),
+            (6, 1, 1, 'BBVA', 9000.00, 50.00, 'Mensual', 1, 0),
+            (7, 1, 1, 'Santander', 5500.00, 50.00, 'Mensual', 1, 0),
+            (8, 1, 1, 'HSBC', 4000.00, 50.00, 'Mensual', 1, 0),
+            (9, 1, 1, 'Banorte', 6500.00, 50.00, 'Mensual', 1, 0),
+            (10, 1, 1, 'Scotiabank', 5000.00, 50.00, 'Mensual', 1, 0),
+            (11, 1, 2, 'Banco Uno', 5000.00, 60.00, 'Mensual', 1, 0);
         ");
     }
 

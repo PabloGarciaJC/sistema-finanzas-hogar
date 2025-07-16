@@ -128,23 +128,26 @@ class ServiceController extends AbstractCrudController
 
         $statusField = BooleanField::new('status', 'Activo')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
         $isDefaultField = BooleanField::new('is_default', 'Predeterminado')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
+        $isPaidField = BooleanField::new('is_paid', 'Pagado')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
 
         if ($pageName === Crud::PAGE_NEW) {
             $isDefaultField->setFormTypeOption('data', false);
             $isDefaultField->setFormTypeOption('disabled', true);
+            $isPaidField->setFormTypeOption('data', false);
+            $isPaidField->setFormTypeOption('disabled', true);
         }
 
         return [
             AssociationField::new('member', 'Miembro')->setQueryBuilder(function ($qb) use ($user) {
                 return $qb->andWhere('entity.user = :user')->setParameter('user', $user);
             })->setFormTypeOption('row_attr', $rowClass),
-
             $this->createFormattedNumberField('amount', 'Importe', $pageName, 0.00, true, false, $rowClass, $currencySymbol),
             $descriptionField,
             $this->createPaymentDayField($rowClass),
             $this->createMonthChoiceField($pageName, $rowClass),
             $this->createYearChoiceField($pageName, $rowClass),
             $isDefaultField,
+            $isPaidField,
             $statusField,
         ];
     }

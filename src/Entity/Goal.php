@@ -44,6 +44,9 @@ class Goal
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $isDefault = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isPaid = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -145,6 +148,17 @@ class Goal
     public function setIsDefault(bool $isDefault): self
     {
         $this->isDefault = $isDefault;
+        return $this;
+    }
+
+    public function getIsPaid(): bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setIsPaid(bool $isPaid): self
+    {
+        $this->isPaid = $isPaid;
         return $this;
     }
 }

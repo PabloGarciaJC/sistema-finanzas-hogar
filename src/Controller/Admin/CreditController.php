@@ -54,7 +54,7 @@ class CreditController extends AbstractCrudController
                 ->setFormTypeOption('row_attr', $rowClass)
                 ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
 
-   
+
             ChoiceField::new('frequency', 'Frecuencia')
                 ->setChoices([
                     'Mensual' => 'Mensual',
@@ -68,6 +68,8 @@ class CreditController extends AbstractCrudController
             NumberField::new('totalAmount', 'Importe total')
                 ->setFormTypeOption('row_attr', $rowClass)
                 ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : ''),
+
+            BooleanField::new('is_paid', 'Pagado')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass),
 
             BooleanField::new('status', 'Activo')
                 ->renderAsSwitch(true)
