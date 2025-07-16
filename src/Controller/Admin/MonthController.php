@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class MonthController extends AbstractCrudController
 {
@@ -24,12 +25,16 @@ class MonthController extends AbstractCrudController
         $nameField = TextField::new('name', 'Nombre')
             ->setRequired(true);
 
+        $statusField = BooleanField::new('status', 'Activo')
+            ->renderAsSwitch(true);
+
         if ($pageName === Crud::PAGE_INDEX) {
-            return [$idField, $nameField];
+            return [$idField, $nameField, $statusField];
         }
 
-        return [$nameField];
+        return [$nameField, $statusField];
     }
+
 
     public function configureCrud(Crud $crud): Crud
     {

@@ -16,6 +16,9 @@ class Month
     #[ORM\Column(type: 'string', length: 20)]
     private string $name;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $status = false; 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -30,6 +33,16 @@ class Month
     {
         $this->name = $name;
 
+        return $this;
+    }
+    public function isStatus(): bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
         return $this;
     }
 }

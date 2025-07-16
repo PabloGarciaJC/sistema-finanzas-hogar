@@ -136,3 +136,7 @@ push-build:
 	git add -f public/build
 	git commit -m "Agrego assets compilados para producción"
 	git push origin master
+
+
+
+# php bin/console debug:router | grep service

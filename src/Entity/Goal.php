@@ -12,10 +12,14 @@ class Goal
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(options: ['unsigned' => true])]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: "goals")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'goals')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Member $member = null;
 
@@ -24,13 +28,6 @@ class Goal
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private ?bool $status = true;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private ?User $user = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $month = null;
@@ -41,9 +38,26 @@ class Goal
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $paymentDay = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $status = true;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isDefault = false;
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
     }
 
     public function getMember(): ?Member
@@ -76,28 +90,6 @@ class Goal
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-        return $this;
-    }
-
-    public function getStatus(): ?bool
-    {
-        return $this->status;
-    }
-
-    public function setStatus(bool $status): self
-    {
-        $this->status = $status;
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
         return $this;
     }
 
@@ -134,8 +126,25 @@ class Goal
         return $this;
     }
 
-    public function __toString(): string
+    public function isStatus(): bool
     {
-        return $this->description ?? 'Sin descripción';
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function isDefault(): bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(bool $isDefault): self
+    {
+        $this->isDefault = $isDefault;
+        return $this;
     }
 }

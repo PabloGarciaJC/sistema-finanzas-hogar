@@ -24,24 +24,18 @@
 						<ul class="list-group list-group-flush">
 							<li class="d-flex justify-content-between align-items-center fw-bold text-primary">
 								<span>Ingresos Totales</span>
-								<span>
-									{{ monthlySummary.totalIncome|number_format(2, ',', '.') }}
-									{{ currencySymbol }}
-								</span>
+								<span>{{ monthlySummary.totalIncome|number_format(2, ',', '.') }}
+									{{ currencySymbol }}</span>
 							</li>
 							<li class="d-flex justify-content-between align-items-center fw-bold text-danger">
 								<span>Deuda Total</span>
-								<span>
-									{{ monthlySummary.debtTotal|number_format(2, ',', '.') }}
-									{{ currencySymbol }}
-								</span>
+								<span>{{ monthlySummary.debtTotal|number_format(2, ',', '.') }}
+									{{ currencySymbol }}</span>
 							</li>
 							<li class="d-flex justify-content-between align-items-center fw-bold text-success">
 								<span>Ahorros</span>
-								<span>
-									{{ monthlySummary.savings|number_format(2, ',', '.') }}
-									{{ currencySymbol }}
-								</span>
+								<span>{{ monthlySummary.savings|number_format(2, ',', '.') }}
+									{{ currencySymbol }}</span>
 							</li>
 						</ul>
 					</div>
@@ -52,13 +46,11 @@
 					</div>
 					<div class="card-body">
 						<ul class="list-group list-group-flush">
-							{% for item in monthlySummary.bankBalance %}
+							{% for item in balances %}
 								<li class="d-flex justify-content-between align-items-center">
 									<span>{{ item.memberName }}</span>
-									<span>
-										{{ item.bankBalance|number_format(2, ',', '.') }}
-										{{ currencySymbol }}
-									</span>
+									<span>{{ item.bankBalance|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</span>
 								</li>
 							{% else %}
 								<li>No hay datos</li>
@@ -71,111 +63,101 @@
 						<h2 class="h5 mb-0">Servicios</h2>
 					</div>
 					<div class="card-body">
-						{% for block in monthlySummary.services %}
-							{% set totalServices = 0 %}
-							<ul class="list-group list-group-flush">
-								{% for service in block.services %}
+						<table class="table table-striped text-end">
+							<thead>
+								<tr>
+									<th class="text-start">Descripción</th>
+									<th class="text-start">Miembro</th>
+									<th>Monto</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% set totalServices = 0 %}
+								{% set memberTotals = {} %}
+								{% for service in services %}
+									<tr>
+										<td class="text-start">{{ service.description }}</td>
+										<td class="text-start">{{ service.member_name }}</td>
+										<td>{{ service.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
 									{% set totalServices = totalServices + service.amount %}
-									<li class="d-flex justify-content-between align-items-center">
-										<span>{{ service.description|raw }}</span>
-										<span>
-											{{ service.amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}
-										</span>
-									</li>
+									{% set memberTotals = memberTotals|merge({ 
+                                        (service.member_name): (memberTotals[service.member_name]|default(0) + service.amount) 
+                                    }) %}
 								{% else %}
-									<span>No hay servicios</span>
+									<tr>
+										<td colspan="3" class="text-center">No hay servicios para este mes</td>
+									</tr>
 								{% endfor %}
-								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
-									<span>
-										<strong>Total Servicios</strong>
-									</span>
-									<span>
-										{{ totalServices|number_format(2, ',', '.') }}
-										{{ currencySymbol }}
-									</span>
-								</li>
-							</ul>
-						{% else %}
-							<p>No hay datos</p>
-						{% endfor %}
+							</tbody>
+							<tfoot>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
+									<td>{{ totalServices|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</td>
+								</tr>
+							</tfoot>
+						</table>
 					</div>
 				</div>
 				<div class="card mb-4">
 					<div class="card-header">
-						<h2 class="h5 mb-0">Pagos al Contado</h2>
+						<h2 class="h5 mb-0">Pagos al contado</h2>
 					</div>
 					<div class="card-body">
-						{% for block in monthlySummary.cashPayment %}
-							{% set totalCash = 0 %}
-							<ul class="list-group list-group-flush">
-								{% for cashPayment in block.cashPayment %}
-									{% set totalCash = totalCash + cashPayment.amount %}
-									<li class="d-flex justify-content-between align-items-center">
-										<span>{{ cashPayment.description|raw }}</span>
-										<span>
-											{{ cashPayment.amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}
-										</span>
-									</li>
+						<table class="table table-striped text-end">
+							<thead>
+								<tr>
+									<th class="text-start">Descripción</th>
+									<th class="text-start">Miembro</th>
+									<th>Monto</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% set totalCashPayments = 0 %}
+								{% set memberTotals = {} %}
+								{% for payment in cashPayments %}
+									<tr>
+										<td class="text-start">{{ payment.description }}</td>
+										<td class="text-start">{{ payment.member_name }}</td>
+										<td>{{ payment.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+									{% set totalCashPayments = totalCashPayments + payment.amount %}
+									{% set memberTotals = memberTotals|merge({
+                                        (payment.member_name): (memberTotals[payment.member_name]|default(0) + payment.amount)
+                                    }) %}
 								{% else %}
-									<span>No hay Pagos al Contado</span>
+									<tr>
+										<td colspan="3" class="text-center">No hay pagos en efectivo para este mes</td>
+									</tr>
 								{% endfor %}
-								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
-									<span>
-										<strong>Total Pagos al Contado</strong>
-									</span>
-									<span>
-										{{ totalCash|number_format(2, ',', '.') }}
-										{{ currencySymbol }}
-									</span>
-								</li>
-							</ul>
-						{% else %}
-							<p>No hay datos</p>
-						{% endfor %}
-					</div>
-				</div>
-				<div class="card mb-4">
-					<div class="card-header">
-						<h2 class="h5 mb-0">Créditos</h2>
-					</div>
-					<div class="card-body">
-						{% for block in monthlySummary.credit %}
-							{% set totalCredit = 0 %}
-							<ul class="list-group list-group-flush">
-								{% for credit in block.credit %}
-									{% set totalCredit = totalCredit + credit.installment_amount %}
-									<li class="d-flex justify-content-between align-items-center">
-										<span>
-											<strong>{{ credit.bank_entity }}</strong>
-											-
-											<small>
-												Frecuencia:
-												{{ credit.frequency }}
-											</small>
-										</span>
-										<span>
-											{{ credit.installment_amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}
-										</span>
-									</li>
-								{% else %}
-									<span>No hay Créditos</span>
+							</tbody>
+							<tfoot>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
 								{% endfor %}
-								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
-									<span>
-										<strong>Total Créditos (Cuotas)</strong>
-									</span>
-									<span>
-										{{ totalCredit|number_format(2, ',', '.') }}
-										{{ currencySymbol }}
-									</span>
-								</li>
-							</ul>
-						{% else %}
-							<p>No hay datos</p>
-						{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
+									<td>{{ totalCashPayments|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</td>
+								</tr>
+							</tfoot>
+						</table>
 					</div>
 				</div>
 				<div class="card mb-4">
@@ -183,34 +165,99 @@
 						<h2 class="h5 mb-0">Metas</h2>
 					</div>
 					<div class="card-body">
-						{% for block in monthlySummary.goal %}
-							{% set totalGoals = 0 %}
-							<ul class="list-group list-group-flush">
-								{% for goal in block.goal %}
+						<table class="table table-striped text-end">
+							<thead>
+								<tr>
+									<th class="text-start">Descripción</th>
+									<th class="text-start">Miembro</th>
+									<th>Monto</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% set totalGoals = 0 %}
+								{% set memberTotals = {} %}
+								{% for goal in goals %}
+									<tr>
+										<td class="text-start">{{ goal.description }}</td>
+										<td class="text-start">{{ goal.member_name }}</td>
+										<td>{{ goal.amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
 									{% set totalGoals = totalGoals + goal.amount %}
-									<li class="d-flex justify-content-between align-items-center">
-										<span>{{ goal.description|raw }}</span>
-										<span>
-											{{ goal.amount|number_format(2, ',', '.') }}
-											{{ currencySymbol }}
-										</span>
-									</li>
+									{% set memberTotals = memberTotals|merge({
+                                        (goal.member_name): (memberTotals[goal.member_name]|default(0) + goal.amount)
+                                    }) %}
 								{% else %}
-									<span>No hay Metas</span>
+									<tr>
+										<td colspan="3" class="text-center">No hay metas para este mes</td>
+									</tr>
 								{% endfor %}
-								<li class="d-flex justify-content-between align-items-center fw-bold border-top pt-2 mt-2">
-									<span>
-										<strong>Total Metas</strong>
-									</span>
-									<span>
-										{{ totalGoals|number_format(2, ',', '.') }}
-										{{ currencySymbol }}
-									</span>
-								</li>
-							</ul>
-						{% else %}
-							<p>No hay datos</p>
-						{% endfor %}
+							</tbody>
+							<tfoot>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
+									<td>{{ totalGoals|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+				<div class="card mb-4">
+					<div class="card-header">
+						<h2 class="h5 mb-0">Créditos</h2>
+					</div>
+					<div class="card-body">
+						<table class="table table-striped text-end">
+							<thead>
+								<tr>
+									<th class="text-start">Entidad Bancaria</th>
+									<th class="text-start">Miembro</th>
+									<th>Monto</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% set totalCredits = 0 %}
+								{% set memberTotals = {} %}
+								{% for credit in credits %}
+									<tr>
+										<td class="text-start">{{ credit.bank_entity }}</td>
+										<td class="text-start">{{ credit.member_name }}</td>
+										<td>{{ credit.installment_amount|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+									{% set totalCredits = totalCredits + credit.installment_amount %}
+									{% set memberTotals = memberTotals|merge({(credit.member_name): (memberTotals[credit.member_name]|default(0) + credit.installment_amount)}) %}
+								{% else %}
+									<tr>
+										<td colspan="3" class="text-center">No hay créditos activos</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+							<tfoot>
+								{% for member, subtotal in memberTotals %}
+									<tr class="fw-bold">
+										<td class="text-start" colspan="2">Total
+											{{ member }}</td>
+										<td>{{ subtotal|number_format(2, ',', '.') }}
+											{{ currencySymbol }}</td>
+									</tr>
+								{% endfor %}
+								<tr class="fw-bold table-primary">
+									<td class="text-start" colspan="2">Total General</td>
+									<td>{{ totalCredits|number_format(2, ',', '.') }}
+										{{ currencySymbol }}</td>
+								</tr>
+							</tfoot>
+						</table>
 					</div>
 				</div>
 			</section>

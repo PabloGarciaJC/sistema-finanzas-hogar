@@ -1,5 +1,9 @@
 controllers:
     resource:
-        path: ../src/Controller/    # Directorio donde se encuentran tus controladores
-        namespace: App\Controller    # Espacio de nombres (namespace) de tus controladores
-    type: attribute                 # Indica que las rutas deben ser leídas desde los atributos del controlador
+        path: ../src/Controller/   # 👌 Le dice a Symfony que busque rutas en todos los controladores
+        namespace: App\Controller
+    type: attribute                # 👌 Usa las anotaciones #[Route] si las tienes
+
+admin_services_duplicate:
+    path: /admin/services/duplicate  # 👈 Nueva ruta explícita
+    controller: App\Controller\Admin\ServiceController::duplicateServices

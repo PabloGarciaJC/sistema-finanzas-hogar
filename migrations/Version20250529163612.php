@@ -19,6 +19,7 @@ final class Version20250627121000 extends AbstractMigration
         $this->addSql('CREATE TABLE month (
             id INT UNSIGNED AUTO_INCREMENT NOT NULL,
             name VARCHAR(20) NOT NULL,
+            status TINYINT(1) NOT NULL DEFAULT 0,
             PRIMARY KEY(id)
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
     }

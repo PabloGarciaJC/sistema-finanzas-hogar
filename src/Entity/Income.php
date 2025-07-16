@@ -18,23 +18,24 @@ class Income
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Member $member = null;
 
-    #[ORM\Column(type: "decimal", precision: 12, scale: 2)]
-    private ?string $amount = null;
-
-    #[ORM\Column(type: "integer")]
-    private int $month;
-
-    #[ORM\Column(type: "integer")]
-    private int $year;
-
-    #[ORM\Column(type: "boolean", options: ["default" => true])]
-    private bool $status = true;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $user = null;
 
-    // Getters y Setters
+    #[ORM\Column(type: "decimal", precision: 12, scale: 2)]
+    private ?string $amount = null;
+
+    #[ORM\Column(type: "integer")]
+    private int $year;
+
+    #[ORM\Column(type: "integer")]
+    private ?int $month = null;
+
+    #[ORM\Column(type: "boolean", options: ["default" => true])]
+    private bool $status = true;
+
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    private bool $isDefault = false;
 
     public function getId(): ?int
     {
@@ -52,6 +53,17 @@ class Income
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
     public function getAmount(): ?string
     {
         return $this->amount;
@@ -60,17 +72,6 @@ class Income
     public function setAmount(string $amount): self
     {
         $this->amount = $amount;
-        return $this;
-    }
-
-    public function getMonth(): int
-    {
-        return $this->month;
-    }
-
-    public function setMonth(int $month): self
-    {
-        $this->month = $month;
         return $this;
     }
 
@@ -85,6 +86,17 @@ class Income
         return $this;
     }
 
+    public function getMonth(): ?int
+    {
+        return $this->month;
+    }
+
+    public function setMonth(int $month): self
+    {
+        $this->month = $month;
+        return $this;
+    }
+
     public function isStatus(): bool
     {
         return $this->status;
@@ -96,14 +108,14 @@ class Income
         return $this;
     }
 
-    public function getUser(): ?User
+    public function isDefault(): bool
     {
-        return $this->user;
+        return $this->isDefault;
     }
 
-    public function setUser(?User $user): self
+    public function setIsDefault(bool $isDefault): self
     {
-        $this->user = $user;
+        $this->isDefault = $isDefault;
         return $this;
     }
 }

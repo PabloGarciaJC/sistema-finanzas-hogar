@@ -9,6 +9,8 @@ use App\Repository\CurrencyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -20,6 +22,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ServiceController extends AbstractCrudController
 {
@@ -34,54 +38,125 @@ class ServiceController extends AbstractCrudController
         $this->currencyRepository = $currencyRepository;
     }
 
+    /**
+     * Devuelve la clase de entidad que maneja este CRUD.
+     */
     public static function getEntityFqcn(): string
     {
         return Service::class;
     }
 
-    public function configureFields(string $pageName): iterable
+    /**
+     * Configura las acciones del CRUD (añade acción para duplicar servicios).
+     */
+    public function configureActions(Actions $actions): Actions
     {
-        /** @var \App\Entity\User $user */
+        $duplicate = Action::new('Generar mes siguiente', 'Generar mes siguiente')
+            ->linkToRoute('admin_services_duplicate')
+            ->createAsGlobalAction();
+
+        return $actions->add(Crud::PAGE_INDEX, $duplicate);
+    }
+
+    /**
+     * Ruta para duplicar los servicios predeterminados del usuario al siguiente mes disponible.
+     */
+    #[Route("/admin/services/duplicate", name: "admin_services_duplicate")]
+    public function duplicateServices(EntityManagerInterface $entityManager): RedirectResponse
+    {
         $user = $this->getUser();
 
+        // Obtiene servicios predeterminados del usuario actual
+        $services = $entityManager->getRepository(Service::class)->findBy([
+            'user' => $user,
+            'isDefault' => true,
+        ]);
+
+        $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
+
+        if (!$firstInactiveMonth) {
+            $this->addFlash('warning', 'No se encontró ningún mes inactivo para asignar.');
+            return $this->redirectToRoute('admin_service_index');
+        }
+
+        $targetMonthId = $firstInactiveMonth[0]->getId();
+
+        // Verifica si ya existen servicios generados para ese mes y usuario
+        $existingServices = $entityManager->getRepository(Service::class)->findBy([
+            'user' => $user,
+            'month' => $targetMonthId,
+            'isDefault' => false,
+        ]);
+
+        if (count($existingServices) > 0) {
+            $this->addFlash('warning', 'Ya se generaron servicios para este mes');
+            return $this->redirectToRoute('admin_service_index');
+        }
+
+        // Clona y guarda los servicios para el nuevo mes
+        foreach ($services as $service) {
+            $newService = clone $service;
+            $newService->setUser($user);
+            $newService->setMonth($targetMonthId);
+            $newService->setIsDefault(false);
+            $entityManager->persist($newService);
+        }
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Los servicios se han duplicado correctamente con el primer mes inactivo.');
+
+        return $this->redirectToRoute('admin_service_index');
+    }
+
+    /**
+     * Define los campos del formulario y lista para cada página del CRUD.
+     */
+    public function configureFields(string $pageName): iterable
+    {
+        $user = $this->getUser();
         $rowClass = ['class' => 'col-md-10 cntn-inputs'];
         $currencySymbol = $this->getActiveCurrencySymbol();
 
-        // Campo description según página
         if ($pageName === Crud::PAGE_INDEX) {
-            $descriptionField = TextField::new('description', 'Descripción')
-                ->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'));
+            $descriptionField = TextField::new('description', 'Descripción')->formatValue(fn($value) => mb_strimwidth(strip_tags($value), 0, 100, '...'));
         } elseif ($pageName === Crud::PAGE_DETAIL) {
-            $descriptionField = TextField::new('description', 'Descripción')
-                ->renderAsHtml();
+            $descriptionField = TextField::new('description', 'Descripción')->renderAsHtml();
         } else {
-            $descriptionField = TextEditorField::new('description', 'Descripción')
-                ->setRequired(true)
-                ->setFormTypeOption('row_attr', $rowClass);
+            $descriptionField = TextEditorField::new('description', 'Descripción')->setRequired(true)->setFormTypeOption('row_attr', $rowClass);
+        }
+
+        $statusField = BooleanField::new('status', 'Activo')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
+        $isDefaultField = BooleanField::new('is_default', 'Predeterminado')->renderAsSwitch(true)->setFormTypeOption('row_attr', $rowClass);
+
+        if ($pageName === Crud::PAGE_NEW) {
+            $isDefaultField->setFormTypeOption('data', false);
+            $isDefaultField->setFormTypeOption('disabled', true);
         }
 
         return [
-            AssociationField::new('member', 'Miembro')
-                ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
-                    return $qb->andWhere('entity.user = :user')
-                        ->setParameter('user', $user);
-                })
-                ->setFormTypeOption('row_attr', $rowClass),
+            AssociationField::new('member', 'Miembro')->setQueryBuilder(function ($qb) use ($user) {
+                return $qb->andWhere('entity.user = :user')->setParameter('user', $user);
+            })->setFormTypeOption('row_attr', $rowClass),
+
             $this->createFormattedNumberField('amount', 'Importe', $pageName, 0.00, true, false, $rowClass, $currencySymbol),
             $descriptionField,
             $this->createPaymentDayField($rowClass),
             $this->createMonthChoiceField($pageName, $rowClass),
             $this->createYearChoiceField($pageName, $rowClass),
-            BooleanField::new('status', 'Activo')
-                ->renderAsSwitch(true)
-                ->setFormTypeOption('row_attr', $rowClass),
+            $isDefaultField,
+            $statusField,
         ];
     }
 
+    /**
+     * Crea un campo numérico con formato para el formulario.
+     */
     private function createFormattedNumberField(string $name, string $label, string $pageName, ?float $default = null, bool $mapped = true, bool $readonly = false, array $rowClass = [], string $currencySymbol = ''): NumberField
     {
 
         $inputAttributes = ['class' => 'form-control'];
+
         if ($readonly) {
             $inputAttributes['readonly'] = true;
         }
@@ -102,30 +177,37 @@ class ServiceController extends AbstractCrudController
         return $field;
     }
 
+    /**
+     * Crea una nueva instancia de Service con valores predeterminados.
+     */
     public function createEntity(string $entityFqcn)
     {
         $service = new Service();
-        $service->setStatus('Activo');
+        $service->setStatus(true);
         $service->setUser($this->getUser());
 
-        // Seleccionar mes por defecto
-        $service->setMonth(1); // Enero
+        $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
 
-        // Seleccionar año activo por defecto
+        if (!$firstInactiveMonth) {
+            throw new \RuntimeException('Debes crear al menos un mes inactivo con status = 1 antes de crear un servicio.');
+        }
+        $service->setMonth($firstInactiveMonth[0]->getId());
+
         $activeYears = $this->yearRepository->findBy(['status' => 1]);
         if ($activeYears) {
             $service->setYear($activeYears[0]->getId());
         }
 
-        // Establecer día de pago por defecto a 1
         $service->setPaymentDay(1);
-
-        // Valor por defecto para amount
         $service->setAmount(0.00);
+        $service->setIsDefault(false);
 
         return $service;
     }
 
+    /**
+     * Configura títulos, etiquetas y campos de búsqueda del CRUD.
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -135,57 +217,70 @@ class ServiceController extends AbstractCrudController
             ->setSearchFields(['description', 'member.name', 'amount']);
     }
 
+    /**
+     * Crea el query builder para listar solo servicios del usuario actual.
+     */
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $user = $this->getUser();
         if ($user) {
-            $qb->andWhere('entity.user = :currentUser')
-                ->setParameter('currentUser', $user);
+            $qb->andWhere('entity.user = :currentUser')->setParameter('currentUser', $user);
         }
+
+        $qb->orderBy('entity.id', 'DESC');
+
         return $qb;
     }
 
+    /**
+     * Crea el campo de selección de mes para el formulario.
+     */
     private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        $monthsEntities = $this->monthRepository->findAll();
+        $monthsEntities = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
         $months = [];
+        $firstMonthId = null;
+
         foreach ($monthsEntities as $monthEntity) {
             $months[$monthEntity->getName()] = $monthEntity->getId();
+            if ($firstMonthId === null) {
+                $firstMonthId = $monthEntity->getId();
+            }
         }
 
-        $monthField = ChoiceField::new('month', 'Mes')
-            ->setChoices($months)
-            ->setFormTypeOption('row_attr', $rowClass);
+        $monthField = ChoiceField::new('month', 'Mes')->setChoices($months)->setFormTypeOption('row_attr', $rowClass);
 
-        if ($pageName === Crud::PAGE_NEW) {
-            $monthField->setFormTypeOption('data', 1);
+        if ($pageName === Crud::PAGE_NEW && $firstMonthId !== null) {
+            $monthField->setFormTypeOption('data', $firstMonthId);
         }
 
         return $monthField;
     }
 
+    /**
+     * Crea el campo de selección de año para el formulario.
+     */
     private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
     {
         $activeYearsEntities = $this->yearRepository->findBy(['status' => 1]);
-
         $years = [];
         foreach ($activeYearsEntities as $yearEntity) {
             $years[$yearEntity->getYear()] = $yearEntity->getId();
         }
 
-        $yearField = ChoiceField::new('year', 'Año')
-            ->setChoices($years)
-            ->setFormTypeOption('row_attr', $rowClass);
+        $yearField = ChoiceField::new('year', 'Año')->setChoices($years)->setFormTypeOption('row_attr', $rowClass);
 
         if ($pageName === Crud::PAGE_NEW && count($years) > 0) {
-            $defaultYearId = reset($years);
-            $yearField->setFormTypeOption('data', $defaultYearId);
+            $yearField->setFormTypeOption('data', reset($years));
         }
 
         return $yearField;
     }
 
+    /**
+     * Crea el campo de selección del Día (1-31).
+     */
     private function createPaymentDayField(array $rowClass): ChoiceField
     {
         $days = [];
@@ -193,48 +288,43 @@ class ServiceController extends AbstractCrudController
             $days[$i] = $i;
         }
 
-        return ChoiceField::new('paymentDay', 'Día de Pago')
-            ->setHelp('Día del mes en que se paga (1–31)')
-            ->setChoices($days)
-            ->setFormTypeOption('row_attr', $rowClass);
+        return ChoiceField::new('paymentDay', 'Día')->setHelp('Día del mes en que se paga (1–31)')->setChoices($days)->setFormTypeOption('row_attr', $rowClass);
     }
 
+    /**
+     * Valida y guarda una entidad nueva.
+     */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if (!$entityInstance instanceof Service) {
             return;
         }
 
-        $monthId = $entityInstance->getMonth();
-        $monthEntity = $this->monthRepository->find($monthId);
-        if (!$monthEntity) {
+        if (!$this->monthRepository->find($entityInstance->getMonth())) {
             throw new \RuntimeException('Mes inválido');
         }
 
-        $yearId = $entityInstance->getYear();
-        $yearEntity = $this->yearRepository->find($yearId);
-        if (!$yearEntity) {
+        if (!$this->yearRepository->find($entityInstance->getYear())) {
             throw new \RuntimeException('Año inválido');
         }
 
         parent::persistEntity($entityManager, $entityInstance);
     }
 
+    /**
+     * Valida y actualiza una entidad existente.
+     */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if (!$entityInstance instanceof Service) {
             return;
         }
 
-        $monthId = $entityInstance->getMonth();
-        $monthEntity = $this->monthRepository->find($monthId);
-        if (!$monthEntity) {
+        if (!$this->monthRepository->find($entityInstance->getMonth())) {
             throw new \RuntimeException('Mes inválido');
         }
 
-        $yearId = $entityInstance->getYear();
-        $yearEntity = $this->yearRepository->find($yearId);
-        if (!$yearEntity) {
+        if (!$this->yearRepository->find($entityInstance->getYear())) {
             throw new \RuntimeException('Año inválido');
         }
 
@@ -242,7 +332,7 @@ class ServiceController extends AbstractCrudController
     }
 
     /**
-     * Obtiene el símbolo de la moneda activa en la configuración.
+     * Obtiene el símbolo de la moneda activa.
      */
     private function getActiveCurrencySymbol(): string
     {

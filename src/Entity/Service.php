@@ -28,6 +28,9 @@ class Service
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $status = true; // true = Activo
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isDefault = false; // true = Predeterminado
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $user = null;
@@ -87,6 +90,17 @@ class Service
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getIsDefault(): bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(bool $isDefault): self
+    {
+        $this->isDefault = $isDefault;
         return $this;
     }
 
