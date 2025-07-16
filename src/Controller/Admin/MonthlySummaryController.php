@@ -289,7 +289,7 @@ class MonthlySummaryController extends AbstractCrudController
         $viewDetails = Action::new('viewDetails', 'Ver detalles')
             ->linkToCrudAction('viewDetails');
 
-        $duplicate = Action::new('Preparar mes siguiente', 'Preparar mes siguiente')
+        $duplicate = Action::new('Generar mes siguiente', 'Generar mes siguiente')
             ->linkToRoute('admin_prepare_next_month')
             ->createAsGlobalAction();
 
