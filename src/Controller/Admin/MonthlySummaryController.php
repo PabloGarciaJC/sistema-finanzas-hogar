@@ -3,6 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\MonthlySummary;
+use App\Entity\Service;
+use App\Entity\CashPayment;
+use App\Entity\Income;
+use App\Entity\Goal;
 use App\Repository\IncomeRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\CreditRepository;
@@ -23,14 +27,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class MonthlySummaryController extends AbstractCrudController
@@ -44,22 +44,9 @@ class MonthlySummaryController extends AbstractCrudController
     private YearRepository $yearRepository;
     private MemberRepository $memberRepository;
     private CashPaymentRepository $cashPaymentRepository;
-    private RequestStack $requestStack;
-    private EntityManagerInterface $em;
 
-    public function __construct(
-        IncomeRepository $incomeRepository,
-        ServiceRepository $serviceRepository,
-        CreditRepository $creditRepository,
-        GoalRepository $goalRepository,
-        CurrencyRepository $currencyRepository,
-        MonthRepository $monthRepository,
-        YearRepository $yearRepository,
-        MemberRepository $memberRepository,
-        CashPaymentRepository $cashPaymentRepository,
-        RequestStack $requestStack,
-        EntityManagerInterface $em
-    ) {
+    public function __construct(IncomeRepository $incomeRepository, ServiceRepository $serviceRepository, CreditRepository $creditRepository, GoalRepository $goalRepository, CurrencyRepository $currencyRepository, MonthRepository $monthRepository, YearRepository $yearRepository, MemberRepository $memberRepository, CashPaymentRepository $cashPaymentRepository,)
+    {
         $this->incomeRepository = $incomeRepository;
         $this->serviceRepository = $serviceRepository;
         $this->creditRepository = $creditRepository;
@@ -69,8 +56,6 @@ class MonthlySummaryController extends AbstractCrudController
         $this->yearRepository = $yearRepository;
         $this->memberRepository = $memberRepository;
         $this->cashPaymentRepository = $cashPaymentRepository;
-        $this->requestStack = $requestStack;
-        $this->em = $em;
     }
 
     public static function getEntityFqcn(): string
@@ -304,9 +289,125 @@ class MonthlySummaryController extends AbstractCrudController
         $viewDetails = Action::new('viewDetails', 'Ver detalles')
             ->linkToCrudAction('viewDetails');
 
+        $duplicate = Action::new('Preparar mes siguiente', 'Preparar mes siguiente')
+            ->linkToRoute('admin_prepare_next_month')
+            ->createAsGlobalAction();
+
         return $actions
             ->add(Crud::PAGE_INDEX, $viewDetails)
-            ->add(Crud::PAGE_EDIT, $viewDetails);
+            ->add(Crud::PAGE_EDIT, $viewDetails)
+            ->add(Crud::PAGE_INDEX, $duplicate);
+    }
+
+    /**
+     * Ruta para preparar todos los registros necesarios para el mes siguiente.
+     */
+    #[Route("/admin/prepare-next-month", name: "admin_prepare_next_month")]
+    public function prepareNextMonth(EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $user = $this->getUser();
+
+        // Obtiene el primer mes inactivo
+        $targetMonth = $this->getFirstInactiveMonth();
+        if (!$targetMonth) {
+            $this->addFlash('warning', 'No se encontró ningún mes inactivo para asignar.');
+            return $this->redirectToRoute('admin_monthly_summary_index');
+        }
+
+        $targetMonthId = $targetMonth->getId();
+
+        try {
+            // Procesar servicios
+            $this->cloneEntitiesForNextMonth(
+                $entityManager,
+                Service::class,
+                $user,
+                $targetMonthId,
+                'servicios',
+                'admin_service_index'
+            );
+
+            // Procesar pagos al contado
+            $this->cloneEntitiesForNextMonth(
+                $entityManager,
+                CashPayment::class,
+                $user,
+                $targetMonthId,
+                'pagos al contado',
+                'admin_cash_payment_index'
+            );
+
+            // Procesar ingresos
+            $this->cloneEntitiesForNextMonth(
+                $entityManager,
+                Income::class,
+                $user,
+                $targetMonthId,
+                'ingresos',
+                'admin_income_index'
+            );
+
+            // Procesar objetivos
+            $this->cloneEntitiesForNextMonth(
+                $entityManager,
+                Goal::class,
+                $user,
+                $targetMonthId,
+                'objetivos',
+                'admin_goal_index'
+            );
+        } catch (\Exception $e) {
+            $this->addFlash('warning', $e->getMessage());
+            return $this->redirectToRoute('admin_monthly_summary_index');
+        }
+
+        $this->addFlash('success', '¡Listo! los meses se han generado correctamente');
+        return $this->redirectToRoute('admin_monthly_summary_index');
+    }
+
+    /**
+     * Obtiene el primer mes inactivo (status = 1) ordenado descendente por id
+     */
+    private function getFirstInactiveMonth()
+    {
+        $months = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
+        return $months ? $months[0] : null;
+    }
+
+    /**
+     * Clona y persiste entidades para el siguiente meses
+     */
+    private function cloneEntitiesForNextMonth(EntityManagerInterface $entityManager, string $entityClass, $user, int $monthId, string $entityName, string $redirectRoute): void
+    {
+        $repository = $entityManager->getRepository($entityClass);
+
+        // Obtiene registros predeterminados del usuario
+        $defaults = $repository->findBy([
+            'user' => $user,
+            'isDefault' => true,
+        ]);
+
+        // Verifica si ya existen registros generados para ese mes y usuario
+        $existing = $repository->findBy([
+            'user' => $user,
+            'month' => $monthId,
+            'isDefault' => false,
+        ]);
+
+        if (count($existing) > 0) {
+            throw new \Exception("Ya se han generado datos para los meses.");
+        }
+
+        // Clona y guarda los registros para el nuevo mes
+        foreach ($defaults as $entity) {
+            $newEntity = clone $entity;
+            $newEntity->setUser($user);
+            $newEntity->setMonth($monthId);
+            $newEntity->setIsDefault(false);
+            $entityManager->persist($newEntity);
+        }
+
+        $entityManager->flush();
     }
 
     /**
