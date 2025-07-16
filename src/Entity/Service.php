@@ -26,10 +26,13 @@ class Service
     private ?string $description = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $status = true; // true = Activo
+    private bool $status = true;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $isDefault = false; // true = Predeterminado
+    private bool $isDefault = false;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isPaid = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -101,6 +104,17 @@ class Service
     public function setIsDefault(bool $isDefault): self
     {
         $this->isDefault = $isDefault;
+        return $this;
+    }
+
+    public function getIsPaid(): bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setIsPaid(bool $isPaid): self
+    {
+        $this->isPaid = $isPaid;
         return $this;
     }
 
