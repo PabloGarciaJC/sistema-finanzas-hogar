@@ -64,7 +64,31 @@ class ServiceController extends AbstractCrudController
     #[Route("/admin/services/duplicate", name: "admin_services_duplicate")]
     public function duplicateServices(EntityManagerInterface $entityManager): RedirectResponse
     {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
+
+        // APLICA LA MISMA VALIDACIÓN AQUÍ
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles(), true) && $user->getStatus()) {
+            $this->addFlash('warning', '
+            <div class="custom-flash-message">
+                <strong>Acceso Restringido</strong><br>
+                Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a> |
+                <a href="https://www.instagram.com/pablogarciajc" class="custom-link" target="_blank" title="Instagram" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a> |
+                <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a> |
+                <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+            </div>
+        ');
+            return $this->redirectToRoute('admin_service_index');
+        }
 
         // Obtiene servicios predeterminados del usuario actual
         $services = $entityManager->getRepository(Service::class)->findBy([
@@ -294,22 +318,38 @@ class ServiceController extends AbstractCrudController
         return ChoiceField::new('paymentDay', 'Día')->setHelp('Día del mes en que se paga (1–31)')->setChoices($days)->setFormTypeOption('row_attr', $rowClass);
     }
 
-    /**
-     * Valida y guarda una entidad nueva.
-     */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if (!$entityInstance instanceof Service) {
             return;
         }
 
-        if (!$this->monthRepository->find($entityInstance->getMonth())) {
-            throw new \RuntimeException('Mes inválido');
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles(), true) && $user->getStatus()) {
+            $this->addFlash('warning', '
+                <div class="custom-flash-message">
+                    <strong>Acceso Restringido</strong><br>
+                    Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                    <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a> |
+                    <a href="https://www.instagram.com/pablogarciajc" class="custom-link" target="_blank" title="Instagram" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a> |
+                    <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a> |
+                    <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                </div>
+            ');
+            return;
         }
 
-        if (!$this->yearRepository->find($entityInstance->getYear())) {
-            throw new \RuntimeException('Año inválido');
-        }
+        $this->addFlash('success', 'El servicio se ha creado correctamente.');
 
         parent::persistEntity($entityManager, $entityInstance);
     }

@@ -197,12 +197,62 @@ class MonthlySummaryController extends AbstractCrudController
         return $entity;
     }
 
+    // public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    // {
+    //     /** @var \App\Entity\User $user */
+    //     $user = $this->getUser();
+
+    //     if (!$entityInstance instanceof MonthlySummary) {
+    //         return;
+    //     }
+
+    //     $month = $entityInstance->getMonth();
+    //     $year = $entityInstance->getYear();
+
+    //     $existing = $entityManager->getRepository(MonthlySummary::class)->findOneBy([
+    //         'user' => $user,
+    //         'month' => $month,
+    //         'year' => $year,
+    //     ]);
+
+    //     if ($existing) {
+    //         $this->addFlash('warning', 'Ya existe un resumen mensual para este mes y año.');
+    //         return;
+    //     }
+
+    //     $this->addFlash('success', 'Se ha generado un resumen mensual para este mes y año.');
+
+    //     parent::persistEntity($entityManager, $entityInstance);
+    // }
+
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
+        if (!$entityInstance instanceof MonthlySummary) {
+            return;
+        }
+
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        if (!$entityInstance instanceof MonthlySummary) {
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles(), true) && $user->getStatus()) {
+            $this->addFlash('warning', '
+                <div class="custom-flash-message">
+                    <strong>Acceso Restringido</strong><br>
+                    Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                    <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a> |
+                    <a href="https://www.instagram.com/pablogarciajc" class="custom-link" target="_blank" title="Instagram" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a> |
+                    <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a> |
+                    <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                </div>
+            ');
             return;
         }
 
@@ -219,6 +269,7 @@ class MonthlySummaryController extends AbstractCrudController
             $this->addFlash('warning', 'Ya existe un resumen mensual para este mes y año.');
             return;
         }
+
 
         $this->addFlash('success', 'Se ha generado un resumen mensual para este mes y año.');
 
@@ -305,8 +356,31 @@ class MonthlySummaryController extends AbstractCrudController
     #[Route("/admin/prepare-next-month", name: "admin_prepare_next_month")]
     public function prepareNextMonth(EntityManagerInterface $entityManager): RedirectResponse
     {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
+        // APLICA LA MISMA VALIDACIÓN AQUÍ
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles(), true) && $user->getStatus()) {
+            $this->addFlash('warning', '
+            <div class="custom-flash-message">
+                <strong>Acceso Restringido</strong><br>
+                Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a> |
+                <a href="https://www.instagram.com/pablogarciajc" class="custom-link" target="_blank" title="Instagram" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a> |
+                <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a> |
+                <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+            </div>
+        ');
+            return $this->redirectToRoute('admin_monthly_summary_index');
+        }
         // Obtiene el primer mes inactivo
         $targetMonth = $this->getFirstInactiveMonth();
         if (!$targetMonth) {
