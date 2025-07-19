@@ -8,6 +8,7 @@ use App\Entity\Goal;
 use App\Entity\Income;
 use App\Entity\Member;
 use App\Entity\MonthlySummary;
+use App\Entity\user;
 use App\Controller\Admin\CreditController;
 use App\Controller\Admin\GoalController;
 use App\Controller\Admin\IncomeController;
@@ -115,8 +116,16 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Miembros', 'fas fa-users', Member::class)->setController(MemberController::class);
         yield MenuItem::linkToCrud('Informe Mensual', 'fas fa-chart-bar', MonthlySummary::class)->setController(MonthlySummaryController::class);
         yield MenuItem::linkToRoute('Configuración', 'fas fa-cog', 'app_admin_configuration');
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        if ($user && in_array('ROLE_SUPER', $user->getRoles(), true)) {
+            yield MenuItem::linkToCrud('Usuarios', 'fas fa-user', User::class)->setController(UserController::class);
+        }
+
         yield MenuItem::linkToRoute('Documentación', 'fas fa-book', 'app_admin_documentation');
     }
+
 
     public function configureAssets(): Assets
     {

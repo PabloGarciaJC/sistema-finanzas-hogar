@@ -56,7 +56,31 @@ class IncomeController extends AbstractCrudController
     #[Route("/admin/incomes/duplicate", name: "admin_income_duplicate")]
     public function duplicateIncomes(EntityManagerInterface $entityManager): RedirectResponse
     {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
+
+        // APLICA LA MISMA VALIDACIÓN AQUÍ
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles(), true) && $user->getStatus()) {
+            $this->addFlash('warning', '
+            <div class="custom-flash-message">
+                <strong>Acceso Restringido</strong><br>
+                Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a> |
+                <a href="https://www.instagram.com/pablogarciajc" class="custom-link" target="_blank" title="Instagram" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a> |
+                <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a> |
+                <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+            </div>
+        ');
+            return $this->redirectToRoute('admin_income_index');
+        }
 
         // Obtiene ingresos predeterminados del usuario actual
         $incomes = $entityManager->getRepository(Income::class)->findBy([
@@ -253,5 +277,41 @@ class IncomeController extends AbstractCrudController
     {
         $currency = $this->currencyRepository->findOneBy(['status' => 1]);
         return $currency ? $currency->getSymbol() : '';
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Income) {
+            return;
+        }
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles(), true) && $user->getStatus()) {
+            $this->addFlash('warning', '
+                <div class="custom-flash-message">
+                    <strong>Acceso Restringido</strong><br>
+                    Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                    <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a> |
+                    <a href="https://www.instagram.com/pablogarciajc" class="custom-link" target="_blank" title="Instagram" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a> |
+                    <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a> |
+                    <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                </div>
+            ');
+            return;
+        }
+
+        $this->addFlash('success', 'El ingreso se ha creado correctamente.');
+
+        parent::persistEntity($entityManager, $entityInstance);
     }
 }
