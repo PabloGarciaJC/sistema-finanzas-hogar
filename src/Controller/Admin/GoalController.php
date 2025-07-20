@@ -84,7 +84,7 @@ class GoalController extends AbstractCrudController
             return $this->redirectToRoute('admin_goal_index');
         }
 
-        // Obtiene objetivos predeterminados del usuario actual
+        // Obtiene Metas predeterminados del usuario actual
         $goals = $entityManager->getRepository(Goal::class)->findBy([
             'user' => $user,
             'isDefault' => true,
@@ -100,7 +100,7 @@ class GoalController extends AbstractCrudController
 
         $targetMonthId = $firstInactiveMonth[0]->getId();
 
-        // Verifica si ya existen objetivos generados para ese mes y usuario
+        // Verifica si ya existen Metas generados para ese mes y usuario
         $existingGoals = $entityManager->getRepository(Goal::class)->findBy([
             'user' => $user,
             'month' => $targetMonthId,
@@ -108,11 +108,11 @@ class GoalController extends AbstractCrudController
         ]);
 
         if (count($existingGoals) > 0) {
-            $this->addFlash('warning', 'Ya se generaron objetivos para este mes.');
+            $this->addFlash('warning', 'Ya se generaron Metas para este mes.');
             return $this->redirectToRoute('admin_goal_index');
         }
 
-        // Clona y guarda los objetivos para el nuevo mes
+        // Clona y guarda los Metas para el nuevo mes
         foreach ($goals as $goal) {
             $newGoal = clone $goal;
             $newGoal->setUser($user);
@@ -123,7 +123,7 @@ class GoalController extends AbstractCrudController
 
         $entityManager->flush();
 
-        $this->addFlash('success', 'Los objetivos se han duplicado correctamente con el primer mes inactivo.');
+        $this->addFlash('success', 'Los Metas se han duplicado correctamente con el primer mes inactivo.');
 
         return $this->redirectToRoute('admin_goal_index');
     }
@@ -205,7 +205,7 @@ class GoalController extends AbstractCrudController
         $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
 
         if (!$firstInactiveMonth) {
-            throw new \RuntimeException('Debes crear al menos un mes inactivo con status = 1 antes de crear un objetivo.');
+            throw new \RuntimeException('Debes crear al menos un mes inactivo con status = 1 antes de crear un metas.');
         }
         $goal->setMonth($firstInactiveMonth[0]->getId());
 
@@ -224,9 +224,9 @@ class GoalController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Objetivo')
-            ->setEntityLabelInPlural('Objetivos')
-            ->setPageTitle(Crud::PAGE_INDEX, 'Objetivos')
+            ->setEntityLabelInSingular('metas')
+            ->setEntityLabelInPlural('Metas')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Metas')
             ->setSearchFields(['description', 'member.name', 'amount']);
     }
 
