@@ -126,7 +126,6 @@ class IncomeController extends AbstractCrudController
         return $this->redirectToRoute('admin_income_index');
     }
 
-
     public function configureFields(string $pageName): iterable
     {
         $user = $this->getUser();

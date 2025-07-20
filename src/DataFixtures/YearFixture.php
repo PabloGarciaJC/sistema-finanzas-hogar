@@ -11,13 +11,10 @@ class YearFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $currentYear = (int) date('Y');
-
         $yearEntity = new Year();
         $yearEntity->setYear($currentYear);
-        $yearEntity->setStatus(1); // Activo
-
+        $yearEntity->setStatus(1); 
         $manager->persist($yearEntity);
-
         $manager->flush();
     }
 }
