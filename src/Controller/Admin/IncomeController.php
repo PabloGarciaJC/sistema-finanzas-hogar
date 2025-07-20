@@ -75,7 +75,7 @@ class IncomeController extends AbstractCrudController
                 <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
                     <i class="fab fa-linkedin"></i> LinkedIn
                 </a> |
-                <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                <a href="https://www.youtube.com/@pablogarciajc" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
                     <i class="fab fa-youtube"></i> YouTube
                 </a>
             </div>
@@ -307,7 +307,7 @@ class IncomeController extends AbstractCrudController
                     <a href="https://www.linkedin.com/in/pablogarciajc" class="custom-link" target="_blank" title="LinkedIn" style="font-size: 15px !important; color: inherit;">
                         <i class="fab fa-linkedin"></i> LinkedIn
                     </a> |
-                    <a href="https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhw" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
+                    <a href="https://www.youtube.com/@pablogarciajc" class="custom-link" target="_blank" title="YouTube" style="font-size: 15px !important; color: inherit;">
                         <i class="fab fa-youtube"></i> YouTube
                     </a>
                 </div>
