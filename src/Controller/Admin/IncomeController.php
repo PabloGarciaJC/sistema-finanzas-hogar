@@ -22,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class IncomeController extends AbstractCrudController
 {
@@ -64,7 +65,7 @@ class IncomeController extends AbstractCrudController
             $this->addFlash('warning', '
             <div class="custom-flash-message">
                 <strong>Acceso Restringido</strong><br>
-                Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                Para autorizar el acceso a los módulos, contáctame a través de cualquiera de mis redes sociales:<br><br>
                 <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
                     <i class="fab fa-facebook"></i> Facebook
                 </a> |
@@ -296,7 +297,7 @@ class IncomeController extends AbstractCrudController
             $this->addFlash('warning', '
                 <div class="custom-flash-message">
                     <strong>Acceso Restringido</strong><br>
-                    Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                    Para autorizar el acceso a los módulos, contáctame a través de cualquiera de mis redes sociales:<br><br>
                     <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
                         <i class="fab fa-facebook"></i> Facebook
                     </a> |

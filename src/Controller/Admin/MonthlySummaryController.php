@@ -234,7 +234,7 @@ class MonthlySummaryController extends AbstractCrudController
             $this->addFlash('warning', '
                 <div class="custom-flash-message">
                     <strong>Acceso Restringido</strong><br>
-                    Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                    Para autorizar el acceso a los módulos, contáctame a través de cualquiera de mis redes sociales:<br><br>
                     <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
                         <i class="fab fa-facebook"></i> Facebook
                     </a> |
@@ -360,7 +360,7 @@ class MonthlySummaryController extends AbstractCrudController
             $this->addFlash('warning', '
             <div class="custom-flash-message">
                 <strong>Acceso Restringido</strong><br>
-                Para autorizar el acceso a los módulos de esta red social, contáctame a través de cualquiera de mis redes sociales:<br><br>
+                Para autorizar el acceso a los módulos, contáctame a través de cualquiera de mis redes sociales:<br><br>
                 <a href="https://www.facebook.com/PabloGarciaJC" class="custom-link" target="_blank" title="Facebook" style="font-size: 15px !important; color: inherit;">
                     <i class="fab fa-facebook"></i> Facebook
                 </a> |
