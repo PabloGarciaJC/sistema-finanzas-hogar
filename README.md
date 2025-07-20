@@ -10,7 +10,7 @@ El proyecto está pensado como una solución práctica para aprender y aplicar c
 
 [http://finanzashogar.pablogarciajc.com/](http://finanzashogar.pablogarciajc.com/)
 
-| ![Imagen 1](https://pablogarciajc.com/wp-content/uploads/2025/01/ecommerce_1_webp.png) | ![Imagen 2](https://pablogarciajc.com/wp-content/uploads/2025/01/ecommerce_6_webp.png) |
+| ![Imagen 1](https://pablogarciajc.com/wp-content/uploads/2025/07/sistema_finanzas_hogar1.webp) | ![Imagen 2](https://pablogarciajc.com/wp-content/uploads/2025/07/sistema_finanzas_hogar5.webp) |
 |-----------|-----------|
 
 ## ¿Qué funcionalidades ofrece el Sistema de Finanzas de Hogar?
