@@ -2,9 +2,7 @@
 
 El **Sistema de Finanzas de Hogar** es una aplicación desarrollada con el paquete **EasyAdmin** para **Symfony**, diseñada para ayudarte a administrar tus finanzas personales y familiares de forma sencilla y segura.
 
-Este sistema facilita el control y seguimiento de ingresos, gastos, ahorros y metas financieras, ofreciendo una interfaz amigable y funcionalidades robustas para la gestión financiera diaria.
-
-El proyecto está pensado como una solución práctica para aprender y aplicar conceptos de administración de datos, seguridad y experiencia de usuario en aplicaciones web.
+Con esta herramienta podrás llevar un control detallado de ingresos, gastos, ahorros y metas financieras, todo a través de una interfaz intuitiva y funcionalidades prácticas que facilitan la administración de tu economía día a día.
 
 ## Demo del Proyecto
 
@@ -18,11 +16,14 @@ El proyecto está pensado como una solución práctica para aprender y aplicar c
 - **Autenticación**  
   Inicio de sesión y registro de usuarios con sistema seguro. Cada usuario tiene acceso individual a sus datos financieros.
 
+- **Dashboard**  
+  Vista general de tu información financiera actual. Accede a resúmenes rápidos de ingresos, gastos, ahorros y progreso de tus metas en un solo lugar.
+  
 - **Ingresos**  
   Registra y visualiza tus entradas de dinero. Útil para llevar un control claro de tus fuentes de ingresos.
 
 - **Ahorros**  
-  Administra tus ahorros. Establece montos reservados mensualmente y lleva un seguimiento de tu crecimiento financiero.
+ Administra tus ahorros. Establece montos reservados mensualmente y lleva un seguimiento de tu crecimiento financiero.
 
 - **Metas Financieras**  
   Define objetivos como comprar un coche o pagar una deuda. Controla el progreso hacia tus metas económicas.
@@ -44,6 +45,12 @@ El proyecto está pensado como una solución práctica para aprender y aplicar c
 
 - **Documentación**  
   Acceso completo a la documentación técnica y manuales de usuario para facilitar el uso y desarrollo del sistema. Incluye guías de instalación, uso, API y solución de problemas.
+
+- **Moneda**  
+  Configura la moneda principal con la que se registrarán todos tus ingresos, gastos y ahorros para mantener coherencia en tu información financiera.
+
+- **Año**  
+  Selecciona el año fiscal o periodo anual que deseas consultar para organizar y analizar tus movimientos financieros por ciclos anuales.
 
 ---
 
@@ -100,12 +107,12 @@ El proyecto está pensado como una solución práctica para aprender y aplicar c
 
 | Red Social   | Descripción                                              | Enlace                   |
 |--------------|----------------------------------------------------------|--------------------------|
-| **Facebook** | Conéctate y mantente al tanto de mis actualizaciones.    | [Presiona aquí](https://facebook.com/tu-usuario) |
-| **YouTube**  | Fundamentos de la programación, tutoriales y noticias.   | [Presiona aquí](https://youtube.com/tu-canal)     |
-| **Página Web** | Más información sobre mis proyectos y servicios.        | [Presiona aquí](https://tusitio.com)              |
-| **LinkedIn** | Sigue mi carrera profesional y establece conexiones.     | [Presiona aquí](https://linkedin.com/in/tu-usuario) |
-| **Instagram**| Fotos, proyectos y contenido relacionado.                 | [Presiona aquí](https://instagram.com/tu-usuario) |
-| **Twitter**  | Proyectos, pensamientos y actualizaciones.                | [Presiona aquí](https://twitter.com/tu-usuario)   |
+| **Facebook** | Conéctate y mantente al tanto de mis actualizaciones.    | [Presiona aquí](https://www.facebook.com/PabloGarciaJC) |
+| **YouTube**  | Fundamentos de la programación, tutoriales y noticias.   | [Presiona aquí](https://www.youtube.com/channel/UC5I4oY7BeNwT4gBu1ZKsEhwl)     |
+| **Página Web** | Más información sobre mis proyectos y servicios.        | [Presiona aquí](https://pablogarciajc.com/)              |
+| **LinkedIn** | Sigue mi carrera profesional y establece conexiones.     | [Presiona aquí](https://www.linkedin.com/in/pablogarciajc) |
+| **Instagram**| Fotos, proyectos y contenido relacionado.                 | [Presiona aquí](https://www.instagram.com/pablogarciajc) |
+| **Twitter**  | Proyectos, pensamientos y actualizaciones.                | [Presiona aquí](https://x.com/PabloGarciaJC?t=lct1gxvE8DkqAr8dgxrHIw&s=09)   |
 
 ---
 > _"El buen manejo de tus finanzas hoy construye la seguridad del mañana."_
