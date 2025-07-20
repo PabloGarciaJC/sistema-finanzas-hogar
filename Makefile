@@ -65,6 +65,10 @@ require-maker:
 require-easyadmin:
 	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar composer require easycorp/easyadmin-bundle
 
+.PHONY: debug-router-service
+debug-router-service:
+	$(DOCKER_COMPOSE) exec php_apache_finanzas_hogar php bin/console debug:router | grep service
+
 ## ---------------------------------------------------------
 ## Symfony - Base de Datos y Migraciones
 ## ---------------------------------------------------------
@@ -136,7 +140,3 @@ push-build:
 	git add -f public/build
 	git commit -m "Agrego assets compilados para producción"
 	git push origin master
-
-
-
-# php bin/console debug:router | grep service
