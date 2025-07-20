@@ -6,13 +6,12 @@ Este sistema facilita el control y seguimiento de ingresos, gastos, ahorros y me
 
 El proyecto está pensado como una solución práctica para aprender y aplicar conceptos de administración de datos, seguridad y experiencia de usuario en aplicaciones web.
 
----
-
-## Demo del Proyecto  
+## Demo del Proyecto
 
 [http://finanzashogar.pablogarciajc.com/](http://finanzashogar.pablogarciajc.com/)
 
----
+| ![Imagen 1](https://pablogarciajc.com/wp-content/uploads/2025/01/ecommerce_1_webp.png) | ![Imagen 2](https://pablogarciajc.com/wp-content/uploads/2025/01/ecommerce_6_webp.png) |
+|-----------|-----------|
 
 ## ¿Qué funcionalidades ofrece el Sistema de Finanzas de Hogar?
 
