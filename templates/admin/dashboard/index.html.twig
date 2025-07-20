@@ -1,14 +1,15 @@
 {% extends '@EasyAdmin/layout.html.twig' %}
 
 {% block content %}
-    <article class="content">
-        <section class="content-header mb-4">
-            <h1 class="title fw-semibold" style="font-size: 1.8rem;">Panel de Finanzas Hogar</h1>
-        </section>
+	<article class="content">
+		<section class="content-header mb-4">
+			<h1 class="title fw-semibold" style="font-size: 1.8rem;">Panel de Finanzas Hogar</h1>
+			<h2 class="title fw-semibold" style="font-size: 1.8rem; color: #333;">Último mes activo:<span style="color: #1cc88a;">{{ activeMonthName }}</span></h2>
+		</section>
 
-        <section id="main" class="content-body">
-        
-            {% set tarjetas = [
+		<section id="main" class="content-body">
+
+			{% set tarjetas = [
                 {'label': 'Miembros', 'value': totalMiembros, 'icon': 'fas fa-users', 'color': '#4e73df'},
                 {'label': 'Ingresos', 'value': totalIngresos, 'icon': 'fas fa-dollar-sign', 'color': '#1cc88a'},
                 {'label': 'Créditos', 'value': totalCreditos, 'icon': 'fas fa-money-bill', 'color': '#e0a800'},
@@ -19,151 +20,193 @@
                 {'label': 'Gastos Anuales', 'value': totalPagosAnuales, 'icon': 'fas fa-chart-pie', 'color': '#e74a3b'}
             ] %}
 
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-5">
-                {% for item in tarjetas %}
-                    <div class="col">
-                        <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: {{ item.color }}; color: #fff; min-height: 115px;">
-                            <div class="card-body d-flex align-items-center gap-3 p-4">
-                                <div style="background-color: rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 1.9rem;">
-                                    <i class="{{ item.icon }}"></i>
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-1" style="color: #fff; font-size: 1.45rem;">{{ item.value }}</h5>
-                                    <p class="mb-0" style="opacity: 0.98; font-weight: 600; font-size: 1.1rem;">{{ item.label }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-5">
+				{% for item in tarjetas %}
+					<div class="col">
+						<div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: {{ item.color }}; color: #fff; min-height: 115px;">
+							<div class="card-body d-flex align-items-center gap-3 p-4">
+								<div style="background-color: rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 1.9rem;">
+									<i class="{{ item.icon }}"></i>
+								</div>
+								<div>
+									<h5 class="fw-bold mb-1" style="color: #fff; font-size: 1.45rem;">{{ item.value }}</h5>
+									<p class="mb-0" style="opacity: 0.98; font-weight: 600; font-size: 1.1rem;">{{ item.label }}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
 
-            <div class="row mt-5">
-                <div class="col-md-6" style="height: 370px;">
-                    <canvas id="monthlyExpensesChart" style="width: 100%; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
-                </div>
-                <div class="col-md-6" style="height: 370px;">
-                    <canvas id="dashboardDoughnutChart" style="width: 100%; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
-                </div>
-            </div>
-        </section>
-    </article>
+			<div class="row mt-5">
+				<div class="col-md-6" style="height: 370px;">
+					<canvas id="monthlyExpensesChart" style="width: 100%; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
+				</div>
+				<div class="col-md-6" style="height: 370px;">
+					<canvas id="dashboardDoughnutChart" style="width: 100%; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.07);"></canvas>
+				</div>
+			</div>
+		</section>
+	</article>
 {% endblock %}
 
 {% block body_javascript %}
-    {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctxDoughnut = document.getElementById('dashboardDoughnutChart').getContext('2d');
+	{{ parent() }}
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		const ctxDoughnut = document.getElementById('dashboardDoughnutChart').getContext('2d');
 
-        const doughnutColors = [
-            '#4e73df',
-            '#1cc88a',
-            '#e0a800',
-            '#17a2b8',
-            '#6f42c1',
-            '#fd7e14',
-            '#ff6f61'
-        ];
+const doughnutColors = [
+'#4e73df',
+'#1cc88a',
+'#e0a800',
+'#17a2b8',
+'#6f42c1',
+'#fd7e14',
+'#ff6f61'
+];
 
-        const doughnutData = {
-            labels: ['Miembros', 'Ingresos', 'Créditos', 'Servicios', 'Metas', 'Ahorros', 'Pagos al Contado'],
-            datasets: [{
-                data: [
-                    {{ totalMiembros }},
-                    {{ totalIngresos }},
-                    {{ totalCreditos }},
-                    {{ totalServicios }},
-                    {{ totalMetas }},
-                    {{ totalAhorros }},
-                    {{ totalPagosAlContado }}
-                ],
-                backgroundColor: doughnutColors,
-                borderColor: '#fff',
-                borderWidth: 2,
-                hoverOffset: 30
-            }]
-        };
+const doughnutData = {
+labels: [
+'Miembros',
+'Ingresos',
+'Créditos',
+'Servicios',
+'Metas',
+'Ahorros',
+'Pagos al Contado'
+],
+datasets: [
+{
+data: [
+{{ totalMiembros }},
+{{ totalIngresos }},
+{{ totalCreditos }},
+{{ totalServicios }},
+{{ totalMetas }},
+{{ totalAhorros }},
+{{ totalPagosAlContado }}
+],
+backgroundColor: doughnutColors,
+borderColor: '#fff',
+borderWidth: 2,
+hoverOffset: 30
+}
+]
+};
 
-        const doughnutConfig = {
-            type: 'doughnut',
-            data: doughnutData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 800,
-                    easing: 'easeOutQuart'
-                },
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            color: '#444',
-                            font: { size: 14, weight: '600' }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#2a2a2a',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        padding: 10,
-                        borderRadius: 6,
-                        titleFont: { size: 14, weight: 'bold' },
-                        bodyFont: { size: 13 }
-                    }
-                }
-            }
-        };
+const doughnutConfig = {
+type: 'doughnut',
+data: doughnutData,
+options: {
+responsive: true,
+maintainAspectRatio: false,
+animation: {
+duration: 800,
+easing: 'easeOutQuart'
+},
+plugins: {
+legend: {
+position: 'right',
+labels: {
+color: '#444',
+font: {
+size: 14,
+weight: '600'
+}
+}
+},
+tooltip: {
+backgroundColor: '#2a2a2a',
+titleColor: '#fff',
+bodyColor: '#fff',
+padding: 10,
+borderRadius: 6,
+titleFont: {
+size: 14,
+weight: 'bold'
+},
+bodyFont: {
+size: 13
+}
+}
+}
+}
+};
 
-        new Chart(ctxDoughnut, doughnutConfig);
+new Chart(ctxDoughnut, doughnutConfig);
 
-        const ctxMonthly = document.getElementById('monthlyExpensesChart').getContext('2d');
+const ctxMonthly = document.getElementById('monthlyExpensesChart').getContext('2d');
 
-        const monthlyExpensesData = {
-            labels: {{ meses|json_encode|raw }},
-            datasets: [{
-                label: 'Gastos Mensuales',
-                data: {{ gastosPorMes|json_encode|raw }},
-                backgroundColor: '#e74a3b',
-                barThickness: 50
-            }]
-        };
+const monthlyExpensesData = {
+labels: {{ meses|json_encode|raw }},
+datasets: [
+{
+label: 'Gastos Mensuales',
+data: {{ gastosPorMes|json_encode|raw }},
+backgroundColor: '#e74a3b',
+barThickness: 50
+}
+]
+};
 
-        const monthlyExpensesConfig = {
-            type: 'bar',
-            data: monthlyExpensesData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 800,
-                    easing: 'easeOutQuart'
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#eee' },
-                        ticks: { color: '#666', font: { size: 12 } }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#444', font: { weight: '600', size: 13 } }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#2a2a2a',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        padding: 10,
-                        borderRadius: 6,
-                        titleFont: { size: 14, weight: 'bold' },
-                        bodyFont: { size: 13 }
-                    }
-                }
-            }
-        };
-        new Chart(ctxMonthly, monthlyExpensesConfig);
-    </script>
+const monthlyExpensesConfig = {
+type: 'bar',
+data: monthlyExpensesData,
+options: {
+responsive: true,
+maintainAspectRatio: false,
+animation: {
+duration: 800,
+easing: 'easeOutQuart'
+},
+scales: {
+y: {
+beginAtZero: true,
+grid: {
+color: '#eee'
+},
+ticks: {
+color: '#666',
+font: {
+size: 12
+}
+}
+},
+x: {
+grid: {
+display: false
+},
+ticks: {
+color: '#444',
+font: {
+weight: '600',
+size: 13
+}
+}
+}
+},
+plugins: {
+legend: {
+display: false
+},
+tooltip: {
+backgroundColor: '#2a2a2a',
+titleColor: '#fff',
+bodyColor: '#fff',
+padding: 10,
+borderRadius: 6,
+titleFont: {
+size: 14,
+weight: 'bold'
+},
+bodyFont: {
+size: 13
+}
+}
+}
+}
+};
+new Chart(ctxMonthly, monthlyExpensesConfig);
+	</script>
 {% endblock %}

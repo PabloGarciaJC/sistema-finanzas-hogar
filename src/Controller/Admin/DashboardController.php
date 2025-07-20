@@ -58,7 +58,6 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         $monthsEntities = $this->monthRepository->findAll();
-        $firstInactiveMonth = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC'], 1);
 
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -72,9 +71,14 @@ class DashboardController extends AbstractDashboardController
         $bankDebtTotal = $totalServicios + $totalPagosAlContado + $totalCreditos + $totalMetas;
         $totalAhorros = (float) $totalIngresos - $bankDebtTotal;
 
+        // Mes activo
+        $activeMonth = $this->monthRepository->findOneBy(['status' => 1], ['id' => 'DESC']);
+        $activeMonthName = $activeMonth ? $activeMonth->getName() : 'No activo';
+
         // Crear array de meses dinámicamente
         $months = [];
         $gastosPorMes = [];
+
         foreach ($monthsEntities as $monthEntity) {
             $months[$monthEntity->getName()] = $monthEntity->getId();
             $gastosPorMes[] = $this->monthlySummaryRepository->getDebtsByMonth($user->getId(), $monthEntity->getId());
@@ -97,9 +101,10 @@ class DashboardController extends AbstractDashboardController
             'meses' => $meses,
             'gastosPorMes' => $gastosPorMes,
             'totalPagosAnuales' => $gastosAnuales,
+            'activeMonthName' => $activeMonthName,
         ]);
     }
-
+    
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()->setTitle('<i class="fas fa-wallet"></i> Finanzas Hogar');

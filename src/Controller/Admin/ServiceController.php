@@ -265,21 +265,20 @@ class ServiceController extends AbstractCrudController
      */
     private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        $monthsEntities = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
-        $months = [];
-        $firstMonthId = null;
+        $monthEntities = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
 
-        foreach ($monthsEntities as $monthEntity) {
-            $months[$monthEntity->getName()] = $monthEntity->getId();
-            if ($firstMonthId === null) {
-                $firstMonthId = $monthEntity->getId();
-            }
+        $months = [];
+        foreach ($monthEntities as $month) {
+            $months[$month->getName()] = $month->getId();
         }
 
-        $monthField = ChoiceField::new('month', 'Mes')->setChoices($months)->setFormTypeOption('row_attr', $rowClass);
+        $monthField = ChoiceField::new('month', 'Mes')
+            ->setChoices($months)
+            ->setFormTypeOption('row_attr', $rowClass)
+            ->setFormTypeOption('placeholder', 'Seleccione un mes');
 
-        if ($pageName === Crud::PAGE_NEW && $firstMonthId !== null) {
-            $monthField->setFormTypeOption('data', $firstMonthId);
+        if ($pageName === Crud::PAGE_NEW && count($monthEntities) > 0) {
+            $monthField->setFormTypeOption('data', $monthEntities[0]->getId());
         }
 
         return $monthField;

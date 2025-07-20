@@ -126,37 +126,33 @@ class MonthlySummaryController extends AbstractCrudController
             ->formatValue(fn($value) => $value !== null ? number_format((float)$value, 2, ',', '.') . ' ' . $currencySymbol : '');
     }
 
+    /**
+     * Crea el campo de selección de mes para el formulario.
+     */
     private function createMonthChoiceField(string $pageName, array $rowClass): ChoiceField
     {
-        if ($pageName === Crud::PAGE_NEW) {
-            // Obtener solo el primer mes desactivado (status = false)
-            $monthsEntities = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
-        } else {
-            // Todos los meses para otras páginas
-            $monthsEntities = $this->monthRepository->findAll();
-        }
+        $monthEntities = $this->monthRepository->findBy(['status' => 1], ['id' => 'DESC']);
 
         $months = [];
-        $defaultMonthId = null;
-
-        foreach ($monthsEntities as $monthEntity) {
-            $months[$monthEntity->getName()] = $monthEntity->getId();
-            if ($defaultMonthId === null) {
-                $defaultMonthId = $monthEntity->getId();
-            }
+        foreach ($monthEntities as $month) {
+            $months[$month->getName()] = $month->getId();
         }
 
-        $field = ChoiceField::new('month', 'Mes')
+        $monthField = ChoiceField::new('month', 'Mes')
             ->setChoices($months)
-            ->setFormTypeOption('row_attr', $rowClass);
+            ->setFormTypeOption('row_attr', $rowClass)
+            ->setFormTypeOption('placeholder', 'Seleccione un mes');
 
-        // En creación, setear el primer mes desactivado como valor por defecto
-        if ($pageName === Crud::PAGE_NEW && $defaultMonthId !== null) {
-            $field->setFormTypeOption('data', $defaultMonthId);
+        if ($pageName === Crud::PAGE_NEW && count($monthEntities) > 0) {
+            $monthField->setFormTypeOption('data', $monthEntities[0]->getId());
         }
 
-        return $field;
+        return $monthField;
     }
+
+    /**
+     * Crea el campo de selección de año para el formulario.
+     */
 
     private function createYearChoiceField(string $pageName, array $rowClass): ChoiceField
     {
