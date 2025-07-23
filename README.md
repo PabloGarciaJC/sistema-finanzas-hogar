@@ -6,7 +6,7 @@ Con esta herramienta podrás llevar un control detallado de ingresos, gastos, ah
 
 ## Demo del Proyecto
 
-[http://finanzashogar.pablogarciajc.com/](http://finanzashogar.pablogarciajc.com/)
+[http://finanzashogar.com/](http://finanzashogar.pablogarciajc.com/)
 
 | ![Imagen 1](https://pablogarciajc.com/wp-content/uploads/2025/07/sistema_finanzas_hogar1.webp) | ![Imagen 2](https://pablogarciajc.com/wp-content/uploads/2025/07/sistema_finanzas_hogar5.webp) |
 |-----------|-----------|
